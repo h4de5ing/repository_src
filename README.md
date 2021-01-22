@@ -11,3 +11,11 @@
 ```
 
 
+# Base 基础公共库
+- 常用代码封装,UI无关
+
+# BaseUI UI相关的基础公共库
+- 与UI相关的公共库
+
+# GsonCommon
+- gson 库的基础封装 null判断 json解析 生成json字符串
