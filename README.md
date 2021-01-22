@@ -19,3 +19,6 @@
 
 # GsonCommon
 - gson 库的基础封装 null判断 json解析 生成json字符串
+
+# WSClientLib WebSocket 封装
+- WSClient 基于`org.java-websocket:Java-WebSocket:1.5.1` 封装

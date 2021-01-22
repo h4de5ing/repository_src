@@ -2,3 +2,4 @@ rootProject.name = "repository"
 include ':Base'
 include ':GsonCommon'
 include ':BaseUI'
+include ':WSClientLib'
