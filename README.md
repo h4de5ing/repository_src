@@ -11,3 +11,7 @@
 ```
 
 
+# Base 基础公共库
+- 常用代码封装
+# GsonCommon
+- gson 库的基础封装 null判断 json解析 生成json字符串
