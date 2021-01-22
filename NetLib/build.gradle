@@ -36,14 +36,14 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.java-websocket:Java-WebSocket:1.5.1"
-    //implementation "com.squareup.okhttp3:okhttp:4.9.0"//在android 4.4上会崩溃
+    implementation "com.squareup.okhttp3:okhttp:4.9.0"
 }
 uploadArchives {
     repositories.mavenDeployer {
         def today = new Date().format('yyyyMMdd')
         repository(url: "file://F://repository/repository/repository/")
-        pom.groupId = "com.github.h4de5ing.wsclientlib"
-        pom.artifactId = "wsclientlib"
+        pom.groupId = "com.github.h4de5ing.netlib"
+        pom.artifactId = "netlib"
         pom.version = "1.0-$today"
     }
 }

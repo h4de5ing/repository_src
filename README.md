@@ -20,5 +20,7 @@
 # GsonCommon
 - gson 库的基础封装 null判断 json解析 生成json字符串
 
-# WSClientLib WebSocket 封装
-- WSClient 基于`org.java-websocket:Java-WebSocket:1.5.1` 封装
+# NetLib 网络请求相关
+- WSClient 基于`org.java-websocket:Java-WebSocket:1.5.1` 的WebSocket封装
+- OkhttpUtil 基于`com.squareup.okhttp3:okhttp:4.9.0` 的HTTP请求封装
+- HttpRequest 基于Java原生的网络请求库

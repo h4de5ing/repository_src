@@ -14,7 +14,7 @@
             <option value="$PROJECT_DIR$/Base" />
             <option value="$PROJECT_DIR$/BaseUI" />
             <option value="$PROJECT_DIR$/GsonCommon" />
-            <option value="$PROJECT_DIR$/WSClientLib" />
+            <option value="$PROJECT_DIR$/NetLib" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

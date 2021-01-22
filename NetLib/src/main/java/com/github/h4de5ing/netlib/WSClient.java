@@ -1,4 +1,4 @@
-package com.github.h4de5ing.wsclientlib;
+package com.github.h4de5ing.netlib;
 
 
 import org.java_websocket.client.WebSocketClient;
@@ -53,6 +53,7 @@ public class WSClient {
     public void setWSMessageListener(WSMessageUpdateListener listener) {
         wsMessageUpdateListener = listener;
     }
+
 
     private void connect(String url) {
         try {
