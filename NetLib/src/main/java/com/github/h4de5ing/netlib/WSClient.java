@@ -49,12 +49,19 @@ public class WSClient {
     }
 
     private WSMessageUpdateListener wsMessageUpdateListener;
-
+    private WSStatusUpdateListener wsStatusUpdateListener;
     public void setWSMessageListener(WSMessageUpdateListener listener) {
         wsMessageUpdateListener = listener;
     }
 
-
+    public void setWsStatusUpdateListener(WSStatusUpdateListener listener) {
+        wsStatusUpdateListener = listener;
+    }
+    private void updateStatus() {
+        if (wsStatusUpdateListener != null) {
+            wsStatusUpdateListener.update(isConnected);
+        }
+    }
     private void connect(String url) {
         try {
             System.out.println("初始化" + url);
@@ -64,6 +71,7 @@ public class WSClient {
                     isConnected = true;
                     println("WebSocket 打开成功");
                     counter = 0;
+                    updateStatus();
                 }
 
                 @Override
@@ -71,6 +79,7 @@ public class WSClient {
                     isConnected = true;
                     println("接收到消息1:" + message);
                     counter = 0;
+                    updateStatus();
                     if (wsMessageUpdateListener != null) wsMessageUpdateListener.update(message);
                 }
 
@@ -78,11 +87,13 @@ public class WSClient {
                 public void onClose(int code, String reason, boolean remote) {
                     isConnected = false;
                     println("WebSocket 已经关闭");
+                    updateStatus();
                 }
 
                 @Override
                 public void onError(Exception ex) {
                     isConnected = false;
+                    updateStatus();
                     println("WebSocket 打开失败" + ex.getMessage());
                 }
             };
