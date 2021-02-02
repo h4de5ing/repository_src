@@ -1,5 +1,6 @@
 package com.github.h4de5ing.base
 
+import java.io.*
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -37,4 +38,16 @@ fun timer(delay: Long, block: () -> Unit) {
             block()
         }
     }, 0, delay)
+}
+
+/**
+ * "data.json".stream().buffered().reader("utf-8").readLines()
+ */
+fun String.stream() = FileInputStream(this)
+fun InputStream.buffered() = BufferedInputStream(this)
+fun InputStream.reader(charset: String) = InputStreamReader(this, charset)
+fun Reader.readLines(): List<String> {
+    val result = arrayListOf<String>()
+    forEachLine { result.add(it) }
+    return result
 }
