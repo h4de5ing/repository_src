@@ -1,13 +1,14 @@
-package com.github.h4de5ing.baseui
+package com.github.h4de5ing.baseui.base
 
 import android.annotation.SuppressLint
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import com.github.h4de5ing.baseui.base.BaseActivity
 
 //全屏BaseActivity
-open class FullScreenBaseActivity : BaseActivity() {
+open class BaseFullScreenActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         window.setFormat(PixelFormat.TRANSLUCENT)

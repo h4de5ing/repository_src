@@ -1,11 +1,20 @@
-package com.github.h4de5ing.baseui
+package com.github.h4de5ing.baseui.base
 
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.github.h4de5ing.baseui.SPUtils
 import com.google.android.material.snackbar.Snackbar
 
 open class BaseActivity : AppCompatActivity() {
+    fun getSP(key: String): Any {
+        return SPUtils.getSp(this, key, "")
+    }
+
+    fun setSP(key: String, value: Any) {
+        SPUtils.setSP(this, key, value)
+    }
+
     fun showToast(message: String) {
         runOnUiThread { Toast.makeText(this, message, Toast.LENGTH_SHORT).show() }
     }

@@ -1,4 +1,4 @@
-package com.github.h4de5ing.baseui
+package com.github.h4de5ing.baseui.base
 
 import androidx.fragment.app.Fragment
 

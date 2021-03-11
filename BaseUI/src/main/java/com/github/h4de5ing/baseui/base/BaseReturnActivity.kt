@@ -1,9 +1,10 @@
-package com.github.h4de5ing.baseui
+package com.github.h4de5ing.baseui.base
 
 import android.os.Bundle
+import com.github.h4de5ing.baseui.base.BaseActivity
 
 //带返回的BaseActivity
-open class ReturnBaseActivity : BaseActivity() {
+open class BaseReturnActivity : BaseActivity() {
     override fun onSupportNavigateUp(): Boolean {
         finish()
         return super.onSupportNavigateUp()

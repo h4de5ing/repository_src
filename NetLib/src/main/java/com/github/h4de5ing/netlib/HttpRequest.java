@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+//TODO 用kt重写一遍 并将所有错误方方式返回
 public class HttpRequest {
 
     /**

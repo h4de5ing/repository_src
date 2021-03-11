@@ -50,6 +50,7 @@ public class WSClient {
 
     private WSMessageUpdateListener wsMessageUpdateListener;
     private WSStatusUpdateListener wsStatusUpdateListener;
+
     public void setWSMessageListener(WSMessageUpdateListener listener) {
         wsMessageUpdateListener = listener;
     }
@@ -57,11 +58,13 @@ public class WSClient {
     public void setWsStatusUpdateListener(WSStatusUpdateListener listener) {
         wsStatusUpdateListener = listener;
     }
+
     private void updateStatus() {
         if (wsStatusUpdateListener != null) {
             wsStatusUpdateListener.update(isConnected);
         }
     }
+
     private void connect(String url) {
         try {
             System.out.println("初始化" + url);
@@ -114,6 +117,8 @@ public class WSClient {
             if (counter > 10 || !isConnected) {
                 retry(mUrl);
                 counter = 0;
+                //TODO
+                //webSocketClient.reconnect();
             }
         } catch (Exception e) {
             e.printStackTrace();
