@@ -25,5 +25,24 @@
 - OkhttpUtil 基于`com.squareup.okhttp3:okhttp:4.9.0` 的HTTP请求封装
 - HttpRequest 基于Java原生的网络请求库
 
+# OKPermission
+```
+  public static void checkPerm(Context context) {
+        PermissionItem[] permissionItems = new PermissionItem[]{
+                new PermissionItem(Manifest.permission.WRITE_EXTERNAL_STORAGE, "文件读写", R.mipmap.ic_launcher),
+                new PermissionItem(Manifest.permission.ACCESS_COARSE_LOCATION, "位置信息1", R.mipmap.ic_launcher),
+                new PermissionItem(Manifest.permission.ACCESS_FINE_LOCATION, "位置信息2", R.mipmap.ic_launcher)};
 
-# TODO 将所有java类采用kt重写
+        OKPermissionManager okPermissionManager = new OKPermissionManager
+                .Builder(permissionItems)
+                .setOKPermissionListener((permissions1, grantResults) -> Log.e(TAG, Arrays.toString(permissions1)))
+                .setKeyBackListener(() -> Log.e("", "OKPermissionKeyBackListener"))
+                .setShowDialog(true)
+                .setDialogTitle("开启App")
+                .setDialogMsg("为了能够正常使用，需要开启以下权限")
+                .builder();
+        okPermissionManager.applyPermission(context);
+    }
+```
+
+# TODO 将所有java类采用kt重写  错误信息采用Result返回

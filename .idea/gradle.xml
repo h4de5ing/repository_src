@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/BaseUI" />
             <option value="$PROJECT_DIR$/GsonCommon" />
             <option value="$PROJECT_DIR$/NetLib" />
+            <option value="$PROJECT_DIR$/OKPermission" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
