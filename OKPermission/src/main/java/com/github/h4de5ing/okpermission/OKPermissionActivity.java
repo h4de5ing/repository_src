@@ -3,12 +3,13 @@ package com.github.h4de5ing.okpermission;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.view.View;
 import android.view.Window;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ public class OKPermissionActivity extends Activity {
     private static final String TAG = "OKPermissionActivity";
 
     private static OKPermissionListener sOKPermissionListener;
+    private static OKPermissionFinishListener sOKPermissionFinishListener;
     private static OKPermissionKeyBackListener sKeyBackListener;
 
     /**
@@ -57,6 +59,10 @@ public class OKPermissionActivity extends Activity {
         sOKPermissionListener = okPermissionListener;
     }
 
+    public static void setOKPermissionFinishListener(OKPermissionFinishListener okPermissionFinishListener) {
+        sOKPermissionFinishListener = okPermissionFinishListener;
+    }
+
     public static void setKeyBackListener(OKPermissionKeyBackListener keyBackListener) {
         sKeyBackListener = keyBackListener;
     }
@@ -66,11 +72,8 @@ public class OKPermissionActivity extends Activity {
         super.onCreate(savedInstanceState);
         //取消标题栏
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-
         mContext = this;
-
         getIntentData();
-
         showApplyPermissionDialog();
     }
 
@@ -87,24 +90,29 @@ public class OKPermissionActivity extends Activity {
     }
 
     private void showApplyPermissionDialog() {
-        final List<String> requestPermission = OKPermission.requestPermission(mContext, mPermissions);
+        List<String> requestPermission = new ArrayList<>();
+        for (int i = 0; i < mPermissions.length; i++) {
+            if (ContextCompat.checkSelfPermission(mContext, mPermissions[i]) != PackageManager.PERMISSION_GRANTED) {
+                //没有授权
+                requestPermission.add(mPermissions[i]);
+            }
+            {
+                //全部都有授权
+                sOKPermissionFinishListener.onOKPermissionFinish();
+            }
+        }
         if (requestPermission.size() <= 0) {
             finish();
             return;
         }
         if (mShowDialog) {
-
             final OKPermissionDialog okPermissionDialog = new OKPermissionDialog(mContext, R.style.CustomDialog);
             okPermissionDialog.setOKPermissionTitle(mDialogTitle);
             okPermissionDialog.setOKPermissionMessage(mDialogMsg);
             okPermissionDialog.setRecyclerView(requestPermission, mDialogItems);
-            okPermissionDialog.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    okPermissionDialog.dismiss();
-                    OKPermission.okPermission((Activity) mContext, requestPermission);
-
-                }
+            okPermissionDialog.setOnClickListener(v -> {
+                okPermissionDialog.dismiss();
+                OKPermission.okPermission((Activity) mContext, requestPermission);
             });
             okPermissionDialog.setDialogKeyBackListener(() -> {
                 if (null != sKeyBackListener) {
@@ -114,7 +122,6 @@ public class OKPermissionActivity extends Activity {
             });
             mDialog = okPermissionDialog;
             okPermissionDialog.show();
-
         } else {
             OKPermission.okPermission((Activity) mContext, requestPermission);
         }

@@ -17,6 +17,7 @@ public class OKPermissionManager {
 
     private Bundle mBundle = new Bundle();
     private OKPermissionListener mOKPermissionListener;
+    private OKPermissionFinishListener mOKPermissionFinishListener;
     private OKPermissionKeyBackListener mKeyBackListener;
 
     private OKPermissionManager(Builder builder) {
@@ -29,6 +30,7 @@ public class OKPermissionManager {
         mBundle.putSerializable(INTENT_KEY_DIALOG_ITEMS, builder.mDialogItems);
 
         mOKPermissionListener = builder.mOKPermissionListener;
+        mOKPermissionFinishListener = builder.mOKPermissionFinishListener;
         mKeyBackListener = builder.mKeyBackListener;
     }
 
@@ -39,6 +41,7 @@ public class OKPermissionManager {
      */
     public void applyPermission(Context context) {
         OKPermissionActivity.setOKPermissionListener(mOKPermissionListener);
+        OKPermissionActivity.setOKPermissionFinishListener(mOKPermissionFinishListener);
         OKPermissionActivity.setKeyBackListener(mKeyBackListener);
         Intent intent = new Intent(context, OKPermissionActivity.class);
         intent.putExtras(mBundle);
@@ -53,6 +56,7 @@ public class OKPermissionManager {
         private ArrayList<PermissionItem> mDialogItems;
         private boolean mShowDialog = false;
         private OKPermissionListener mOKPermissionListener;
+        private OKPermissionFinishListener mOKPermissionFinishListener;
         private OKPermissionKeyBackListener mKeyBackListener;
 
         public Builder(PermissionItem[] permissions) {
@@ -81,6 +85,11 @@ public class OKPermissionManager {
 
         public Builder setOKPermissionListener(OKPermissionListener permissionListener) {
             mOKPermissionListener = permissionListener;
+            return this;
+        }
+
+        public Builder setOKPermissionFinishListener(OKPermissionFinishListener okPermissionFinishListener) {
+            mOKPermissionFinishListener = okPermissionFinishListener;
             return this;
         }
 
