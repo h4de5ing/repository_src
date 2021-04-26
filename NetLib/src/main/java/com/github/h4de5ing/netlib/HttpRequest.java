@@ -242,4 +242,46 @@ public class HttpRequest {
         }
         return result;
     }
+
+    public static String sendPut(String urlStr, String json, Map<String, String> header) throws Exception {
+        String result = "";
+        URL url = new URL(urlStr);
+        HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+        if (header != null && header.size() > 0) {
+            for (String key : header.keySet()) {
+                httpCon.setRequestProperty(key, header.get(key));
+            }
+        }
+        httpCon.setDoOutput(true);
+        httpCon.setRequestMethod("PUT");
+        httpCon.setUseCaches(false);
+        httpCon.setRequestProperty("Accept-Charset", "utf-8");
+        httpCon.setRequestProperty("Connection", "keep-alive");
+        httpCon.setRequestProperty("Content-Type", "application/json");
+        httpCon.setRequestProperty("Accept", "application/json");
+        OutputStream out = httpCon.getOutputStream();
+        out.write(json.getBytes());
+        String footer = "\r\n" + "--" + "----------" + "--" + "\r\n";
+        out.write(footer.getBytes());
+        out.flush();
+        out.close();
+        Map<String, List<String>> map = httpCon.getHeaderFields();
+        System.out.println("网址:" + url);
+        System.out.println("json:" + json);
+        for (String key : map.keySet()) {
+            System.out.println(key + "--->" + map.get(key));
+        }
+        if (httpCon.getResponseCode() == 200) {
+            StringBuffer strBuf = new StringBuffer();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(httpCon.getInputStream()));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                strBuf.append(line).append("\n");
+            }
+            reader.close();
+            result = strBuf.toString();
+        }
+        System.out.println("请求结果:" + result);
+        return result;
+    }
 }
