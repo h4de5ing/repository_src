@@ -5,6 +5,8 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class WSClient {
     private boolean isConnected = false;
@@ -33,6 +35,10 @@ public class WSClient {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean isConnected() {
+        return isConnected;
     }
 
     public void close() {
@@ -106,19 +112,20 @@ public class WSClient {
         }
     }
 
+    private void delay(String message) {
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                sendMessage(message);
+            }
+        }, 2 * 1000);
+    }
+
     public void sendMessage(String message) {
         try {
-            if (webSocketClient != null && webSocketClient.isOpen()) {
+            if (webSocketClient != null) {
+                System.out.println("sendMessage:" + message);
                 webSocketClient.send(message);
-                System.out.println("发送消息" + message);
-                counter = 0;
-            }
-            counter++;
-            if (counter > 10 || !isConnected) {
-                retry(mUrl);
-                counter = 0;
-                //TODO
-                //webSocketClient.reconnect();
             }
         } catch (Exception e) {
             e.printStackTrace();

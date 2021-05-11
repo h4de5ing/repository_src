@@ -15,6 +15,25 @@ fun Long.date(pattern: String) = SimpleDateFormat(pattern, Locale.CHINA).format(
 fun now(): String =
     SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA).format(Date(System.currentTimeMillis()))
 
+//获取某天0点
+private fun getData0(year: Int, month: Int, dayOfMonth: Int): Long {
+    val calendar = Calendar.getInstance()
+    calendar.set(year, month, dayOfMonth, 0, 0, 0)
+    return calendar.time.time
+}
+
+//获取某天24点
+private fun getToDay24(year: Int, month: Int, dayOfMonth: Int): Long {
+    val calendar = Calendar.getInstance()
+    calendar.set(year, month, dayOfMonth, 23, 59, 59)
+    return calendar.time.time
+}
+
+fun todayTime(): Long = System.currentTimeMillis()
+fun Long.toHuman() = this / 1000000000
+val Int.days: Long get() = (this * 3600 * 24).toLong()
+val Long.ago: Long get() = todayTime() - this * 1000
+
 fun string2Date(s: String?, style: String?): Date? {
     val simpleDateFormat = SimpleDateFormat(style)
     var date: Date? = null

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/RtlOverlay.Widget.AppCompat.Search.DropDown"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white">
+
+    <ImageView
+        android:id="@android:id/icon1"
+        style="@style/RtlOverlay.Widget.AppCompat.Search.DropDown.Icon1"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_centerInParent="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_sentiment_satisfied"
+        app:tint="?colorControlActivated" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@android:id/text1"
+        style="?android:attr/dropDownItemStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@android:id/text2"
+        android:layout_centerVertical="true"
+        android:singleLine="true"
+        android:textAppearance="?attr/textAppearanceSearchResultTitle"
+        tools:text="一级标题" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@android:id/text2"
+        style="?android:attr/dropDownItemStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:gravity="top"
+        android:paddingBottom="4dip"
+        android:textAppearance="?attr/textAppearanceSearchResultSubtitle"
+        android:textColor="@color/black"
+        android:visibility="visible"
+        tools:text="二级标题\n第二行二级标题\n第三行二级标题" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/green_pressed" />
+</RelativeLayout>

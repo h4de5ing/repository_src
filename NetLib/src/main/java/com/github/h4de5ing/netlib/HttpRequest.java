@@ -1,5 +1,7 @@
 package com.github.h4de5ing.netlib;
 
+import com.github.h4de5ing.netlib.exception.ResponseCodeErrorException;
+
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -18,14 +20,6 @@ import java.util.Map;
 //TODO 用kt重写一遍 并将所有错误方方式返回
 //TODO 返回错误原因Result
 public class HttpRequest {
-
-    /**
-     * 向指定URL发送GET方法的请求
-     *
-     * @param url    发送请求的URL
-     * @param params 请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
-     * @return URL 所代表远程资源的响应结果
-     */
     public static String sendGet(String url, Map<String, String> params, Map<String, String> header) throws Exception {
         String result = "";
         BufferedReader in = null;
@@ -38,28 +32,32 @@ public class HttpRequest {
             param = param.substring(0, param.length() - 1);
         }
         URL realUrl = new URL(url + param);
-        URLConnection connection = realUrl.openConnection();
-        connection.setRequestProperty("accept", "*/*");
-        connection.setRequestProperty("connection", "Keep-Alive");
-        connection.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+        HttpURLConnection conn = (HttpURLConnection) realUrl.openConnection();
+        conn.setRequestProperty("accept", "*/*");
+        conn.setRequestProperty("connection", "Keep-Alive");
+        conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
         if (header != null && header.size() > 0) {
             for (String key : header.keySet()) {
-                connection.setRequestProperty(key, header.get(key));
+                conn.setRequestProperty(key, header.get(key));
             }
         }
-        Map<String, List<String>> map = connection.getHeaderFields();
+        Map<String, List<String>> map = conn.getHeaderFields();
         System.out.println(url);
         for (String key : map.keySet()) {
             System.out.println(key + "--->" + map.get(key));
         }
-        connection.connect();
-        in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String line;
-        while ((line = in.readLine()) != null) {
-            result += line;
-        }
-        if (in != null) {
-            in.close();
+        conn.connect();
+        if (conn.getResponseCode() == 200) {
+            in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line;
+            while ((line = in.readLine()) != null) {
+                result += line;
+            }
+            if (in != null) {
+                in.close();
+            }
+        } else {
+            throw new ResponseCodeErrorException(conn.getResponseCode() + " " + conn.getResponseMessage());
         }
         return result;
     }
@@ -151,6 +149,8 @@ public class HttpRequest {
             }
             reader.close();
             result = strBuf.toString();
+        } else {
+            throw new ResponseCodeErrorException(conn.getResponseCode() + " " + conn.getResponseMessage());
         }
         System.out.println("请求结果:" + result);
         return result;
@@ -246,40 +246,91 @@ public class HttpRequest {
     public static String sendPut(String urlStr, String json, Map<String, String> header) throws Exception {
         String result = "";
         URL url = new URL(urlStr);
-        HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         if (header != null && header.size() > 0) {
             for (String key : header.keySet()) {
-                httpCon.setRequestProperty(key, header.get(key));
+                conn.setRequestProperty(key, header.get(key));
             }
         }
-        httpCon.setDoOutput(true);
-        httpCon.setRequestMethod("PUT");
-        httpCon.setUseCaches(false);
-        httpCon.setRequestProperty("Accept-Charset", "utf-8");
-        httpCon.setRequestProperty("Connection", "keep-alive");
-        httpCon.setRequestProperty("Content-Type", "application/json");
-        httpCon.setRequestProperty("Accept", "application/json");
-        OutputStream out = httpCon.getOutputStream();
-        out.write(json.getBytes());
-        String footer = "\r\n" + "--" + "----------" + "--" + "\r\n";
-        out.write(footer.getBytes());
-        out.flush();
-        out.close();
-        Map<String, List<String>> map = httpCon.getHeaderFields();
+        conn.setDoOutput(true);
+        conn.setRequestMethod("PUT");
+        conn.setUseCaches(false);
+        conn.setRequestProperty("Accept-Charset", "utf-8");
+        conn.setRequestProperty("Connection", "keep-alive");
+        conn.setRequestProperty("Content-Type", "application/json");
+        conn.setRequestProperty("Accept", "application/json");
+        OutputStream out = conn.getOutputStream();
+        if (json != null) {
+            out.write(json.getBytes());
+            String footer = "\r\n" + "--" + "----------" + "--" + "\r\n";
+            out.write(footer.getBytes());
+            out.flush();
+            out.close();
+        }
+        Map<String, List<String>> map = conn.getHeaderFields();
         System.out.println("网址:" + url);
         System.out.println("json:" + json);
         for (String key : map.keySet()) {
             System.out.println(key + "--->" + map.get(key));
         }
-        if (httpCon.getResponseCode() == 200) {
+        if (conn.getResponseCode() == 200) {
             StringBuffer strBuf = new StringBuffer();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(httpCon.getInputStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line = null;
             while ((line = reader.readLine()) != null) {
                 strBuf.append(line).append("\n");
             }
             reader.close();
             result = strBuf.toString();
+        } else {
+            throw new ResponseCodeErrorException(conn.getResponseCode() + " " + conn.getResponseMessage());
+        }
+        System.out.println("请求结果:" + result);
+        return result;
+    }
+
+    public static String sendDelete(String urlStr, String json, Map<String, String> header) throws Exception {
+        String result = "";
+        URL url = new URL(urlStr);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        if (header != null && header.size() > 0) {
+            for (String key : header.keySet()) {
+                conn.setRequestProperty(key, header.get(key));
+            }
+        }
+        conn.setDoOutput(true);
+        conn.setRequestMethod("DELETE");
+        conn.setUseCaches(false);
+        conn.setRequestProperty("Accept-Charset", "utf-8");
+        conn.setRequestProperty("Connection", "keep-alive");
+        conn.setRequestProperty("Content-Type", "application/json");
+        conn.setRequestProperty("Accept", "application/json");
+        OutputStream out = conn.getOutputStream();
+        if (json != null) {
+            out.write(json.getBytes());
+            String footer = "\r\n" + "--" + "----------" + "--" + "\r\n";
+            out.write(footer.getBytes());
+            out.flush();
+            out.close();
+        }
+        Map<String, List<String>> map = conn.getHeaderFields();
+        System.out.println("网址:" + url);
+        System.out.println("json:" + json);
+
+        for (String key : map.keySet()) {
+            System.out.println(key + "--->" + map.get(key));
+        }
+        if (conn.getResponseCode() == 200) {
+            StringBuffer strBuf = new StringBuffer();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                strBuf.append(line).append("\n");
+            }
+            reader.close();
+            result = strBuf.toString();
+        } else {
+            throw new ResponseCodeErrorException(conn.getResponseCode() + " " + conn.getResponseMessage());
         }
         System.out.println("请求结果:" + result);
         return result;
