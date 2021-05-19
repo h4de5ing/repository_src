@@ -49,3 +49,4 @@ uploadArchives {
         pom.version = "1.0-$today"
     }
 }
+//gradlew :GsonCommon:uploadArchives

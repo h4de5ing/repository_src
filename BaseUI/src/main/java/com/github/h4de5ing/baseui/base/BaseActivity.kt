@@ -7,8 +7,8 @@ import com.github.h4de5ing.baseui.SPUtils
 import com.google.android.material.snackbar.Snackbar
 
 open class BaseActivity : AppCompatActivity() {
-    fun getSP(key: String): Any {
-        return SPUtils.getSp(this, key, "")
+    fun getSP(key: String,defaultValue: Any): Any {
+        return SPUtils.getSp(this, key, defaultValue)
     }
 
     fun setSP(key: String, value: Any) {
