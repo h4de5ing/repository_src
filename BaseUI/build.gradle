@@ -26,8 +26,9 @@ android {
         }
     }
     buildFeatures {
+        //noinspection DataBindingWithoutKapt
         android.buildFeatures.dataBinding = true
-        viewBinding = true
+        //viewBinding = true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

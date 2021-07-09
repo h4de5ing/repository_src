@@ -1,6 +1,8 @@
 package com.github.h4de5ing.baseui
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.text.Editable
 import android.text.TextWatcher
@@ -59,6 +61,15 @@ fun MaterialCheckBox.checkedChange(change: ((Boolean) -> Unit)) {
     this.setOnCheckedChangeListener { _, isChecked ->
         change(isChecked)
     }
+}
+
+//弹出确认按钮
+fun alertConfirm(context: Context, message: String, block: ((Boolean) -> Unit)) {
+    val builder = AlertDialog.Builder(context)
+    builder.setMessage(message)
+    builder.setNegativeButton(android.R.string.cancel) { _, _ -> block(false) }
+    builder.setPositiveButton(android.R.string.ok) { _, _ -> block(true) }
+    builder.create().show()
 }
 
 //判断任何对象是否为空

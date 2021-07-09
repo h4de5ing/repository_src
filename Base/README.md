@@ -21,3 +21,54 @@ timer 用kotlin实现
 Thread 用kotlin实现
 
 将资产中的工具类移植
+``` 自定义Adapter 点击事件
+package com.github.h4de5ing.ammini.adapter
+
+import android.view.View
+import android.widget.ImageView
+import com.chad.library.adapter.base.BaseQuickAdapter
+import com.chad.library.adapter.base.module.LoadMoreModule
+import com.chad.library.adapter.base.viewholder.BaseViewHolder
+import com.github.h4de5ing.ammini.R
+import com.github.h4de5ing.ammini.bean.HistoryList
+import com.github.h4de5ing.ammini.utils.API
+import com.github.h4de5ing.imageselecter.utils.GlideEngine
+
+class HistoryListAdapter :
+    BaseQuickAdapter<HistoryList, BaseViewHolder>(R.layout.item_recy_cardview_iv), LoadMoreModule {
+    override fun convert(holder: BaseViewHolder, item: HistoryList) {
+        holder.setText(R.id.tv_item, "$item")
+        val iv = holder.getView<ImageView>(R.id.sign)
+        GlideEngine.createGlideEngine()
+            .loadImage(context, "${API.APP_DOMAIN}${API.getRepairfile}?path=${item.pdqm}", iv)
+        iv.setOnClickListener { imgItemClickListener(holder.itemView, item) }
+    }
+
+    private lateinit var imgItemClickListener: (view: View, item: HistoryList) -> Unit
+    fun addImgClickListener(listener: (view: View, item: HistoryList) -> Unit) {
+        imgItemClickListener = listener
+    }
+
+    fun addOnItemLongClickListener(listener: (view: View, item: HistoryList) -> Unit) {
+        itemLongClickListener = listener
+    }
+
+    private lateinit var itemClickListener: (item: HistoryList) -> Unit
+    private lateinit var itemLongClickListener: (view: View, item: HistoryList) -> Unit
+    private fun registerClickListener(view: View, position: Int) {
+        if (::itemClickListener.isInitialized) {
+            view.setOnClickListener(fun(_: View) {
+                getItem(position).let {
+                    itemClickListener.invoke(it)
+                }
+            })
+            view.setOnLongClickListener(fun(_: View): Boolean {
+                getItem(position).let { item ->
+                    itemLongClickListener.invoke(view, item)
+                }
+                return false
+            })
+        }
+    }
+}
+```

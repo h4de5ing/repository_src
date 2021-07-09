@@ -1,6 +1,5 @@
 package com.github.h4de5ing.base
 
-import java.io.*
 import java.text.DecimalFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -26,6 +25,26 @@ private fun getData0(year: Int, month: Int, dayOfMonth: Int): Long {
 private fun getToDay24(year: Int, month: Int, dayOfMonth: Int): Long {
     val calendar = Calendar.getInstance()
     calendar.set(year, month, dayOfMonth, 23, 59, 59)
+    return calendar.time.time
+}
+
+//获取今天第一秒
+fun getStartOfDay(): Long {
+    val calendar = Calendar.getInstance()
+    calendar.set(Calendar.HOUR_OF_DAY, 0)
+    calendar.set(Calendar.MINUTE, 0)
+    calendar.set(Calendar.SECOND, 0)
+    calendar.set(Calendar.MILLISECOND, 0)
+    return calendar.time.time
+}
+
+//获取今天最后一秒
+fun getEndOfDay(): Long {
+    val calendar = Calendar.getInstance()
+    calendar.set(Calendar.HOUR_OF_DAY, 23)
+    calendar.set(Calendar.MINUTE, 59)
+    calendar.set(Calendar.SECOND, 59)
+    calendar.set(Calendar.MILLISECOND, 999)
     return calendar.time.time
 }
 
@@ -79,12 +98,7 @@ fun timer(delay: Long, block: () -> Unit) {
 
 /**
  * "data.json".stream().buffered().reader("utf-8").readLines()
- */
-fun String.stream() = FileInputStream(this)
-fun InputStream.buffered() = BufferedInputStream(this)
-fun InputStream.reader(charset: String) = InputStreamReader(this, charset)
-fun Reader.readLines(): List<String> {
-    val result = arrayListOf<String>()
-    forEachLine { result.add(it) }
-    return result
+ * assets.open("txt.txt").buffered().bufferedReader(Charsets.UTF_8).readLines().forEach {
+list.add(it)
 }
+ */
