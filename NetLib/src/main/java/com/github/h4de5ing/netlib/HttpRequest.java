@@ -26,9 +26,7 @@ public class HttpRequest {
         String param = "";
         if (params != null && params.size() > 0) {
             param = param + "?";
-            for (String key : params.keySet()) {
-                param = param + key + "=" + params.get(key) + "&";
-            }
+            for (String key : params.keySet()) param = param + key + "=" + params.get(key) + "&";
             param = param.substring(0, param.length() - 1);
         }
         URL realUrl = new URL(url + param);
@@ -37,9 +35,7 @@ public class HttpRequest {
         conn.setRequestProperty("connection", "Keep-Alive");
         conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
         if (header != null && header.size() > 0) {
-            for (String key : header.keySet()) {
-                conn.setRequestProperty(key, header.get(key));
-            }
+            for (String key : header.keySet()) conn.setRequestProperty(key, header.get(key));
         }
         Map<String, List<String>> map = conn.getHeaderFields();
         System.out.println(url);
@@ -50,12 +46,8 @@ public class HttpRequest {
         if (conn.getResponseCode() == 200) {
             in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line;
-            while ((line = in.readLine()) != null) {
-                result += line;
-            }
-            if (in != null) {
-                in.close();
-            }
+            while ((line = in.readLine()) != null) result += line;
+            if (in != null) in.close();
         } else {
             throw new ResponseCodeErrorException(conn.getResponseCode() + " " + conn.getResponseMessage());
         }
@@ -75,9 +67,8 @@ public class HttpRequest {
         BufferedReader in = null;
         StringBuilder paramStr = new StringBuilder();
         if (param != null && param.size() > 0) {
-            for (String key : param.keySet()) {
+            for (String key : param.keySet())
                 paramStr.append(key).append("=").append(param.get(key)).append("&");
-            }
         }
         URL realUrl = new URL(url);
         URLConnection conn = realUrl.openConnection();
@@ -85,9 +76,7 @@ public class HttpRequest {
         conn.setRequestProperty("connection", "Keep-Alive");
         conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
         if (header != null && header.size() > 0) {
-            for (String key : header.keySet()) {
-                conn.setRequestProperty(key, header.get(key));
-            }
+            for (String key : header.keySet()) conn.setRequestProperty(key, header.get(key));
         }
         conn.setDoOutput(true);
         conn.setDoInput(true);
@@ -97,20 +86,12 @@ public class HttpRequest {
         System.out.println(url);
         System.out.println(paramStr);
         Map<String, List<String>> map = conn.getHeaderFields();
-        for (String key : map.keySet()) {
-            System.out.println(key + "--->" + map.get(key));
-        }
+        for (String key : map.keySet()) System.out.println(key + "--->" + map.get(key));
         in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String line;
-        while ((line = in.readLine()) != null) {
-            result += line;
-        }
-        if (out != null) {
-            out.close();
-        }
-        if (in != null) {
-            in.close();
-        }
+        while ((line = in.readLine()) != null) result += line;
+        if (out != null) out.close();
+        if (in != null) in.close();
         return result;
     }
 
@@ -124,9 +105,7 @@ public class HttpRequest {
         conn.setRequestProperty("Content-Length", String.valueOf(json.getBytes().length));
         conn.setRequestProperty("Content-type", "application/json");
         if (header != null && header.size() > 0) {
-            for (String key : header.keySet()) {
-                conn.setRequestProperty(key, header.get(key));
-            }
+            for (String key : header.keySet()) conn.setRequestProperty(key, header.get(key));
         }
         conn.setDoOutput(true);
         conn.setDoInput(true);
@@ -137,16 +116,12 @@ public class HttpRequest {
         Map<String, List<String>> map = conn.getHeaderFields();
         System.out.println("网址:" + url);
         System.out.println("json:" + json);
-        for (String key : map.keySet()) {
-            System.out.println(key + "--->" + map.get(key));
-        }
+        for (String key : map.keySet()) System.out.println(key + "--->" + map.get(key));
         if (conn.getResponseCode() == 200) {
             StringBuffer strBuf = new StringBuffer();
             BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line = null;
-            while ((line = reader.readLine()) != null) {
-                strBuf.append(line).append("\n");
-            }
+            while ((line = reader.readLine()) != null) strBuf.append(line).append("\n");
             reader.close();
             result = strBuf.toString();
         } else {
@@ -160,12 +135,10 @@ public class HttpRequest {
         String result = "";
         HttpURLConnection conn = null;
         String BOUNDARY = "---------------------------123821742118716"; //boundary就是request头和上传文件内容的分隔符
-        for (String key : params.keySet()) {
+        for (String key : params.keySet())
             System.out.println("上传参数：" + key + "->" + params.get(key));
-        }
-        for (String key : header.keySet()) {
+        for (String key : header.keySet())
             System.out.println("上传头：" + key + "->" + header.get(key));
-        }
         URL url = new URL(urlStr);
         conn = (HttpURLConnection) url.openConnection();
         conn.setConnectTimeout(5000);
@@ -178,9 +151,7 @@ public class HttpRequest {
         conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.1; zh-CN; rv:1.9.2.6)");
         conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
         if (header != null && header.size() > 0) {
-            for (String key : header.keySet()) {
-                conn.setRequestProperty(key, header.get(key));
-            }
+            for (String key : header.keySet()) conn.setRequestProperty(key, header.get(key));
         }
         OutputStream out = new DataOutputStream(conn.getOutputStream());
         if (params != null) {
@@ -211,9 +182,7 @@ public class HttpRequest {
                 DataInputStream in = new DataInputStream(new FileInputStream(file));
                 int bytes = 0;
                 byte[] bufferOut = new byte[1024];
-                while ((bytes = in.read(bufferOut)) != -1) {
-                    out.write(bufferOut, 0, bytes);
-                }
+                while ((bytes = in.read(bufferOut)) != -1) out.write(bufferOut, 0, bytes);
                 in.close();
             }
         }
@@ -224,15 +193,11 @@ public class HttpRequest {
         out.close();
         System.out.println("网址:" + url);
         Map<String, List<String>> map = conn.getHeaderFields();
-        for (String key : map.keySet()) {
-            System.out.println("head:" + key + "--->" + map.get(key));
-        }
+        for (String key : map.keySet()) System.out.println("head:" + key + "--->" + map.get(key));
         StringBuffer strBuf = new StringBuffer();
         BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         String line = null;
-        while ((line = reader.readLine()) != null) {
-            strBuf.append(line).append("\n");
-        }
+        while ((line = reader.readLine()) != null) strBuf.append(line).append("\n");
         result = strBuf.toString();
         reader.close();
         reader = null;
@@ -248,9 +213,7 @@ public class HttpRequest {
         URL url = new URL(urlStr);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         if (header != null && header.size() > 0) {
-            for (String key : header.keySet()) {
-                conn.setRequestProperty(key, header.get(key));
-            }
+            for (String key : header.keySet()) conn.setRequestProperty(key, header.get(key));
         }
         conn.setDoOutput(true);
         conn.setRequestMethod("PUT");
@@ -270,16 +233,12 @@ public class HttpRequest {
         Map<String, List<String>> map = conn.getHeaderFields();
         System.out.println("网址:" + url);
         System.out.println("json:" + json);
-        for (String key : map.keySet()) {
-            System.out.println(key + "--->" + map.get(key));
-        }
+        for (String key : map.keySet()) System.out.println(key + "--->" + map.get(key));
         if (conn.getResponseCode() == 200) {
             StringBuffer strBuf = new StringBuffer();
             BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line = null;
-            while ((line = reader.readLine()) != null) {
-                strBuf.append(line).append("\n");
-            }
+            while ((line = reader.readLine()) != null) strBuf.append(line).append("\n");
             reader.close();
             result = strBuf.toString();
         } else {
@@ -294,9 +253,7 @@ public class HttpRequest {
         URL url = new URL(urlStr);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         if (header != null && header.size() > 0) {
-            for (String key : header.keySet()) {
-                conn.setRequestProperty(key, header.get(key));
-            }
+            for (String key : header.keySet()) conn.setRequestProperty(key, header.get(key));
         }
         conn.setDoOutput(true);
         conn.setRequestMethod("DELETE");
@@ -317,16 +274,12 @@ public class HttpRequest {
         System.out.println("网址:" + url);
         System.out.println("json:" + json);
 
-        for (String key : map.keySet()) {
-            System.out.println(key + "--->" + map.get(key));
-        }
+        for (String key : map.keySet()) System.out.println(key + "--->" + map.get(key));
         if (conn.getResponseCode() == 200) {
             StringBuffer strBuf = new StringBuffer();
             BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String line = null;
-            while ((line = reader.readLine()) != null) {
-                strBuf.append(line).append("\n");
-            }
+            while ((line = reader.readLine()) != null) strBuf.append(line).append("\n");
             reader.close();
             result = strBuf.toString();
         } else {

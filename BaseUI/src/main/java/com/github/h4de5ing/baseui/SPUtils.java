@@ -26,6 +26,10 @@ public class SPUtils {
         edit.apply();
     }
 
+    public static Object getSp(Context context, String key) {
+        return getSp(context, key, "");
+    }
+
     public static Object getSp(Context context, String key, Object defaultObject) {
         String type = defaultObject.getClass().getSimpleName();
         String packageName = context.getPackageName();

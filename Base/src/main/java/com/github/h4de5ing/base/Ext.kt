@@ -7,7 +7,8 @@ import java.util.*
 
 //常见的扩展函数
 //判断任何对象是否为空
-fun Any?.isNotEmpty(): Boolean = this != null
+@Deprecated("存在问题,集合不为Null但是size==0", ReplaceWith("this != null"))
+//fun Any?.isNotEmpty(): Boolean = this != null
 fun Double.nDecimal(n: Int): String = String.format("%.${n}f", this)
 fun Long.date(): String = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA).format(Date(this))
 fun Long.date(pattern: String) = SimpleDateFormat(pattern, Locale.CHINA).format(Date(this))

@@ -1,5 +1,6 @@
 package com.github.h4de5ing.baseui
 
+import android.R
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -8,6 +9,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.RadioGroup
 import androidx.appcompat.widget.AppCompatSpinner
 import com.google.android.material.checkbox.MaterialCheckBox
@@ -49,9 +51,8 @@ fun TextInputEditText.textChanged(change: ((CharSequence) -> Unit)) {
     this.addTextChangedListener(object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
 
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-            change(s)
-        }
+        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) =
+            change.invoke(s)
 
         override fun afterTextChanged(s: Editable?) = Unit
     })
@@ -61,6 +62,24 @@ fun MaterialCheckBox.checkedChange(change: ((Boolean) -> Unit)) {
     this.setOnCheckedChangeListener { _, isChecked ->
         change(isChecked)
     }
+}
+
+fun <T> androidx.appcompat.app.AlertDialog.Builder.changed(
+    items: MutableList<T>,
+    title: String,
+    change: ((T) -> Unit)
+) {
+    this.setTitle(title)
+    val adapter = ArrayAdapter(this.context, R.layout.simple_list_item_1, items)
+    this.setSingleChoiceItems(
+        adapter, 0
+    ) { dialog, which ->
+        change(items[which])
+        dialog.dismiss()
+    }
+    this.setCancelable(false)
+    //this.setNegativeButton(android.R.string.cancel, null)
+    this.create().show()
 }
 
 //弹出确认按钮
@@ -73,4 +92,4 @@ fun alertConfirm(context: Context, message: String, block: ((Boolean) -> Unit)) 
 }
 
 //判断任何对象是否为空
-fun Any?.isNotEmpty(): Boolean = this != null
+//fun Any?.isNotEmpty(): Boolean = this != null
