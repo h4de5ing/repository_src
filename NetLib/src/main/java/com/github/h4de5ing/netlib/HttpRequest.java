@@ -20,7 +20,7 @@ import java.util.Map;
 //TODO 用kt重写一遍 并将所有错误方方式返回
 //TODO 返回错误原因Result
 public class HttpRequest {
-    public static String sendGet(String url, Map<String, String> params, Map<String, String> header) throws Exception {
+    public static String sendGet(String url, Map<String, Object> params, Map<String, String> header) throws Exception {
         String result = "";
         BufferedReader in = null;
         String param = "";
@@ -61,7 +61,7 @@ public class HttpRequest {
      * @param param 请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
      * @return 所代表远程资源的响应结果
      */
-    public static String sendPost(String url, Map<String, String> param, Map<String, String> header) throws Exception {
+    public static String sendPost(String url, Map<String, Object> param, Map<String, String> header) throws Exception {
         String result = "";
         PrintWriter out = null;
         BufferedReader in = null;
@@ -131,7 +131,7 @@ public class HttpRequest {
         return result;
     }
 
-    public static String uploadFile(String urlStr, Map<String, File> fileMap, Map<String, String> params, Map<String, String> header) throws Exception {
+    public static String uploadFile(String urlStr, Map<String, File> fileMap, Map<String, Object> params, Map<String, String> header) throws Exception {
         String result = "";
         HttpURLConnection conn = null;
         String BOUNDARY = "---------------------------123821742118716"; //boundary就是request头和上传文件内容的分隔符
@@ -156,11 +156,11 @@ public class HttpRequest {
         OutputStream out = new DataOutputStream(conn.getOutputStream());
         if (params != null) {
             StringBuffer strBuf = new StringBuffer();
-            Iterator<Map.Entry<String, String>> iter = params.entrySet().iterator();
+            Iterator<Map.Entry<String, Object>> iter = params.entrySet().iterator();
             while (iter.hasNext()) {
-                Map.Entry<String, String> entry = iter.next();
+                Map.Entry<String, Object> entry = iter.next();
                 String inputName = entry.getKey();
-                String inputValue = entry.getValue();
+                Object inputValue = entry.getValue();
                 strBuf.append("\r\n").append("--").append(BOUNDARY).append("\r\n");
                 strBuf.append("Content-Disposition: form-data; name=\"" + inputName + "\"\r\n\r\n");
                 strBuf.append(inputValue);
