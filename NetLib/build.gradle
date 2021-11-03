@@ -5,12 +5,12 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
@@ -41,7 +41,7 @@ dependencies {
 uploadArchives {
     repositories.mavenDeployer {
         def today = new Date().format('yyyyMMdd')
-        repository(url: "file://F://repository/repository/repository/")
+        repository(url: "file://D://repository/repository/repository/")
         pom.groupId = "com.github.h4de5ing.netlib"
         pom.artifactId = "netlib"
         pom.version = "1.0-$today"
