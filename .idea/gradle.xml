@@ -16,6 +16,7 @@
             <option value="$PROJECT_DIR$/GsonCommon" />
             <option value="$PROJECT_DIR$/NetLib" />
             <option value="$PROJECT_DIR$/OKPermission" />
+            <option value="$PROJECT_DIR$/SerialPortLib" />
             <option value="$PROJECT_DIR$/filepicker" />
           </set>
         </option>

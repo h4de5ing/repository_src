@@ -14,7 +14,7 @@ public class DialogUtils {
         void onSelectedFilePaths(String[] files);
     }
 
-    public static void select_file(Context context, String title, final DialogSelection dialogSelection) {
+    public static void selectFile(Context context, String title, final DialogSelection dialogSelection) {
         String default_dir = Environment.getExternalStorageDirectory().getAbsolutePath();
         DialogProperties properties = new DialogProperties();
         properties.selection_mode = DialogConfigs.SINGLE_MODE;

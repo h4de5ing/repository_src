@@ -93,3 +93,9 @@ fun alertConfirm(context: Context, message: String, block: ((Boolean) -> Unit)) 
 
 //判断任何对象是否为空
 //fun Any?.isNotEmpty(): Boolean = this != null
+
+fun View.visible() = run { this.visibility = View.VISIBLE }
+fun View.invisible() = run { this.visibility = View.INVISIBLE }
+fun View.gone() = run { this.visibility = View.GONE }
+fun View.isVisible(isShowed: Boolean) =
+    run { if (isShowed) this.visibility = View.VISIBLE else View.GONE }
