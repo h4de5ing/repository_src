@@ -5,6 +5,9 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
+import android.graphics.Paint
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -37,6 +40,16 @@ fun AppCompatSpinner.selected(selected: ((Int) -> Unit)) {
 
 fun SwitchMaterial.changed(change: ((Boolean) -> Unit)) =
     this.setOnCheckedChangeListener { _, isChecked -> change(isChecked) }
+
+/**
+ * 这个方式，如果是代码调用是不会响应回调
+ */
+fun SwitchMaterial.changedNoIsPressed(change: ((Boolean) -> Unit)) =
+    this.setOnCheckedChangeListener { view, isChecked ->
+        //如果没有按下，则认为是代码设置的，直接拦截
+        if (view.isPressed) return@setOnCheckedChangeListener
+        change(isChecked)
+    }
 
 fun Chip.changed(change: ((Boolean) -> Unit)) =
     this.setOnCheckedChangeListener { _, isChecked -> change(isChecked) }
@@ -94,8 +107,35 @@ fun alertConfirm(context: Context, message: String, block: ((Boolean) -> Unit)) 
 //判断任何对象是否为空
 //fun Any?.isNotEmpty(): Boolean = this != null
 
+/**
+ * 设置View为可见
+ */
 fun View.visible() = run { this.visibility = View.VISIBLE }
+
+/**
+ * 设置View不可见，占用布局空间
+ */
 fun View.invisible() = run { this.visibility = View.INVISIBLE }
+
+/**
+ * 设置View不可见，不占用位置
+ */
 fun View.gone() = run { this.visibility = View.GONE }
 fun View.isVisible(isShowed: Boolean) =
     run { if (isShowed) this.visibility = View.VISIBLE else View.GONE }
+
+/**
+ * 设置View的黑色主题
+ */
+fun View.darkTheme() {
+    val colorMatrix = ColorMatrix()
+    colorMatrix.setSaturation(0f)
+    val paint = Paint()
+    paint.colorFilter = ColorMatrixColorFilter(colorMatrix)
+    this.setLayerType(View.LAYER_TYPE_HARDWARE, paint)
+}
+
+/**
+ * 重置View的主题
+ */
+fun View.resetTheme() = this.setLayerType(View.LAYER_TYPE_HARDWARE, Paint())

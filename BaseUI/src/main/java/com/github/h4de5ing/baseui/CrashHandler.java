@@ -37,7 +37,7 @@ import java.util.Map;
  * @author sunzhk
  */
 public class CrashHandler implements UncaughtExceptionHandler {
-    public static String logpath = "/sdcard/KYAssetsLog/";
+    public static String logpath = "/sdcard/crash/";
     public static final String TAG = "gh0st";
     /**
      * 单实例
@@ -116,8 +116,8 @@ public class CrashHandler implements UncaughtExceptionHandler {
         mContext = context;
         this.autoExit = autoExit;
         mUploadCallBack = uploadCallBack;
-        logpath = context.getObbDir().getAbsolutePath();
-        L.i("日志路径：" + context.getObbDir().getAbsolutePath());
+        logpath = context.getExternalFilesDir("LOG").getAbsolutePath();
+        L.i("日志路径：" + logpath);
         return instance;
     }
 
