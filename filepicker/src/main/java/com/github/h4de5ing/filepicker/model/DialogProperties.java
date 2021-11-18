@@ -17,8 +17,10 @@
 package com.github.h4de5ing.filepicker.model;
 
 import java.io.File;
+import java.util.Arrays;
 
-/**<p>
+/**
+ * <p>
  * Created by Angad Singh on 11-07-2016.
  * </p>
  */
@@ -27,59 +29,79 @@ import java.io.File;
  *  these Properties
  */
 public class DialogProperties {
-    /** Selection Mode defines whether a single of multiple Files/Directories
-     *  have to be selected.
-     *
-     *  SINGLE_MODE and MULTI_MODE are the two selection modes, See DialogConfigs
-     *  for more info. Set to SINGLE_MODE as default value by constructor.
+    /**
+     * Selection Mode defines whether a single of multiple Files/Directories
+     * have to be selected.
+     * <p>
+     * SINGLE_MODE and MULTI_MODE are the two selection modes, See DialogConfigs
+     * for more info. Set to SINGLE_MODE as default value by constructor.
      */
     public int selection_mode;
 
-    /** Selection Type defines that whether a File/Directory or both of these has
-     *  to be selected.
-     *
-     *  FILE_SELECT ,DIR_SELECT, FILE_AND_DIR_SELECT are the three selection modes,
-     *  See DialogConfigs for more info. Set to FILE_SELECT as default value by constructor.
+    /**
+     * Selection Type defines that whether a File/Directory or both of these has
+     * to be selected.
+     * <p>
+     * FILE_SELECT ,DIR_SELECT, FILE_AND_DIR_SELECT are the three selection modes,
+     * See DialogConfigs for more info. Set to FILE_SELECT as default value by constructor.
      */
     public int selection_type;
 
-    /**  The Parent/Root Directory. List of Files are populated from here. Can be set
-     *  to any readable directory. /sdcard is the default location.
-     *
-     *  Eg. /sdcard
-     *  Eg. /mnt
+    /**
+     * The Parent/Root Directory. List of Files are populated from here. Can be set
+     * to any readable directory. /sdcard is the default location.
+     * <p>
+     * Eg. /sdcard
+     * Eg. /mnt
      */
     public File root;
 
-    /**  The Directory is used when Root Directory is not readable or accessible. /
-     *  sdcard is the default location.
-     *
-     *  Eg. /sdcard
-     *  Eg. /mnt
+    /**
+     * The Directory is used when Root Directory is not readable or accessible. /
+     * sdcard is the default location.
+     * <p>
+     * Eg. /sdcard
+     * Eg. /mnt
      */
     public File error_dir;
 
-    /** The Directory can be used as an offset. It is the first directory that is
-     *  shown in dialog. Consider making it Root's sub-directory.
-     *
-     *  Eg. Root: /sdcard
-     *  Eg. Offset: /sdcard/Music/Country
-     *
+    /**
+     * The Directory can be used as an offset. It is the first directory that is
+     * shown in dialog. Consider making it Root's sub-directory.
+     * <p>
+     * Eg. Root: /sdcard
+     * Eg. Offset: /sdcard/Music/Country
      */
     public File offset;
 
-    /** An Array of String containing extensions, Files with only that will be shown.
-     *  Others will be ignored. Set to null as default value by constructor.
-     *  Eg. String ext={"jpg","jpeg","png","gif"};
+    /**
+     * An Array of String containing extensions, Files with only that will be shown.
+     * Others will be ignored. Set to null as default value by constructor.
+     * Eg. String ext={"jpg","jpeg","png","gif"};
      */
     public String[] extensions;
+    public boolean isNeedFileName;
 
     public DialogProperties() {
+        isNeedFileName = DialogConfigs.Not_NEED_FILE_NAME;
         selection_mode = DialogConfigs.SINGLE_MODE;
         selection_type = DialogConfigs.FILE_SELECT;
         root = new File(DialogConfigs.DEFAULT_DIR);
         error_dir = new File(DialogConfigs.DEFAULT_DIR);
         offset = new File(DialogConfigs.DEFAULT_DIR);
         extensions = null;
+    }
+
+    @Override
+    public String toString() {
+        return "DialogProperties{" +
+                "selection_mode=" + selection_mode +
+                ", selection_type=" + selection_type +
+                ", root=" + root +
+                ", error_dir=" + error_dir +
+                ", offset=" + offset +
+                ", extensions=" + Arrays.toString(extensions) +
+                ", isNeedFileName=" + isNeedFileName +
+                '}';
     }
 }

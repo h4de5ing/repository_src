@@ -11,12 +11,19 @@
         layout="@layout/dialog_header" />
 
     <include
+        android:id="@+id/file_name"
+        layout="@layout/dialog_file_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/header" />
+
+    <include
         android:id="@+id/fileList"
         layout="@layout/dialog_file_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/footer"
-        android:layout_below="@+id/header"
+        android:layout_below="@+id/file_name"
         android:dividerHeight="1dp"
         tools:listitem="@layout/dialog_file_list_item" />
 

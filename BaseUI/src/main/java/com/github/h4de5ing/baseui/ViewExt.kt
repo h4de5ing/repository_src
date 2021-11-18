@@ -1,6 +1,5 @@
 package com.github.h4de5ing.baseui
 
-import android.R
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -83,7 +82,7 @@ fun <T> androidx.appcompat.app.AlertDialog.Builder.changed(
     change: ((T) -> Unit)
 ) {
     this.setTitle(title)
-    val adapter = ArrayAdapter(this.context, R.layout.simple_list_item_1, items)
+    val adapter = ArrayAdapter(this.context, android.R.layout.simple_list_item_1, items)
     this.setSingleChoiceItems(
         adapter, 0
     ) { dialog, which ->

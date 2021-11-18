@@ -16,7 +16,8 @@
 
 package com.github.h4de5ing.filepicker.model;
 
-/**<p>
+/**
+ * <p>
  * Created by Angad Singh on 11-07-2016.
  * </p>
  */
@@ -61,4 +62,6 @@ public abstract class DialogConfigs {
      *  mount point.
      */
     public static final String DEFAULT_DIR = DIRECTORY_SEPERATOR + STORAGE_DIR;
+    public static final boolean NEED_FILE_NAME = true;
+    public static final boolean Not_NEED_FILE_NAME = false;
 }
