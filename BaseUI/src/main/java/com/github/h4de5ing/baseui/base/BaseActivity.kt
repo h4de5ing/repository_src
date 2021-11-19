@@ -23,7 +23,13 @@ open class BaseActivity : AppCompatActivity() {
     fun setSP(key: String, value: Any) = SPUtils.setSP(this, key, value)
 
     fun showToast(message: String) =
-        runOnUiThread { Toast.makeText(this, message, Toast.LENGTH_SHORT).show() }
+        runOnUiThread {
+            try {
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
 
     fun showSnack(view: View, message: String) =
         runOnUiThread { Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show() }

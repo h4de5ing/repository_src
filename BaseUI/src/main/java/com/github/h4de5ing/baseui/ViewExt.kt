@@ -1,9 +1,7 @@
 package com.github.h4de5ing.baseui
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.graphics.Paint
@@ -20,7 +18,6 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textfield.TextInputEditText
 
 //常见view扩展封装
-fun Activity.startActivity(activityClass: Class<*>?) = startActivity(Intent(this, activityClass))
 fun AppCompatSpinner.selected(selected: ((Int) -> Unit)) {
     this.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
         override fun onNothingSelected(parent: AdapterView<*>?) {
