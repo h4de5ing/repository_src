@@ -5,7 +5,6 @@ import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import com.github.h4de5ing.baseui.base.BaseActivity
 
 //全屏BaseActivity
 open class BaseFullScreenActivity : BaseActivity() {
