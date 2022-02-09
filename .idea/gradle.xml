@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/NetLib" />
             <option value="$PROJECT_DIR$/OKPermission" />
             <option value="$PROJECT_DIR$/SerialPortLib" />
+            <option value="$PROJECT_DIR$/VanSerialPort" />
             <option value="$PROJECT_DIR$/filepicker" />
             <option value="$PROJECT_DIR$/zxing" />
           </set>
