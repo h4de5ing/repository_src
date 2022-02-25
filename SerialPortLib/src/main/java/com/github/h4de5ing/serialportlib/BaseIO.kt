@@ -79,11 +79,11 @@ abstract class BaseIO {
                     write(poll.buffer)
                     var buffer: ByteArray? = null
                     if (poll.callback != null) {
-                        buffer = readThread.get(2000)
+                        buffer = readThread.get(200)
                     }
                     poll.callback?.invoke(buffer != null, buffer ?: poll.buffer)
                 } catch (e: Exception) {
-                    this@BaseIO.stop()
+                    //this@BaseIO.stop()
                 }
             }
         }
