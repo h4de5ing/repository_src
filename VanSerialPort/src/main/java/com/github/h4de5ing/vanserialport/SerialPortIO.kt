@@ -16,8 +16,9 @@ object SerialPortIO {
     private var writeThread: WriteThread? = null
     fun start(name: String, baud: Int, callback: (buffer: ByteArray, size: Int) -> Unit) {
         try {
+            val devName: String = name.split("/dev/").toTypedArray()[1]
             serialPort = UartManager()
-            serialPort?.open(name, getBaudRate(baud))
+            serialPort?.open(devName, getBaudRate(baud))
             isRun = true
             readThread = startReadThread(callback)
             writeThread = startWriteThread(readThread!!)
