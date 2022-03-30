@@ -1,14 +1,10 @@
 package com.github.h4de5ing.vanserialport
 
+import android.util.Log
 import com.van.uart.UartManager
 import com.van.uart.UartManager.BaudRate
-import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
 
 object SerialPortIO {
-    private var isRun: Boolean = false
-    private val executor = ThreadPoolExecutor(3, 10, 5, TimeUnit.SECONDS, LinkedBlockingQueue())
     private var serialPort: UartManager? = null
     private var readThread: ReadThread? = null
     fun start(name: String, baud: Int, callback: (buffer: ByteArray, size: Int) -> Unit) {
@@ -16,46 +12,35 @@ object SerialPortIO {
             val devName: String = name.split("/dev/").toTypedArray()[1]
             serialPort = UartManager()
             serialPort?.open(devName, getBaudRate(baud))
-            isRun = true
-            readThread = startReadThread(callback)
+            readThread = ReadThread(callback)
+            readThread?.start()
+            Log.i("gh0st", "$name open success [$baud]")
         } catch (e: Exception) {
-            var result = "${e.message}".toByteArray()
+            var result = "exception:${e.message}".toByteArray()
             callback(result, result.size)
             e.printStackTrace()
         }
     }
 
     fun write(data: ByteArray): Int? = serialPort?.write(data, data.size)
-    private fun startReadThread(
-        callback: (buffer: ByteArray, size: Int) -> Unit
-    ): ReadThread {
-        val readThread = ReadThread(callback)
-        executor.execute(readThread)
-        return readThread
-    }
-
-    private class ReadThread(
-        private val callback: (buffer: ByteArray, size: Int) -> Unit
-    ) : Thread() {
+    private class ReadThread(private val callback: (buffer: ByteArray, size: Int) -> Unit) :
+        Thread() {
         private val readBuffer = ByteArray(2048)
         private var readSize = 0
-        private val objecz = Object()
         override fun run() {
-            while (serialPort!!.isOpen) {
-                try {
-                    readSize = serialPort?.read(readBuffer, readBuffer.size, 50, 1)!!
-                    if (readSize > 0) {
-                        synchronized(objecz) {
-                            objecz.notify()
+            try {
+                serialPort?.apply {
+                    while (this.isOpen) {
+                        try {
+                            readSize = this.read(readBuffer, readBuffer.size, 50, 1)
+                            if (readSize > 0) callback.invoke(readBuffer, readSize)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
                         }
-                        callback.invoke(readBuffer, readSize)
                     }
-                } catch (e: Exception) {
-                    isRun = false
-                    readThread?.close()
-                    readThread = null
-                    e.printStackTrace()
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
 
@@ -65,7 +50,6 @@ object SerialPortIO {
     }
 
     fun stop() {
-        isRun = false
         readThread?.close()
         readThread = null
         serialPort?.close()
