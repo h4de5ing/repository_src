@@ -1,14 +1,14 @@
 plugins {
     id 'com.android.library'
-    id 'maven'
+    id 'maven-publish'
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 32
     buildToolsVersion "30.0.3"
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 32
         versionCode 1
         versionName "1.0"
 
@@ -33,13 +33,29 @@ dependencies {
     //implementation 'androidx.appcompat:appcompat:1.3.1'
     //implementation 'com.google.android.material:material:1.4.0'
 }
-uploadArchives {
-    repositories.mavenDeployer {
-        def today = new Date().format('yyyyMMdd')
-        repository(url: "file://D://repository/repository/repository/")
-        pom.groupId = "com.github.h4de5ing.filepicker"
-        pom.artifactId = "filepicker"
-        pom.version = "1.0-$today"
+afterEvaluate {
+    publishing {
+        publications {
+            def today = new Date().format('yyyyMMdd')
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.h4de5ing.filepicker'
+                artifactId = 'filepicker'
+                version = "1.0-$today"
+            }
+            debug(MavenPublication) {
+                from components.debug
+                groupId = 'com.github.h4de5ing.filepicker'
+                artifactId = 'filepicker'
+                version = "1.0-$today"
+            }
+        }
+        repositories {
+            mavenLocal()
+            maven {
+                url uri('D://repository/repository/repository')
+            }
+        }
     }
 }
-//gradlew :filepicker:uploadArchives
+//gradlew publish

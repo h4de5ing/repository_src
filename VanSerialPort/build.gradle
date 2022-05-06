@@ -1,15 +1,15 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-    id 'maven'
+    id 'maven-publish'
 }
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 32
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 32
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -36,13 +36,29 @@ android {
 dependencies {
 
 }
-uploadArchives {
-    repositories.mavenDeployer {
-        def today = new Date().format('yyyyMMdd')
-        repository(url: "file://D://repository/repository/repository/")
-        pom.groupId = "com.github.h4de5ing.vanserialport"
-        pom.artifactId = "vanserialport"
-        pom.version = "1.0-$today"
+afterEvaluate {
+    publishing {
+        publications {
+            def today = new Date().format('yyyyMMdd')
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.h4de5ing.vanserialport'
+                artifactId = 'vanserialport'
+                version = "1.0-$today"
+            }
+            debug(MavenPublication) {
+                from components.debug
+                groupId = 'com.github.h4de5ing.vanserialport'
+                artifactId = 'vanserialport'
+                version = "1.0-$today"
+            }
+        }
+        repositories {
+            mavenLocal()
+            maven {
+                url uri('D://repository/repository/repository')
+            }
+        }
     }
 }
-//gradlew :VanSerialPort:uploadArchives
+//gradlew publish

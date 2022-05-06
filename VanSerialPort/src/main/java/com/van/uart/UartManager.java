@@ -51,15 +51,34 @@ public class UartManager {
     }
 
     public void open(String name, BaudRate baudRate) throws LastError {
-        id = open(name, baudRate.ordinal());
+        int ids = open(name, baudRate.ordinal());
+        System.out.println("打开结果：" + ids);
+        this.id = ids;
         this.name = name;
         this.baudRate = baudRate;
+    }
+
+    public boolean open2(String name, BaudRate baudRate) throws LastError {
+        int ids = open(name, baudRate.ordinal());
+        System.out.println("打开结果：" + ids);
+        this.id = ids;
+        this.name = name;
+        this.baudRate = baudRate;
+        return ids == 0;
     }
 
     public void close() {
         if (-1 != id) {
             close(id);
         }
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public boolean isOpened() {
+        return id == 0;
     }
 
     public boolean isOpen() {

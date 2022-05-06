@@ -1,5 +1,6 @@
 package com.github.h4de5ing.baseui
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.ColorMatrix
@@ -11,6 +12,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.RadioGroup
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatSpinner
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.chip.Chip
@@ -100,6 +102,13 @@ fun alertConfirm(context: Context, message: String, block: ((Boolean) -> Unit)) 
     builder.create().show()
 }
 
+fun alertConfirmJustOk(context: Context, message: String, block: ((Boolean) -> Unit)) {
+    val builder = AlertDialog.Builder(context)
+    builder.setMessage(message)
+    builder.setPositiveButton(android.R.string.ok) { _, _ -> block(true) }
+    builder.create().show()
+}
+
 //判断任何对象是否为空
 //fun Any?.isNotEmpty(): Boolean = this != null
 
@@ -135,3 +144,7 @@ fun View.darkTheme() {
  * 重置View的主题
  */
 fun View.resetTheme() = this.setLayerType(View.LAYER_TYPE_HARDWARE, Paint())
+
+fun Activity.toast(text: CharSequence): Unit = Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
+fun Activity.longToast(text: CharSequence): Unit =
+    Toast.makeText(this, text, Toast.LENGTH_LONG).show()

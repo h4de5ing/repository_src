@@ -46,3 +46,5 @@
 ```
 
 # TODO 将所有java类采用kt重写  错误信息采用Result返回
+参考
+https://github.com/kymjs/Common/blob/master/Common/common/src/main/java/com/kymjs/kotlin/common/extension/ExtensionDensity.kt

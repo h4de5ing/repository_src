@@ -33,7 +33,7 @@ object SerialPortIO {
                     while (this.isOpen) {
                         try {
                             readSize = this.read(readBuffer, readBuffer.size, 50, 1)
-                            if (readSize > 0) callback.invoke(readBuffer, readSize)
+                            callback.invoke(readBuffer, readSize)
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }

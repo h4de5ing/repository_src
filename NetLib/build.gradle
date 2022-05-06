@@ -1,16 +1,16 @@
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
-    id 'maven'
+    id 'maven-publish'
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 32
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 30
+        targetSdkVersion 32
         versionCode 1
         versionName "1.0"
 
@@ -36,15 +36,31 @@ android {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.java-websocket:Java-WebSocket:1.5.1"
-    implementation "com.squareup.okhttp3:okhttp:4.9.0"
+    implementation "com.squareup.okhttp3:okhttp:4.9.1"
 }
-uploadArchives {
-    repositories.mavenDeployer {
-        def today = new Date().format('yyyyMMdd')
-        repository(url: "file://D://repository/repository/repository/")
-        pom.groupId = "com.github.h4de5ing.netlib"
-        pom.artifactId = "netlib"
-        pom.version = "1.0-$today"
+afterEvaluate {
+    publishing {
+        publications {
+            def today = new Date().format('yyyyMMdd')
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.h4de5ing.netlib'
+                artifactId = 'netlib'
+                version = "1.0-$today"
+            }
+            debug(MavenPublication) {
+                from components.debug
+                groupId = 'com.github.h4de5ing.netlib'
+                artifactId = 'netlib'
+                version = "1.0-$today"
+            }
+        }
+        repositories {
+            mavenLocal()
+            maven {
+                url uri('D://repository/repository/repository')
+            }
+        }
     }
 }
-//gradlew :NetLib:uploadArchives
+//gradlew publish

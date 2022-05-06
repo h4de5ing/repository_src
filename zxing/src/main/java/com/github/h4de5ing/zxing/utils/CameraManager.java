@@ -28,7 +28,7 @@ public class CameraManager implements TextureView.SurfaceTextureListener, Camera
     public final int LANDSCAPE = 2;
 
     private Camera camera;
-    private int cameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
+    private int cameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
     private int degrees = 90;
     private int orientation = PORTRAIT;
     private int requireWidth = 1080;
@@ -109,22 +109,28 @@ public class CameraManager implements TextureView.SurfaceTextureListener, Camera
      *
      * @param cameraId {@link Camera.CameraInfo#CAMERA_FACING_FRONT} or {@link Camera.CameraInfo#CAMERA_FACING_BACK}
      */
-    public void open(int cameraId) {
+    public boolean open(int cameraId) {
+        boolean openEd = false;
         this.cameraId = cameraId;
         if (camera != null) {
             camera.release();
         }
         try {
             camera = Camera.open(cameraId);
+            if (camera != null) {
+                analyzingCameraParameters(camera);
+                size = setCameraPreviewPictureSize(camera, orientation, requireWidth, requireHeight);
+                openEd = true;
+            }
         } catch (Exception e) {
+            openEd = false;
             e.printStackTrace();
         }
         if (camera == null) {
+            openEd = false;
             Log.e(TAG, "open camera failed");
         }
-        analyzingCameraParameters(camera);
-        size = setCameraPreviewPictureSize(camera, orientation, requireWidth, requireHeight);
-
+        return openEd;
     }
 
     /**
@@ -163,7 +169,7 @@ public class CameraManager implements TextureView.SurfaceTextureListener, Camera
                     camera.cancelAutoFocus();
                 }
             });
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -288,10 +294,14 @@ public class CameraManager implements TextureView.SurfaceTextureListener, Camera
 
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-        open(cameraId);
-        startPreview(surface, this);
-        if (onCameraPreviewListener != null) {
-            onCameraPreviewListener.onSurfaceTextureAvailable(surface,width,height);
+        boolean result = open(cameraId);
+        if (result) {
+            startPreview(surface, this);
+            if (onCameraPreviewListener != null) {
+                onCameraPreviewListener.onSurfaceTextureAvailable(surface, width, height);
+            }
+        } else {
+            Log.e("gh0st", "打开失败");
         }
     }
 

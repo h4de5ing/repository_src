@@ -69,9 +69,9 @@ public class ScanCodeView extends FrameLayout implements CameraManager.OnCameraP
         //扫描区域参数
         initScanParams(context, attrs);
         //传感器
-        focusSensor = new FocusSensor(getContext());
+//        focusSensor = new FocusSensor(getContext());
         //震动器
-        focusSensor.setOnFocusSensorChangedListener(this);
+//        focusSensor.setOnFocusSensorChangedListener(this);
         cameraManager = new CameraManager();
         cameraManager.setOnCameraPreviewListener(this);
         cameraManager.startPreview(textureView);
