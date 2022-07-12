@@ -22,7 +22,6 @@
             <option value="$PROJECT_DIR$/zxing" />
           </set>
         </option>
-        <option name="resolveModulePerSourceSet" value="false" />
       </GradleProjectSettings>
     </option>
   </component>

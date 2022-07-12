@@ -22,7 +22,14 @@ object SerialPortIO {
         }
     }
 
-    fun write(data: ByteArray): Int? = serialPort?.write(data, data.size)
+    fun write(data: ByteArray): Int? {
+        return try {
+            serialPort?.write(data, data.size)
+        } catch (e: Exception) {
+            -1
+        }
+    }
+
     private class ReadThread(private val callback: (buffer: ByteArray, size: Int) -> Unit) :
         Thread() {
         private val readBuffer = ByteArray(2048)
@@ -44,13 +51,13 @@ object SerialPortIO {
             }
         }
 
-        fun close() {
-            interrupt()
-        }
+//        fun close() {
+//            interrupt()
+//        }
     }
 
     fun stop() {
-        readThread?.close()
+//        readThread?.close()
         readThread = null
         serialPort?.close()
         serialPort = null
@@ -59,8 +66,12 @@ object SerialPortIO {
     fun getBaudRate(baudrate: Int): BaudRate? {
         var value: BaudRate? = null
         when (baudrate) {
+            1200 -> value = BaudRate.B1200
+            2400 -> value = BaudRate.B2400
+            4800 -> value = BaudRate.B4800
             9600 -> value = BaudRate.B9600
             19200 -> value = BaudRate.B19200
+            38400 -> value = BaudRate.B38400
             57600 -> value = BaudRate.B57600
             115200 -> value = BaudRate.B115200
             230400 -> value = BaudRate.B230400
