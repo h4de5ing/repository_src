@@ -1,5 +1,7 @@
 package com.github.h4de5ing.serialportlib
 
+import android.os.SystemClock
+import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.*
@@ -124,20 +126,49 @@ abstract class BaseIO {
         private val readBuffer = ByteArray(1024)
         private var readSize = 0
         private val objecz = Object()
-
+        private var readBytes: ByteArray? = null
         override fun run() {
-            while (isRun) {
+//            while (isRun) {
+//                try {
+//                    readSize = inputStream.read(readBuffer)
+//                    if (readSize > 0) {
+//                        synchronized(objecz) {
+//                            objecz.notify()
+//                        }
+//                        callback.invoke(readBuffer, readSize)
+//                    }
+//                } catch (e: Exception) {
+//                    this@BaseIO.stop()
+//                }
+//            }
+            while (!isInterrupted) {
+                if (null == inputStream) return
+                var size = 0
                 try {
-                    readSize = inputStream.read(readBuffer)
-                    if (readSize > 0) {
-                        synchronized(objecz) {
-                            objecz.notify()
-                        }
-                        callback.invoke(readBuffer, readSize)
+                    /** 获取流中数据的量 */
+                    val i: Int = inputStream.available()
+                    size = if (i == 0) {
+                        0
+                    } else {
+                        /** 流中有数据，则添加到临时数组中 */
+                        inputStream.read(readBuffer)
                     }
-                } catch (e: Exception) {
-                    this@BaseIO.stop()
+                } catch (e: IOException) {
+                    e.printStackTrace()
                 }
+                if (size > 0) {
+                    /** 发现有信息后就追加到临时变量 */
+                    readBytes = DataUtil.arrayAppend(readBytes, readBuffer, size)
+                } else {
+                    /** 没有需要追加的数据了，回调 */
+                    if (readBytes != null) {
+//                        onDataReceived(readBytes)
+                        callback.invoke(readBytes!!, readSize)
+                    }
+                    /** 清空，等待下个信息单元 */
+                    readBytes = null
+                }
+                SystemClock.sleep(10)
             }
         }
 

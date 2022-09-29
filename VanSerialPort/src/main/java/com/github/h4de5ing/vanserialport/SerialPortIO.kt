@@ -1,6 +1,7 @@
 package com.github.h4de5ing.vanserialport
 
 import android.util.Log
+import com.van.uart.LastError
 import com.van.uart.UartManager
 import com.van.uart.UartManager.BaudRate
 
@@ -16,7 +17,7 @@ object SerialPortIO {
             readThread?.start()
             Log.i("gh0st", "$name open success [$baud]")
         } catch (e: Exception) {
-            var result = "exception:${e.message}".toByteArray()
+            val result = "exception:${e.message}".toByteArray()
             callback(result, result.size)
             e.printStackTrace()
         }
@@ -25,14 +26,14 @@ object SerialPortIO {
     fun write(data: ByteArray): Int? {
         return try {
             serialPort?.write(data, data.size)
-        } catch (e: Exception) {
+        } catch (e: LastError) {
             -1
         }
     }
 
     private class ReadThread(private val callback: (buffer: ByteArray, size: Int) -> Unit) :
         Thread() {
-        private val readBuffer = ByteArray(2048)
+        private val readBuffer = ByteArray(4096)
         private var readSize = 0
         override fun run() {
             try {
@@ -41,6 +42,7 @@ object SerialPortIO {
                         try {
                             readSize = this.read(readBuffer, readBuffer.size, 50, 1)
                             callback.invoke(readBuffer, readSize)
+//                            sleep(100)
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
@@ -63,8 +65,8 @@ object SerialPortIO {
         serialPort = null
     }
 
-    fun getBaudRate(baudrate: Int): BaudRate? {
-        var value: BaudRate? = null
+    fun getBaudRate(baudrate: Int): BaudRate {
+        val value: BaudRate?
         when (baudrate) {
             1200 -> value = BaudRate.B1200
             2400 -> value = BaudRate.B2400
