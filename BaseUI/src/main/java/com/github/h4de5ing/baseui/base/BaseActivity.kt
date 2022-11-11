@@ -22,14 +22,14 @@ open class BaseActivity : AppCompatActivity() {
 
     fun setSP(key: String, value: Any) = SPUtils.setSP(this, key, value)
 
+    fun String.toast() =
+        runOnUiThread { Toast.makeText(this@BaseActivity, this, Toast.LENGTH_SHORT).show() }
+
     fun showToast(message: String) =
-        runOnUiThread {
-            try {
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+        runOnUiThread(Toast.makeText(this, message, Toast.LENGTH_SHORT)::show)
+
+    fun showToast(message: Int) =
+        runOnUiThread(Toast.makeText(this, message, Toast.LENGTH_SHORT)::show)
 
     fun showSnack(view: View, message: String) =
         runOnUiThread { Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show() }

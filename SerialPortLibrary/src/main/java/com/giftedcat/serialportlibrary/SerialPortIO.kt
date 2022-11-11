@@ -6,7 +6,7 @@ object SerialPortIO {
     private var serialPortManager: SerialPortManager? = null
     fun start(name: String, baud: Int, callback: (buffer: ByteArray, size: Int) -> Unit) {
         SerialPortManager.openLog()
-        SerialPortManager(File(name), baud, SerialPortManager.SPLICING)
+        SerialPortManager(File(name), baud, SerialPortManager.NORMAL)
             .setOnSerialPortDataListener { bytes: ByteArray ->
                 callback(bytes, bytes.size)
             }.also { serialPortManager = it }
