@@ -1,12 +1,19 @@
 package com.github.h4de5ing.netlib;
 
+import android.annotation.SuppressLint;
+import android.util.Log;
+
 import com.github.h4de5ing.netlib.exception.ResponseCodeErrorException;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -287,5 +294,57 @@ public class HttpRequest {
         }
         System.out.println("请求结果:" + result);
         return result;
+    }
+
+    public interface FileDownloadComplete {
+        void complete(File file);
+    }
+
+    @SuppressLint({"SetWorldReadable", "SetWorldWritable"})
+    public static void downloadFile(String downloadUrl, String fileSavePath, FileDownloadComplete complete) {
+        File downloadFile = null;
+        HttpURLConnection connection = null;
+        try {
+            Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+            URL url = new URL(downloadUrl);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(60000);
+            connection.setDoInput(true);
+            InputStream is = connection.getInputStream();
+            final File temp = new File(fileSavePath);
+            if (temp.exists()) temp.delete();
+            temp.createNewFile();
+            temp.setReadable(true, false);
+            temp.setWritable(true, false);
+            downloadFile = temp;
+            OutputStream os = new FileOutputStream(temp);
+            byte[] buf = new byte[8 * 1024];
+            int len;
+            try {
+                while ((len = is.read(buf)) != -1) os.write(buf, 0, len);
+                os.flush();
+                ((FileOutputStream) os).getFD().sync();
+            } finally {
+                closeSilently(os);
+                closeSilently(is);
+            }
+            complete.complete(temp);
+            Log.d("downloadFile", "download complete url=" + downloadUrl + ", fileSize= " + temp.length());
+        } catch (Exception e) {
+            Log.w("downloadFile", e);
+            if (downloadFile != null) downloadFile.delete();
+        } finally {
+            if (connection != null) connection.disconnect();
+        }
+    }
+
+    public static void closeSilently(Object closeable) {
+        try {
+            if (closeable != null)
+                if (closeable instanceof Closeable)
+                    ((Closeable) closeable).close();
+        } catch (IOException ignored) {
+        }
     }
 }
