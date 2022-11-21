@@ -1,5 +1,6 @@
 package com.github.h4de5ing.base;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -23,6 +24,14 @@ public class CommandExecution {
         public int result = -1;
         public String errorMsg;
         public String successMsg;
+		
+		@Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            if (!TextUtils.isEmpty(this.errorMsg)) sb.append("errorMsg=" + errorMsg);
+            if (!TextUtils.isEmpty(this.successMsg)) sb.append("successMsg=" + successMsg);
+            return sb.toString();
+        }
     }
 
     /**
