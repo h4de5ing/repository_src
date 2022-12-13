@@ -21,21 +21,16 @@
 
     <SurfaceView
         android:id="@+id/preview_view"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
-
-    <ImageView
-        android:id="@+id/iv_outside_scan_top"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="@drawable/bg_outside_scan" />
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true" />
+
 
     <RelativeLayout
         android:id="@+id/rl_scan_area"
         android:layout_width="258dp"
         android:layout_height="258dp"
-        android:layout_below="@id/iv_outside_scan_top"
-        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
         android:background="@drawable/bg_scan_area">
 
         <ImageView
@@ -46,7 +41,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:background="@drawable/scan_right_top" />
 
         <ImageView
@@ -58,7 +53,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:background="@drawable/scan_right_bottom" />
 
@@ -72,30 +67,4 @@
             android:src="@drawable/scan_line" />
 
     </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/iv_outside_scan_bottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/rl_scan_area"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/bg_outside_scan" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/iv_outside_scan_bottom"
-        android:layout_below="@id/iv_outside_scan_top"
-        android:layout_alignParentLeft="true"
-        android:layout_toLeftOf="@id/rl_scan_area"
-        android:background="@drawable/bg_outside_scan" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/iv_outside_scan_bottom"
-        android:layout_below="@id/iv_outside_scan_top"
-        android:layout_alignParentRight="true"
-        android:layout_toRightOf="@id/rl_scan_area"
-        android:background="@drawable/bg_outside_scan" />
 </RelativeLayout>

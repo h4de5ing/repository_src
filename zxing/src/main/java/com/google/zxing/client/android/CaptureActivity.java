@@ -19,10 +19,13 @@ package com.google.zxing.client.android;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Window;
@@ -67,7 +70,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_capture);
@@ -77,11 +79,11 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     }
 
     private void initView() {
-        mRlScanContainer = (RelativeLayout) findViewById(R.id.rl_scan_container);
-        mRlScanArea = (RelativeLayout) findViewById(R.id.rl_scan_area);
-        mIvScanLine = (ImageView) findViewById(R.id.iv_scan_line);
+        mRlScanContainer = findViewById(R.id.rl_scan_container);
+        mRlScanArea = findViewById(R.id.rl_scan_area);
+        mIvScanLine = findViewById(R.id.iv_scan_line);
         TranslateAnimation animation = new TranslateAnimation(Animation.RELATIVE_TO_PARENT, 0.0f, Animation.RELATIVE_TO_PARENT, 0.0f, Animation.RELATIVE_TO_PARENT, 0.0f, Animation.RELATIVE_TO_PARENT, 0.9f);
-        animation.setDuration(4500);
+        animation.setDuration(2000);
         animation.setRepeatCount(-1);
         animation.setRepeatMode(Animation.RESTART);
         mIvScanLine.startAnimation(animation);
@@ -91,9 +93,10 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     protected void onResume() {
         super.onResume();
         cameraManager = new CameraManager(getApplication());
+        setRequestedOrientation(getCurrentOrientation());
         handler = null;
         inactivityTimer.onResume();
-        SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
+        SurfaceView surfaceView = findViewById(R.id.preview_view);
         SurfaceHolder surfaceHolder = surfaceView.getHolder();
         if (hasSurface) initCamera(surfaceHolder);
         else surfaceHolder.addCallback(this);
@@ -101,6 +104,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
     @Override
     protected void onPause() {
+        super.onPause();
         if (handler != null) {
             handler.quitSynchronously();
             handler = null;
@@ -108,11 +112,10 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         inactivityTimer.onPause();
         cameraManager.closeDriver();
         if (!hasSurface) {
-            SurfaceView surfaceView = (SurfaceView) findViewById(R.id.preview_view);
+            SurfaceView surfaceView = findViewById(R.id.preview_view);
             SurfaceHolder surfaceHolder = surfaceView.getHolder();
             surfaceHolder.removeCallback(this);
         }
-        super.onPause();
     }
 
     @Override
@@ -151,8 +154,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         inactivityTimer.onActivity();
         Intent resultIntent = new Intent();
         resultIntent.putExtra("result", rawResult.getText());
-        this.setResult(RESULT_OK, resultIntent);
-        CaptureActivity.this.finish();
+        setResult(RESULT_OK, resultIntent);
+        finish();
     }
 
     private void initCamera(SurfaceHolder surfaceHolder) {
@@ -232,5 +235,26 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             e.printStackTrace();
         }
         return 0;
+    }
+
+    private int getCurrentOrientation() {
+        int rotation = getWindowManager().getDefaultDisplay().getRotation();
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            switch (rotation) {
+                case Surface.ROTATION_0:
+                case Surface.ROTATION_90:
+                    return ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
+                default:
+                    return ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE;
+            }
+        } else {
+            switch (rotation) {
+                case Surface.ROTATION_0:
+                case Surface.ROTATION_270:
+                    return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+                default:
+                    return ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT;
+            }
+        }
     }
 }
