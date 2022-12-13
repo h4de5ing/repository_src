@@ -4,10 +4,10 @@ plugins {
 }
 
 android {
-    compileSdkVersion 32
+    compileSdkVersion 33
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 32
+        targetSdkVersion 33
         versionCode 1
         versionName "1.0"
 
@@ -26,10 +26,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
-
+//源码来自 https://github.com/zxing/zxing
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.4.2'
-    api 'com.google.zxing:core:3.4.1'
+    api 'com.google.zxing:core:3.5.1'
 }
 afterEvaluate {
     publishing {

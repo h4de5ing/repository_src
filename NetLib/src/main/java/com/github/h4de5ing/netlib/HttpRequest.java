@@ -132,7 +132,7 @@ public class HttpRequest {
     }
 
     public static String uploadFile(String urlStr, Map<String, File> fileMap, Map<String, Object> params, Map<String, String> header) throws Exception {
-        String result = "";
+        String result;
         HttpURLConnection conn;
         String BOUNDARY = "---------------------------123821742118716"; //boundary就是request头和上传文件内容的分隔符
         for (String key : params.keySet())
@@ -150,9 +150,8 @@ public class HttpRequest {
         conn.setRequestProperty("Connection", "Keep-Alive");
         conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.1; zh-CN; rv:1.9.2.6)");
         conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + BOUNDARY);
-        if (header != null && header.size() > 0) {
+        if (header != null && header.size() > 0)
             for (String key : header.keySet()) conn.setRequestProperty(key, header.get(key));
-        }
         OutputStream out = new DataOutputStream(conn.getOutputStream());
         if (params != null) {
             StringBuilder strBuf = new StringBuilder();

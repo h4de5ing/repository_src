@@ -9,10 +9,7 @@ import android.graphics.Paint
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.RadioGroup
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.widget.AppCompatSpinner
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.chip.Chip
@@ -48,6 +45,20 @@ fun SwitchMaterial.changedNoIsPressed(change: ((Boolean) -> Unit)) =
         if (view.isPressed) return@setOnCheckedChangeListener
         change(isChecked)
     }
+
+fun SeekBar.change(selected: ((Int) -> Unit)) {
+    this.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+            selected(progress)
+        }
+
+        override fun onStartTrackingTouch(seekBar: SeekBar?) {
+        }
+
+        override fun onStopTrackingTouch(seekBar: SeekBar?) {
+        }
+    })
+}
 
 fun Chip.changed(change: ((Boolean) -> Unit)) =
     this.setOnCheckedChangeListener { _, isChecked -> change(isChecked) }

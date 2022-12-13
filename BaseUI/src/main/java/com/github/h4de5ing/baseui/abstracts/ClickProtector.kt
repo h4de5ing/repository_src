@@ -28,8 +28,8 @@ abstract class ClickProtector : View.OnClickListener {
     override fun onClick(v: View) {
         val key = v.id
         val lastTime = v.getTag(key)
-        if (lastTime != null && (System.currentTimeMillis() - lastTime.toString()
-                .toLong()) < delay
+        if (lastTime != null &&
+            (System.currentTimeMillis() - lastTime.toString().toLong()) < delay
         ) return
         onRealClick(v)
         v.setTag(key, System.currentTimeMillis())
