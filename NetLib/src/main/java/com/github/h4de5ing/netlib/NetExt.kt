@@ -1,7 +1,5 @@
 package com.github.h4de5ing.netlib
 
-import com.github.h4de5ing.netlib.exception.ResponseCodeErrorException
-import java.io.File
 import java.io.IOException
 import java.net.ConnectException
 import java.net.MalformedURLException

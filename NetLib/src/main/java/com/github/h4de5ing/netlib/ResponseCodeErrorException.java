@@ -1,4 +1,4 @@
-package com.github.h4de5ing.netlib.exception;
+package com.github.h4de5ing.netlib;
 
 public class ResponseCodeErrorException extends Exception {
     public ResponseCodeErrorException() {

@@ -16,41 +16,24 @@ import java.util.jar.JarFile;
 public class SignUtil {
 
     /**
-     * 从 apk 中获取 MD5 签名信息
-     *
-     * @param apkPath apk文件路径
-     * @return 返回md5值
-     * @throws Exception
+     * 获取已经安装的 app 的 MD5 签名信息
      */
     public static String getApkSignatureMD5(String apkPath) throws Exception {
-        return hexDigest(getSignaturesFromApk(apkPath), "MD5");
+        byte[] sign = getSignaturesFromApk(apkPath);
+        if (sign != null) return hexDigest(sign, "MD5");
+        else return "";
     }
 
     public static String getApkSignatureSHA1(String apkPath) throws Exception {
-        return hexDigest(getSignaturesFromApk(apkPath), "SHA1");
+        byte[] sign = getSignaturesFromApk(apkPath);
+        if (sign != null) return hexDigest(sign, "SHA1");
+        else return "";
     }
 
     public static String getApkSignatureSHA256(String apkPath) throws Exception {
-        return hexDigest(getSignaturesFromApk(apkPath), "SHA256");
-    }
-
-    /**
-     * 获取已经安装的 app 的 MD5 签名信息
-     *
-     * @param context 上下文
-     * @param pkgName
-     * @return
-     */
-    public static String getAppSignatureMD5(Context context, String pkgName) {
-        return getAppSignature(context, pkgName, "MD5");
-    }
-
-    public static String getAppSignatureSHA1(Context context, String pkgName) {
-        return getAppSignature(context, pkgName, "SHA1");
-    }
-
-    public static String getAppSignatureSHA256(Context context, String pkgName) {
-        return getAppSignature(context, pkgName, "SHA256");
+        byte[] sign = getSignaturesFromApk(apkPath);
+        if (sign != null) return hexDigest(sign, "SHA256");
+        else return "";
     }
 
     public static String getAppSignature(Context context, String pkgName, String algorithm) {
@@ -88,6 +71,7 @@ public class SignUtil {
 
     /**
      * 加载签名
+     * 如果是debug或者未签名的apk 会导致获取为null
      *
      * @param jarFile    jar文件
      * @param je         jar实体

@@ -3,8 +3,6 @@ package com.github.h4de5ing.netlib;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
-import com.github.h4de5ing.netlib.exception.ResponseCodeErrorException;
-
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.DataInputStream;
@@ -135,9 +133,9 @@ public class HttpRequest {
         String result;
         HttpURLConnection conn;
         String BOUNDARY = "---------------------------123821742118716"; //boundary就是request头和上传文件内容的分隔符
-        for (String key : params.keySet())
+        if (params != null && params.size() > 0) for (String key : params.keySet())
             System.out.println("上传参数：" + key + "->" + params.get(key));
-        for (String key : header.keySet())
+        if (header != null && header.size() > 0) for (String key : header.keySet())
             System.out.println("上传头：" + key + "->" + header.get(key));
         URL url = new URL(urlStr);
         conn = (HttpURLConnection) url.openConnection();

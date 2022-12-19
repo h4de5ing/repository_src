@@ -8,7 +8,7 @@ import java.io.InputStream;
 import okhttp3.Call;
 import okhttp3.Response;
 
-public abstract class CallBackUtil<T> {
+abstract class CallBackUtil<T> {
 
     public void onProgress(float progress, long total) {
     }

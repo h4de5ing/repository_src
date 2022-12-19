@@ -30,29 +30,29 @@ android {
 dependencies {
     api 'com.google.zxing:core:3.5.1'
 }
-afterEvaluate {
-    publishing {
-        publications {
-            def today = new Date().format('yyyyMMdd')
-            release(MavenPublication) {
-                from components.release
-                groupId = 'com.github.h4de5ing.zxing'
-                artifactId = 'zxing'
-                version = "1.0-$today"
-            }
-            debug(MavenPublication) {
-                from components.debug
-                groupId = 'com.github.h4de5ing.zxing'
-                artifactId = 'zxing'
-                version = "1.0-$today"
-            }
-        }
-        repositories {
-            mavenLocal()
-            maven {
-                url uri('D://repository/repository/repository')
-            }
-        }
-    }
-}
+//afterEvaluate {
+//    publishing {
+//        publications {
+//            def today = new Date().format('yyyyMMdd')
+//            release(MavenPublication) {
+//                from components.release
+//                groupId = 'com.github.h4de5ing.zxing'
+//                artifactId = 'zxing'
+//                version = "1.0-$today"
+//            }
+//            debug(MavenPublication) {
+//                from components.debug
+//                groupId = 'com.github.h4de5ing.zxing'
+//                artifactId = 'zxing'
+//                version = "1.0-$today"
+//            }
+//        }
+//        repositories {
+//            mavenLocal()
+//            maven {
+//                url uri('D://repository/repository/repository')
+//            }
+//        }
+//    }
+//}
 //gradlew publish

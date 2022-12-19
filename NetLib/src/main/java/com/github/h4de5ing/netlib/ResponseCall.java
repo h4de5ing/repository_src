@@ -1,6 +1,5 @@
 package com.github.h4de5ing.netlib;
 
-
 import java.io.IOException;
 
 import okhttp3.Call;
