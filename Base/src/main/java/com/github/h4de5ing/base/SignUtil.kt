@@ -1,51 +1,47 @@
-package com.github.h4de5ing.base;
+package com.github.h4de5ing.base
 
-import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
+import android.content.Context
+import android.content.pm.PackageManager
+import java.io.File
+import java.io.IOException
+import java.security.MessageDigest
+import java.security.cert.Certificate
+import java.util.jar.JarEntry
+import java.util.jar.JarFile
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.MessageDigest;
-import java.security.cert.Certificate;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-
-public class SignUtil {
-
+object SignUtil {
     /**
      * 获取已经安装的 app 的 MD5 签名信息
      */
-    public static String getApkSignatureMD5(String apkPath) throws Exception {
-        byte[] sign = getSignaturesFromApk(apkPath);
-        if (sign != null) return hexDigest(sign, "MD5");
-        else return "";
+    @Throws(Exception::class)
+    fun getApkSignatureMD5(apkPath: String): String {
+        val sign = getSignaturesFromApk(apkPath)
+        return if (sign != null) hexDigest(sign, "MD5") else ""
     }
 
-    public static String getApkSignatureSHA1(String apkPath) throws Exception {
-        byte[] sign = getSignaturesFromApk(apkPath);
-        if (sign != null) return hexDigest(sign, "SHA1");
-        else return "";
+    @Throws(Exception::class)
+    fun getApkSignatureSHA1(apkPath: String): String {
+        val sign = getSignaturesFromApk(apkPath)
+        return if (sign != null) hexDigest(sign, "SHA1") else ""
     }
 
-    public static String getApkSignatureSHA256(String apkPath) throws Exception {
-        byte[] sign = getSignaturesFromApk(apkPath);
-        if (sign != null) return hexDigest(sign, "SHA256");
-        else return "";
+    @Throws(Exception::class)
+    fun getApkSignatureSHA256(apkPath: String): String {
+        val sign = getSignaturesFromApk(apkPath)
+        return if (sign != null) hexDigest(sign, "SHA256") else ""
     }
 
-    public static String getAppSignature(Context context, String pkgName, String algorithm) {
+    fun getAppSignature(context: Context, pkgName: String?, algorithm: String): String {
         try {
-            PackageInfo packageInfo = context.getPackageManager().getPackageInfo(pkgName, PackageManager.GET_SIGNATURES);
-            Signature[] signs = packageInfo.signatures;
-            Signature sign = signs[0];
-            return hexDigest(sign.toByteArray(), algorithm);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+            val packageInfo =
+                context.packageManager.getPackageInfo(pkgName!!, PackageManager.GET_SIGNATURES)
+            val signs = packageInfo.signatures
+            val sign = signs[0]
+            return hexDigest(sign.toByteArray(), algorithm)
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
         }
-        return "";
+        return ""
     }
 
     /**
@@ -55,18 +51,19 @@ public class SignUtil {
      * @return
      * @throws IOException
      */
-    public static byte[] getSignaturesFromApk(String apkPath) throws IOException {
-        File file = new File(apkPath);
-        JarFile jarFile = new JarFile(file);
+    @Throws(IOException::class)
+    fun getSignaturesFromApk(apkPath: String): ByteArray? {
+        val file = File(apkPath)
+        val jarFile = JarFile(file)
         try {
-            JarEntry je = jarFile.getJarEntry("AndroidManifest.xml");
-            byte[] readBuffer = new byte[8192];
-            Certificate[] certs = loadCertificates(jarFile, je, readBuffer);
-            if (certs != null) for (Certificate c : certs) return c.getEncoded();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            val je = jarFile.getJarEntry("AndroidManifest.xml")
+            val readBuffer = ByteArray(8192)
+            val certs = loadCertificates(jarFile, je, readBuffer)
+            if (certs != null) for (c in certs) return c.encoded
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
-        return null;
+        return null
     }
 
     /**
@@ -78,34 +75,38 @@ public class SignUtil {
      * @param readBuffer 读取缓存
      * @return
      */
-    public static Certificate[] loadCertificates(JarFile jarFile, JarEntry je, byte[] readBuffer) {
+    fun loadCertificates(
+        jarFile: JarFile,
+        je: JarEntry?,
+        readBuffer: ByteArray
+    ): Array<Certificate>? {
         try {
-            InputStream is = jarFile.getInputStream(je);
-            while (is.read(readBuffer, 0, readBuffer.length) != -1) {
+            val `is` = jarFile.getInputStream(je)
+            while (`is`.read(readBuffer, 0, readBuffer.size) != -1) {
             }
-            is.close();
-            return je != null ? je.getCertificates() : null;
-        } catch (IOException e) {
-            e.printStackTrace();
+            `is`.close()
+            return je?.certificates
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
-        return null;
+        return null
     }
 
-    public static String hexDigest(byte[] bytes, String algorithm) {
-        MessageDigest md5;
-        try {
-            md5 = MessageDigest.getInstance(algorithm);
-            byte[] md5Bytes = md5.digest(bytes);
-            StringBuilder hexValue = new StringBuilder();
-            for (byte md5Byte : md5Bytes) {
-                int val = ((int) md5Byte) & 0xff;
-                if (val < 16) hexValue.append("0");
-                hexValue.append(Integer.toHexString(val));
+    fun hexDigest(bytes: ByteArray, algorithm: String): String {
+        val md5: MessageDigest
+        return try {
+            md5 = MessageDigest.getInstance(algorithm)
+            val md5Bytes = md5.digest(bytes)
+            val hexValue = StringBuilder()
+            for (md5Byte in md5Bytes) {
+                val `val` = md5Byte.toInt() and 0xff
+                if (`val` < 16) hexValue.append("0")
+                hexValue.append(Integer.toHexString(`val`))
             }
-            return hexValue.toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "";
+            hexValue.toString()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ""
         }
     }
 }

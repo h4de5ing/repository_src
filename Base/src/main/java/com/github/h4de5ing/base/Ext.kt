@@ -1,9 +1,11 @@
 package com.github.h4de5ing.base
 
+import android.annotation.SuppressLint
 import java.text.DecimalFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.experimental.and
 
 //常见的扩展函数
 //判断任何对象是否为空
@@ -54,6 +56,7 @@ fun Long.toHuman() = this / 1000000000
 val Int.days: Long get() = (this * 3600 * 24).toLong()
 val Long.ago: Long get() = todayTime() - this * 1000
 
+@SuppressLint("SimpleDateFormat")
 fun string2Date(s: String?, style: String?): Date? {
     val simpleDateFormat = SimpleDateFormat(style)
     var date: Date? = null
@@ -103,3 +106,54 @@ fun timer(delay: Long, block: () -> Unit) {
 list.add(it)
 }
  */
+/*********进制处理*************/
+
+/**
+ * 数组打印
+ * @this  {0x01,0x02,0x03}
+ * @param 01 02 03
+ */
+fun ByteArray.toHexString(): String {
+    val sb = StringBuilder()
+    val hex =
+        charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
+    for (i in 0 until this.size) {
+        val value: Byte = this[i] and 0xff.toByte()
+        sb.append(hex[value / 16]).append(hex[value % 16]).append(" ")
+    }
+    return sb.toString()
+}
+
+/**
+ * 数组拼接
+ * @this {0x01}
+ * @param {0x02 0x03}
+ * @return {0x01,0x02,0x03}
+ */
+fun ByteArray.add(data: ByteArray): ByteArray {
+    val resultData = ByteArray(this.size + data.size)
+    System.arraycopy(this, 0, resultData, 0, this.size)
+    resultData[this.size] = data.size.toByte()
+    System.arraycopy(data, 0, resultData, this.size, data.size)
+    return resultData
+}
+
+/**
+ * 字符串转数组
+ * @this input string like : 000102030405060708
+ * @return byte[] b={0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08}
+ */
+fun String.toHexByteArray(): ByteArray {
+    var newStr = this.replace(" ", "")
+    val data = ByteArray(newStr.length / 2)
+    try {
+        if (newStr.length % 2 != 0)
+            newStr = newStr.substring(0, newStr.length - 1) + "0" +
+                    newStr.substring(newStr.length - 1, newStr.length)
+        for (j in data.indices) {
+            data[j] = (Integer.valueOf(newStr.substring(j * 2, j * 2 + 2), 16) and 0xff).toByte()
+        }
+    } catch (_: Exception) {
+    }
+    return data
+}
