@@ -1,5 +1,5 @@
 rootProject.name = "repository"
-//include ':Base'
+include ':Base'
 //include ':BaseUI'
 //include ':GsonCommon'
 //include ':NetLib'

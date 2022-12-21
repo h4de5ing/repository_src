@@ -110,14 +110,15 @@ list.add(it)
 
 /**
  * 数组打印
- * @this  {0x01,0x02,0x03}
- * @param 01 02 03
+ * @param ByteArray {0x01,0x02,0x03}
+ * @return 01 02 03
  */
-fun ByteArray.toHexString(): String {
+fun ByteArray.toHexString(): String = this.toHexString(this.size)
+fun ByteArray.toHexString(length: Int): String {
     val sb = StringBuilder()
     val hex =
         charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
-    for (i in 0 until this.size) {
+    for (i in 0 until length) {
         val value: Byte = this[i] and 0xff.toByte()
         sb.append(hex[value / 16]).append(hex[value % 16]).append(" ")
     }
@@ -126,9 +127,7 @@ fun ByteArray.toHexString(): String {
 
 /**
  * 数组拼接
- * @this {0x01}
- * @param {0x02 0x03}
- * @return {0x01,0x02,0x03}
+ * @return {0x01}+{0x02,0x03}={0x01,0x02,0x03}
  */
 fun ByteArray.add(data: ByteArray): ByteArray {
     val resultData = ByteArray(this.size + data.size)
@@ -140,8 +139,8 @@ fun ByteArray.add(data: ByteArray): ByteArray {
 
 /**
  * 字符串转数组
- * @this input string like : 000102030405060708
- * @return byte[] b={0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08}
+ * 输入: 000102030405060708
+ * @return 返回 {0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08}
  */
 fun String.toHexByteArray(): ByteArray {
     var newStr = this.replace(" ", "")
