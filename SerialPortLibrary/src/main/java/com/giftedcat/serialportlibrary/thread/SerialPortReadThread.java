@@ -8,15 +8,9 @@ import com.giftedcat.serialportlibrary.utils.DataUtil;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * Created by giftedcat on 2020/6/13.
- * 串口消息读取线程
- */
-
 public abstract class SerialPortReadThread extends Thread {
     public abstract void onDataReceived(byte[] bytes);
 
-    private static final String TAG = SerialPortReadThread.class.getSimpleName();
     private InputStream mInputStream;
     private byte[] mReadBuffer;
     byte[] readBytes = null;
@@ -47,17 +41,14 @@ public abstract class SerialPortReadThread extends Thread {
      * 一般使用,等待inputStream卡死返回数据
      */
     private void normalRead() {
+        SerialPortManager.logger.info("normalRead");
         while (!isInterrupted()) {
             try {
                 if (null == mInputStream) return;
-                SerialPortManager.logger.info(TAG, "run: ");
                 int size = mInputStream.read(mReadBuffer);
-                if (-1 == size || 0 >= size) {
-                    return;
-                }
+                if (0 >= size) return;
                 byte[] readBytes = new byte[size];
                 System.arraycopy(mReadBuffer, 0, readBytes, 0, size);
-                SerialPortManager.logger.info(TAG, "run: readBytes = " + new String(readBytes));
                 onDataReceived(readBytes);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -70,31 +61,24 @@ public abstract class SerialPortReadThread extends Thread {
      * 轮询读取，判断inputStream中是否还有数据，还有就拼接
      */
     private void splicingRead() {
+        SerialPortManager.logger.info("splicingRead");
         while (!isInterrupted()) {
             if (null == mInputStream) return;
             int size = 0;
             try {
-                /** 获取流中数据的量*/
                 int i = mInputStream.available();
-                if (i == 0) {
-                    size = 0;
-                } else {
-                    /** 流中有数据，则添加到临时数组中*/
-                    size = mInputStream.read(mReadBuffer);
-                }
+                if (i == 0) size = 0;
+                else size = mInputStream.read(mReadBuffer);
             } catch (IOException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
             if (size > 0) {
                 /** 发现有信息后就追加到临时变量*/
-                SerialPortManager.logger.info(TAG, size + "");
                 readBytes = DataUtil.arrayAppend(readBytes, mReadBuffer, size);
-                SerialPortManager.logger.info(TAG, DataUtil.bytesToHexString(readBytes, readBytes.length));
+                SerialPortManager.logger.info(size + "->" + DataUtil.bytesToHexString(readBytes, readBytes.length));
             } else {
                 /** 没有需要追加的数据了，回调*/
-                if (readBytes != null) {
-                    onDataReceived(readBytes);
-                }
+                if (readBytes != null) onDataReceived(readBytes);
                 /** 清空，等待下个信息单元*/
                 readBytes = null;
             }
@@ -107,9 +91,6 @@ public abstract class SerialPortReadThread extends Thread {
         super.start();
     }
 
-    /**
-     * 关闭线程 释放资源
-     */
     public void release() {
         interrupt();
         if (null != mInputStream) {

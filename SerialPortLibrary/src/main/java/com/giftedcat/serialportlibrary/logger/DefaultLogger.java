@@ -1,6 +1,5 @@
 package com.giftedcat.serialportlibrary.logger;
 
-import android.text.TextUtils;
 import android.util.Log;
 
 public class DefaultLogger implements ILogger {
@@ -9,7 +8,7 @@ public class DefaultLogger implements ILogger {
     private static boolean isShowStackTrace = false;
     private static boolean isMonitorMode = false;
 
-    private String defaultTag = "SerialPortManager";
+    private String defaultTag = "SerialPortManager::";
 
     public void showLog(boolean showLog) {
         isShowLog = showLog;
@@ -26,39 +25,35 @@ public class DefaultLogger implements ILogger {
     public DefaultLogger() {
     }
 
-    public DefaultLogger(String defaultTag) {
-        this.defaultTag = defaultTag;
-    }
-
     @Override
-    public void debug(String tag, String message) {
+    public void debug(String message) {
         if (isShowLog) {
             StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[3];
-            Log.d(TextUtils.isEmpty(tag) ? getDefaultTag() : tag, message + getExtInfo(stackTraceElement));
+            Log.d(defaultTag, message + getExtInfo(stackTraceElement));
         }
     }
 
     @Override
-    public void info(String tag, String message) {
+    public void info(String message) {
         if (isShowLog) {
             StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[3];
-            Log.i(TextUtils.isEmpty(tag) ? getDefaultTag() : tag, message + getExtInfo(stackTraceElement));
+            Log.i(defaultTag, message + getExtInfo(stackTraceElement));
         }
     }
 
     @Override
-    public void warning(String tag, String message) {
+    public void warning(String message) {
         if (isShowLog) {
             StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[3];
-            Log.w(TextUtils.isEmpty(tag) ? getDefaultTag() : tag, message + getExtInfo(stackTraceElement));
+            Log.w(defaultTag, message + getExtInfo(stackTraceElement));
         }
     }
 
     @Override
-    public void error(String tag, String message) {
+    public void error(String message) {
         if (isShowLog) {
             StackTraceElement stackTraceElement = Thread.currentThread().getStackTrace()[3];
-            Log.e(TextUtils.isEmpty(tag) ? getDefaultTag() : tag, message + getExtInfo(stackTraceElement));
+            Log.e(defaultTag, message + getExtInfo(stackTraceElement));
         }
     }
 
@@ -83,8 +78,8 @@ public class DefaultLogger implements ILogger {
     public static String getExtInfo(StackTraceElement stackTraceElement) {
         String separator = " & ";
         StringBuilder sb = new StringBuilder();
-        sb.append("[");
         if (isShowStackTrace) {
+            sb.append("[");
             String threadName = Thread.currentThread().getName();
             String fileName = stackTraceElement.getFileName();
             String className = stackTraceElement.getClassName();
@@ -98,9 +93,8 @@ public class DefaultLogger implements ILogger {
             sb.append("ClassName=").append(className).append(separator);
             sb.append("MethodName=").append(methodName).append(separator);
             sb.append("LineNumber=").append(lineNumber);
+            sb.append(" ] ");
         }
-
-        sb.append(" ] ");
         return sb.toString();
     }
 
