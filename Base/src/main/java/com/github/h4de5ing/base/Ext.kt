@@ -119,7 +119,7 @@ fun ByteArray.toHexString(length: Int): String {
     val hex =
         charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
     for (i in 0 until length) {
-        val value: Byte = this[i] and 0xff.toByte()
+        val value: Int = this[i].toInt() and 0xff
         sb.append(hex[value / 16]).append(hex[value % 16]).append(" ")
     }
     return sb.toString()
