@@ -2,9 +2,6 @@ package com.giftedcat.serialportlibrary.utils;
 
 import java.util.Locale;
 
-/**
- * @author giftedcat
- */
 public class DataUtil {
 
     //-------------------------------------------------------

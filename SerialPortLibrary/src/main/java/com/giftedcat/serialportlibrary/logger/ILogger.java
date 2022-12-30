@@ -1,6 +1,5 @@
 package com.giftedcat.serialportlibrary.logger;
 
-
 public interface ILogger {
 
     boolean isShowLog = false;

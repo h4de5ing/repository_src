@@ -13,9 +13,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
-        ndk {
-            abiFilters "armeabi", "armeabi-v7a"
-        }
+        ndk { abiFilters "armeabi", "armeabi-v7a" }
     }
 
     buildTypes {
@@ -30,6 +28,11 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['/src/main/jniLibs']
+        }
     }
 }
 
