@@ -35,12 +35,6 @@ afterEvaluate {
                 artifactId = 'serialportlib'
                 version = "1.0-$today"
             }
-            debug(MavenPublication) {
-                from components.debug
-                groupId = 'com.giftedcat.serialportlibrary'
-                artifactId = 'serialportlib'
-                version = "1.0-$today"
-            }
         }
         repositories {
             mavenLocal()

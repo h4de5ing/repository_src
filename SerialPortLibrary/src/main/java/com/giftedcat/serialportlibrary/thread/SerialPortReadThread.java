@@ -51,7 +51,7 @@ public abstract class SerialPortReadThread extends Thread {
                 System.arraycopy(mReadBuffer, 0, readBytes, 0, size);
                 onDataReceived(readBytes);
             } catch (IOException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
                 return;
             }
         }
@@ -68,6 +68,7 @@ public abstract class SerialPortReadThread extends Thread {
             try {
                 int i = mInputStream.available();
                 if (i == 0) size = 0;
+                    // 流中有数据，则添加到临时数组中
                 else size = mInputStream.read(mReadBuffer);
             } catch (IOException e) {
                 //e.printStackTrace();
@@ -78,7 +79,11 @@ public abstract class SerialPortReadThread extends Thread {
                 SerialPortManager.logger.info(size + "->" + DataUtil.bytesToHexString(readBytes, readBytes.length));
             } else {
                 /** 没有需要追加的数据了，回调*/
-                if (readBytes != null) onDataReceived(readBytes);
+                if (readBytes != null) {
+                    byte sum = 0x00;
+                    for (byte readByte : readBytes) sum += readByte;
+                    if (sum != 0) onDataReceived(readBytes);
+                }
                 /** 清空，等待下个信息单元*/
                 readBytes = null;
             }
