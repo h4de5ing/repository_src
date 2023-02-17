@@ -270,6 +270,8 @@ public class HttpRequest {
     }
 
     public interface FileDownloadComplete {
+        void progress(long progress);
+
         void complete(File file);
     }
 
@@ -291,13 +293,19 @@ public class HttpRequest {
             temp.setReadable(true, false);
             temp.setWritable(true, false);
             downloadFile = temp;
-            OutputStream os = new FileOutputStream(temp);
+            int contentLength = connection.getContentLength();
+            FileOutputStream os = new FileOutputStream(temp);
             byte[] buf = new byte[8 * 1024];
             int len;
+            long totalRead = 0;
             try {
-                while ((len = is.read(buf)) != -1) os.write(buf, 0, len);
+                while ((len = is.read(buf)) != -1) {
+                    os.write(buf, 0, len);
+                    totalRead += len;
+                    complete.progress(totalRead * 100 / contentLength);
+                }
                 os.flush();
-                ((FileOutputStream) os).getFD().sync();
+                os.getFD().sync();
             } finally {
                 closeSilently(os);
                 closeSilently(is);
