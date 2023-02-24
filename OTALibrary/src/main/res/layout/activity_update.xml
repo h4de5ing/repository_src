@@ -67,7 +67,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/app_update_bg_button"
+            android:background="@drawable/button_effect"
+            android:enabled="true"
             android:text="@string/app_update_update"
             android:textAllCaps="false"
             android:textColor="@android:color/white" />
