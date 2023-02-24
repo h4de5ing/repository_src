@@ -8,6 +8,7 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.android.otalibrary.*
 import com.github.h4de5ing.netlib.HttpRequest
@@ -31,24 +32,35 @@ class OTAActivity : AppCompatActivity() {
         btnUpdate.setOnClickListener {
             if (isDownloaded) {
                 installApp(localAPkPath)
+                runOnUiThread {
+                    Toast.makeText(this,getString(R.string.install_now), Toast.LENGTH_LONG).show()
+                }
+                finish()
             } else {
                 Thread {
                     try {
+                        runOnUiThread {
+                            btnUpdate.isEnabled = false
+                        }
                         HttpRequest.downloadFile(apkUrl, localAPkPath, object :
                             HttpRequest.FileDownloadComplete {
                             override fun progress(progress: Long) {
 //                                println("下载进度 $progress")
-                                runOnUiThread { progressBar.text = "${progress}%" }
+                                runOnUiThread {
+                                    progressBar.text = getString(R.string.app_update_download)+"${progress}%"
+                                }
                             }
 
                             override fun complete(file: File?) {
                                 isDownloaded = true
                                 runOnUiThread {
+                                    btnUpdate.isEnabled = true
                                     btnUpdate.text = getString(R.string.app_update_click_hint)
                                 }
                             }
                         })
                     } catch (e: Exception) {
+                        runOnUiThread { btnUpdate.isEnabled = true }
                         e.printStackTrace()
                     }
                 }.start()
