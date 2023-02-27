@@ -170,6 +170,9 @@ fun downloadDexAPK(context: Context) {
                         "dex 下载完成 ${file?.absolutePath}".logD()
                         loadAPK(context, file?.absolutePath!!, responseBean.runPath)
                     }
+
+                    override fun error(throwable: Throwable) {
+                    }
                 })
         } else {
             loadAPK(context, cachePath, responseBean.runPath)

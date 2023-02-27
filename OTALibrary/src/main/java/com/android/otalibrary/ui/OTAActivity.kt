@@ -1,6 +1,6 @@
 package com.android.otalibrary.ui
 
-import android.content.SharedPreferences
+import android.content.*
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.Gravity
@@ -33,32 +33,44 @@ class OTAActivity : AppCompatActivity() {
             if (isDownloaded) {
                 installApp(localAPkPath)
                 runOnUiThread {
-                    Toast.makeText(this,getString(R.string.install_now), Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, getString(R.string.install_now), Toast.LENGTH_LONG).show()
                 }
                 finish()
             } else {
                 Thread {
                     try {
                         runOnUiThread {
+                            progressBar.text = getString(R.string.app_update_download) + "0%"
                             btnUpdate.isEnabled = false
                         }
-                        HttpRequest.downloadFile(apkUrl, localAPkPath, object :
-                            HttpRequest.FileDownloadComplete {
-                            override fun progress(progress: Long) {
+                        HttpRequest.downloadFile(
+                            apkUrl,
+                            localAPkPath,
+                            object : HttpRequest.FileDownloadComplete {
+                                override fun progress(progress: Long) {
 //                                println("下载进度 $progress")
-                                runOnUiThread {
-                                    progressBar.text = getString(R.string.app_update_download)+"${progress}%"
+                                    runOnUiThread {
+                                        progressBar.text =
+                                            getString(R.string.app_update_download) + "${progress}%"
+                                    }
                                 }
-                            }
 
-                            override fun complete(file: File?) {
-                                isDownloaded = true
-                                runOnUiThread {
-                                    btnUpdate.isEnabled = true
-                                    btnUpdate.text = getString(R.string.app_update_click_hint)
+                                override fun complete(file: File?) {
+                                    isDownloaded = true
+                                    runOnUiThread {
+                                        btnUpdate.isEnabled = true
+                                        btnUpdate.text = getString(R.string.app_update_click_hint)
+                                    }
                                 }
-                            }
-                        })
+
+                                override fun error(throwable: Throwable) {
+                                    runOnUiThread {
+                                        btnUpdate.isEnabled = true
+                                        progressBar.text = getString(R.string.network_disable)
+                                        btnUpdate.text = getString(R.string.try_again)
+                                    }
+                                }
+                            })
                     } catch (e: Exception) {
                         runOnUiThread { btnUpdate.isEnabled = true }
                         e.printStackTrace()

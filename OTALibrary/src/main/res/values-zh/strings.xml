@@ -14,4 +14,6 @@
     <string name="app_update_update">升级</string>
     <string name="app_update_download">正在下载： </string>
     <string name="install_now">正在安装，请稍后！</string>
+    <string name="try_again">再试一次</string>
+    <string name="network_disable">网络波动异常，请确认网络连接稳定！</string>
 </resources>
