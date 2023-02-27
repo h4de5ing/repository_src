@@ -21,6 +21,7 @@ import com.github.h4de5ing.gsoncommon.toJson
 import com.github.h4de5ing.netlib.HttpRequest
 import dalvik.system.DexClassLoader
 import java.io.*
+import java.lang.Thread.sleep
 import java.security.MessageDigest
 
 
@@ -122,6 +123,7 @@ fun check4Net(packageName: String, version: Long, tag: String, sign: String, apk
             if (data != null) {
                 versionCode = "$version->${responseBean.versionCode}"
                 apkUrl = data.apkPath
+                sleep(2000)
                 alert()
             } else "签名或者tag不匹配".logD()
         } else "$version->${responseBean.versionCode} 版本不对,忽略升级".logD()
