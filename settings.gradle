@@ -2,7 +2,7 @@ rootProject.name = "repository"
 //include ':Base'
 //include ':BaseUI'
 //include ':GsonCommon'
-//include ':NetLib'
+include ':NetLib'
 //include ':OKPermission'
 //include ':filepicker'
 //include ':zxing'

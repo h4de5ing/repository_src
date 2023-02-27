@@ -270,6 +270,8 @@ public class HttpRequest {
     }
 
     public interface FileDownloadComplete {
+        void error(Throwable throwable);
+
         void progress(long progress);
 
         void complete(File file);
@@ -313,6 +315,7 @@ public class HttpRequest {
             complete.complete(temp);
             Log.d("downloadFile", "download complete url=" + downloadUrl + ", fileSize= " + temp.length());
         } catch (Exception e) {
+            complete.error(e);
             Log.w("downloadFile", e);
             if (downloadFile != null) downloadFile.delete();
         } finally {
