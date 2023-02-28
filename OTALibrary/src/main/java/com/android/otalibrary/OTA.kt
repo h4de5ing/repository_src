@@ -23,6 +23,7 @@ import dalvik.system.DexClassLoader
 import java.io.*
 import java.lang.Thread.sleep
 import java.security.MessageDigest
+import java.util.*
 
 
 lateinit var context: Context
@@ -32,12 +33,17 @@ var versionCode = ""
 var apkUrl = ""
 var localAPkPath = ""
 var isDownloaded = false
+var isUpdate = false
 fun initialize(_context: Context) {
     context = _context.applicationContext
     localAPkPath = "${context.externalCacheDir}${File.separator}cache.apk"
+    timer(5000) { if (!isUpdate) check() }
+}
+
+fun check() {
     if (checkMore24()) Thread { checkSelf() }.start()
     else println("24小时内忽略，不在检查新版本")
-    Thread { downloadDexAPK(_context) }.start()
+    Thread { downloadDexAPK(context) }.start()
 }
 
 private fun checkMore24(): Boolean {
@@ -123,6 +129,7 @@ fun check4Net(packageName: String, version: Long, tag: String, sign: String, apk
             if (data != null) {
                 versionCode = "$version->${responseBean.versionCode}"
                 apkUrl = data.apkPath
+                isUpdate = true
                 sleep(2000)
                 alert()
             } else "签名或者tag不匹配".logD()
@@ -321,4 +328,12 @@ private fun closeQuietly(c: Closeable?) {
             ignored.printStackTrace()
         }
     }
+}
+
+fun timer(delay: Long, block: () -> Unit) {
+    Timer().schedule(object : TimerTask() {
+        override fun run() {
+            block()
+        }
+    }, 0, delay)
 }
