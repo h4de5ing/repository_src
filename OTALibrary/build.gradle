@@ -48,7 +48,6 @@ afterEvaluate {
         repositories {
             mavenLocal()
             maven { url uri('D://repository/repository/repository') }
-            maven { url 'https://github.com/h4de5ing/repository/raw/master/repository' }
         }
     }
 }
