@@ -63,46 +63,25 @@ public class Utility {
      */
     public static ArrayList<FileListItem> prepareFileListEntries(ArrayList<FileListItem> internalList, File inter, ExtensionFilter filter) {
         try {
-            //Check for each and every directory/file in 'inter' directory.
-            //Filter by extension using 'filter' reference.
-
-            for (File name : inter.listFiles(filter)) {
-                //If file/directory can be read by the Application
-                if (name.canRead()) {
-                    //Create a row item for the directory list and define properties.
-                    FileListItem item = new FileListItem();
-                    item.setFilename(name.getName());
-                    item.setDirectory(name.isDirectory());
-                    item.setLocation(name.getAbsolutePath());
-                    item.setTime(name.lastModified());
-                    //Add row to the List of directories/files
-                    internalList.add(item);
+            if (inter.listFiles() != null) {
+                for (File name : inter.listFiles(filter)) {
+                    if (name.canRead()) {
+                        FileListItem item = new FileListItem();
+                        item.setFilename(name.getName());
+                        item.setDirectory(name.isDirectory());
+                        item.setLocation(name.getAbsolutePath());
+                        item.setTime(name.lastModified());
+                        internalList.add(item);
+                    }
                 }
+                Collections.sort(internalList);
+            } else {
+                System.out.println("路径:" + inter.getAbsolutePath());
             }
-            //Sort the files and directories in alphabetical order.
-            //See compareTo method in FileListItem class.
-            Collections.sort(internalList);
-        } catch (NullPointerException e) {   //Just dont worry, it rarely occurs.
+        } catch (NullPointerException e) {
             e.printStackTrace();
             internalList = new ArrayList<>();
         }
         return internalList;
-    }
-
-    /**
-     * Method checks whether the Support Library has been imported by application
-     * or not.
-     *
-     * @return A boolean notifying value wheter support library is imported as a
-     * dependency or not.
-     */
-    private boolean hasSupportLibraryInClasspath() {
-        try {
-            Class.forName("com.android.support:appcompat-v7");
-            return true;
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }
-        return false;
     }
 }

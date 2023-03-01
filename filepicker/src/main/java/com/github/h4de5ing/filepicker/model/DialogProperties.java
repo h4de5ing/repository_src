@@ -80,7 +80,7 @@ public class DialogProperties {
      * Eg. String ext={"jpg","jpeg","png","gif"};
      */
     public String[] extensions;
-    public boolean isNeedFileName;
+    public boolean isNeedFileName = false;
 
     public DialogProperties() {
         isNeedFileName = DialogConfigs.Not_NEED_FILE_NAME;

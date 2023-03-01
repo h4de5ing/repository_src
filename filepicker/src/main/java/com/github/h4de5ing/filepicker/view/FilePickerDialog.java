@@ -98,33 +98,48 @@ public class FilePickerDialog extends Dialog implements AdapterView.OnItemClickL
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.dialog_main);
-        listView = (ListView) findViewById(R.id.fileList);
-        select = (Button) findViewById(R.id.select);
-        textFileName = (EditText) findViewById(R.id.et_file_name);
-        textFileName.setVisibility(properties.isNeedFileName ? View.VISIBLE : View.GONE);
+        listView = findViewById(R.id.fileList);
+        select = findViewById(R.id.select);
+        textFileName = findViewById(R.id.file_name);
+        try {
+            textFileName.setVisibility(properties.isNeedFileName ? View.VISIBLE : View.GONE);
+            textFileName.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    updateSelect(MarkedItemList.getFileCount());
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
 
         updateSelect(MarkedItemList.getFileCount());
-        dname = (TextView) findViewById(R.id.dname);
-        title = (TextView) findViewById(R.id.title);
-        dir_path = (TextView) findViewById(R.id.dir_path);
-        Button cancel = (Button) findViewById(R.id.cancel);
+        dname = findViewById(R.id.dname);
+        title = findViewById(R.id.title);
+        dir_path = findViewById(R.id.dir_path);
+        Button cancel = findViewById(R.id.cancel);
         if (negativeBtnNameStr != null) {
             cancel.setText(negativeBtnNameStr);
         }
         select.setOnClickListener(view -> {
-            /*  Select Button is clicked. Get the array of all selected items
-             *  from MarkedItemList singleton.
-             */
             String paths[] = MarkedItemList.getSelectedPaths();
             String[] newPaths = new String[paths.length + 1];
             System.arraycopy(paths, 0, newPaths, 0, paths.length);
             newPaths[newPaths.length - 1] = textFileName.getText().toString();
-            //NullPointerException fixed in v1.0.2
             if (callbacks != null) {
                 callbacks.onSelectedFilePaths(properties.isNeedFileName ? newPaths : paths);
             }
@@ -133,55 +148,23 @@ public class FilePickerDialog extends Dialog implements AdapterView.OnItemClickL
         cancel.setOnClickListener(view -> cancel());
         mFileListAdapter = new FileListAdapter(internalList, context, properties);
         mFileListAdapter.setNotifyItemCheckedListener(() -> {
-            /*  Handler function, called when a checkbox is checked ie. a file is
-             *  selected.
-             */
             positiveBtnNameStr = positiveBtnNameStr == null ? context.getResources().getString(R.string.choose_button_label) : positiveBtnNameStr;
             updateSelect(MarkedItemList.getFileCount());
             if (properties.selection_mode == DialogConfigs.SINGLE_MODE) {
-                /*  If a single file has to be selected, clear the previously checked
-                 *  checkbox from the list.
-                 */
                 mFileListAdapter.notifyDataSetChanged();
             }
         });
         listView.setAdapter(mFileListAdapter);
-
-        //Title method added in version 1.0.5
         setTitle();
-
-        textFileName.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                updateSelect(MarkedItemList.getFileCount());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
     }
 
     private void updateSelect(int count) {
-        if (count == 0) {
+        if (count == 0)
             setSelect(false, count);
-        } else {
-            if (properties.isNeedFileName) {
-                if (!TextUtils.isEmpty(textFileName.getText().toString())) {
-                    setSelect(true, count);
-                } else {
-                    setSelect(false, count);
-                }
-            } else {
-                setSelect(true, count);
-            }
+        else {
+            if (properties.isNeedFileName)
+                setSelect(!TextUtils.isEmpty(textFileName.getText().toString()), count);
+            else setSelect(true, count);
         }
     }
 
@@ -191,9 +174,7 @@ public class FilePickerDialog extends Dialog implements AdapterView.OnItemClickL
             int color;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 color = context.getResources().getColor(R.color.colorAccent, context.getTheme());
-            } else {
-                color = context.getResources().getColor(R.color.colorAccent);
-            }
+            } else color = context.getResources().getColor(R.color.colorAccent);
             select.setTextColor(color);
             String button_label = positiveBtnNameStr + " (" + count + ") ";
             select.setText(button_label);
@@ -202,33 +183,21 @@ public class FilePickerDialog extends Dialog implements AdapterView.OnItemClickL
             int color;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 color = context.getResources().getColor(R.color.colorAccent, context.getTheme());
-            } else {
-                color = context.getResources().getColor(R.color.colorAccent);
-            }
+            } else color = context.getResources().getColor(R.color.colorAccent);
             select.setTextColor(Color.argb(128, Color.red(color), Color.green(color), Color.blue(color)));
             select.setText(positiveBtnNameStr);
         }
     }
 
     private void setTitle() {
-        if (title == null || dname == null) {
-            return;
-        }
+        if (title == null || dname == null) return;
         if (titleStr != null) {
-            if (title.getVisibility() == View.INVISIBLE) {
-                title.setVisibility(View.VISIBLE);
-            }
+            if (title.getVisibility() == View.INVISIBLE) title.setVisibility(View.VISIBLE);
             title.setText(titleStr);
-            if (dname.getVisibility() == View.VISIBLE) {
-                dname.setVisibility(View.INVISIBLE);
-            }
+            if (dname.getVisibility() == View.VISIBLE) dname.setVisibility(View.INVISIBLE);
         } else {
-            if (title.getVisibility() == View.VISIBLE) {
-                title.setVisibility(View.INVISIBLE);
-            }
-            if (dname.getVisibility() == View.INVISIBLE) {
-                dname.setVisibility(View.VISIBLE);
-            }
+            if (title.getVisibility() == View.VISIBLE) title.setVisibility(View.INVISIBLE);
+            if (dname.getVisibility() == View.INVISIBLE) dname.setVisibility(View.VISIBLE);
         }
     }
 
@@ -250,9 +219,7 @@ public class FilePickerDialog extends Dialog implements AdapterView.OnItemClickL
                 internalList.add(parent);
             } else if (properties.root.exists() && properties.root.isDirectory()) {
                 currLoc = new File(properties.root.getAbsolutePath());
-            } else {
-                currLoc = new File(properties.error_dir.getAbsolutePath());
-            }
+            } else currLoc = new File(properties.error_dir.getAbsolutePath());
             dname.setText(currLoc.getName());
             dir_path.setText(currLoc.getAbsolutePath());
             setTitle();
@@ -293,7 +260,7 @@ public class FilePickerDialog extends Dialog implements AdapterView.OnItemClickL
                     Toast.makeText(context, R.string.error_dir_access, Toast.LENGTH_SHORT).show();
                 }
             } else {
-                MaterialCheckbox fmark = (MaterialCheckbox) view.findViewById(R.id.file_mark);
+                MaterialCheckbox fmark = view.findViewById(R.id.file_mark);
                 fmark.performClick();
             }
         }
@@ -314,28 +281,19 @@ public class FilePickerDialog extends Dialog implements AdapterView.OnItemClickL
 
     @Override
     public void setTitle(CharSequence titleStr) {
-        if (titleStr != null) {
-            this.titleStr = titleStr.toString();
-        } else {
-            this.titleStr = null;
-        }
+        if (titleStr != null) this.titleStr = titleStr.toString();
+        else this.titleStr = null;
         setTitle();
     }
 
     public void setPositiveBtnName(CharSequence positiveBtnNameStr) {
-        if (positiveBtnNameStr != null) {
-            this.positiveBtnNameStr = positiveBtnNameStr.toString();
-        } else {
-            this.positiveBtnNameStr = null;
-        }
+        if (positiveBtnNameStr != null) this.positiveBtnNameStr = positiveBtnNameStr.toString();
+        else this.positiveBtnNameStr = null;
     }
 
     public void setNegativeBtnName(CharSequence negativeBtnNameStr) {
-        if (negativeBtnNameStr != null) {
-            this.negativeBtnNameStr = negativeBtnNameStr.toString();
-        } else {
-            this.negativeBtnNameStr = null;
-        }
+        if (negativeBtnNameStr != null) this.negativeBtnNameStr = negativeBtnNameStr.toString();
+        else this.negativeBtnNameStr = null;
     }
 
     public void markFiles(List<String> paths) {
