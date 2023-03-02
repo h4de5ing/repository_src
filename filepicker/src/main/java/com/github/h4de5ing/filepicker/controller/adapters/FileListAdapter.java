@@ -35,7 +35,6 @@ import com.github.h4de5ing.filepicker.model.DialogProperties;
 import com.github.h4de5ing.filepicker.model.FileListItem;
 import com.github.h4de5ing.filepicker.model.MarkedItemList;
 import com.github.h4de5ing.filepicker.widget.MaterialCheckbox;
-import com.github.h4de5ing.filepicker.widget.OnCheckedChangeListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -165,10 +164,10 @@ public class FileListAdapter extends BaseAdapter {
         MaterialCheckbox fmark;
 
         ViewHolder(View itemView) {
-            name = (TextView) itemView.findViewById(R.id.fname);
-            type = (TextView) itemView.findViewById(R.id.ftype);
-            type_icon = (ImageView) itemView.findViewById(R.id.image_type);
-            fmark = (MaterialCheckbox) itemView.findViewById(R.id.file_mark);
+            name = itemView.findViewById(R.id.fname);
+            type = itemView.findViewById(R.id.ftype);
+            type_icon = itemView.findViewById(R.id.image_type);
+            fmark = itemView.findViewById(R.id.file_mark);
         }
     }
 

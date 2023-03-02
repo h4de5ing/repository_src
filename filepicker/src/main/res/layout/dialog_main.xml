@@ -10,12 +10,14 @@
         android:id="@+id/header"
         layout="@layout/dialog_header" />
 
-    <include
+    <EditText
         android:id="@+id/file_name"
-        layout="@layout/dialog_file_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/header" />
+        android:layout_below="@+id/header"
+        android:hint="file name"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
     <include
         android:id="@+id/fileList"
