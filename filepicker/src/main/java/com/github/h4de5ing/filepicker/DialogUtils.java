@@ -1,6 +1,7 @@
 package com.github.h4de5ing.filepicker;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Environment;
 
 import com.github.h4de5ing.filepicker.controller.DialogSelectionListener;
@@ -12,7 +13,8 @@ import java.io.File;
 
 public class DialogUtils {
     public static void selectExternalCacheDir(Context context, String title, boolean needFileName, DialogSelectionListener dialogSelection) {
-        selectDir(context, title, context.getExternalCacheDir().getParent(), needFileName, dialogSelection);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO)
+            selectDir(context, title, context.getExternalCacheDir().getParent(), needFileName, dialogSelection);
     }
 
     public static void selectDir(Context context, String title, boolean needFileName, DialogSelectionListener dialogSelection) {
@@ -36,7 +38,9 @@ public class DialogUtils {
 
 
     public static void selectExternalCacheFile(Context context, String title, final DialogSelectionListener dialogSelection) {
-        String default_dir = context.getExternalCacheDir().getAbsolutePath();
+        String default_dir = "/sdcard/";
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.FROYO)
+            default_dir = context.getExternalCacheDir().getAbsolutePath();
         DialogProperties properties = new DialogProperties();
         properties.selection_mode = DialogConfigs.SINGLE_MODE;
         properties.selection_type = DialogConfigs.FILE_SELECT;

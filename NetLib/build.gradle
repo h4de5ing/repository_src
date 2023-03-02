@@ -34,29 +34,29 @@ dependencies {
     implementation "org.java-websocket:Java-WebSocket:1.5.3"
     implementation "com.squareup.okhttp3:okhttp:4.9.3"
 }
-//afterEvaluate {
-//    publishing {
-//        publications {
-//            def today = new Date().format('yyyyMMdd')
-//            release(MavenPublication) {
-//                from components.release
-//                groupId = 'com.github.h4de5ing.netlib'
-//                artifactId = 'netlib'
-//                version = "1.0-$today"
-//            }
-//            debug(MavenPublication) {
-//                from components.debug
-//                groupId = 'com.github.h4de5ing.netlib'
-//                artifactId = 'netlib'
-//                version = "1.0-$today"
-//            }
-//        }
-//        repositories {
-//            mavenLocal()
-//            maven {
-//                url uri('D://repository/repository/repository')
-//            }
-//        }
-//    }
-//}
+afterEvaluate {
+    publishing {
+        publications {
+            def today = new Date().format('yyyyMMdd')
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.h4de5ing.netlib'
+                artifactId = 'netlib'
+                version = "1.0-$today"
+            }
+            debug(MavenPublication) {
+                from components.debug
+                groupId = 'com.github.h4de5ing.netlib'
+                artifactId = 'netlib'
+                version = "1.0-$today"
+            }
+        }
+        repositories {
+            mavenLocal()
+            maven {
+                url uri('D://repository/repository/repository')
+            }
+        }
+    }
+}
 //gradlew publish
