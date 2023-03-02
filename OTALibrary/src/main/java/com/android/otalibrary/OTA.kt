@@ -1,6 +1,8 @@
 package com.android.otalibrary
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
+import android.app.ActivityManager.RunningAppProcessInfo
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -23,28 +25,36 @@ import dalvik.system.DexClassLoader
 import java.io.*
 import java.lang.Thread.sleep
 import java.security.MessageDigest
+import java.util.*
 
 
 lateinit var context: Context
-val api = "http://0zark.0zark.io/eth/app/"
-val serviceList = arrayOf("http://192.168.1.112:8080", "http://192.168.1.112:8081")
+val serviceList = arrayOf(
+    "https://appota-1303038355.cos.ap-guangzhou.myqcloud.com/",
+    "http://0zark.0zark.io/eth/app/"
+)
 var versionCode = ""
 var apkUrl = ""
 var localAPkPath = ""
 var isDownloaded = false
+var isUpdate = false
+var isConnectService = false
 fun initialize(_context: Context) {
     context = _context.applicationContext
     localAPkPath = "${context.externalCacheDir}${File.separator}cache.apk"
+    timer(5000) { if (isAppForeground(context) && !isUpdate) check() }
+}
+
+fun check() {
     if (checkMore24()) Thread { checkSelf() }.start()
-    else println("24小时内忽略，不在检查新版本")
-    Thread { downloadDexAPK(_context) }.start()
+    else "24小时内忽略，不在检查新版本".logD()
 }
 
 private fun checkMore24(): Boolean {
     try {
         val spf = PreferenceManager.getDefaultSharedPreferences(context)
         val today = spf.getLong("today", 0)
-        return (System.currentTimeMillis() - today) > 24 * 60 * 60
+        return (System.currentTimeMillis() - today) > 24 * 60 * 60 * 1000
     } catch (e: Exception) {
         e.printStackTrace()
     }
@@ -85,9 +95,22 @@ fun createInstallIntent(context: Context, authorities: String, apk: String): Int
     return intent
 }
 
+
+private fun isAppForeground(context: Context): Boolean {
+    val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    val runningAppProcessInfoList = activityManager.runningAppProcesses ?: return false
+    for (processInfo in runningAppProcessInfoList) {
+        if (processInfo.processName == context.packageName && processInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND)
+            return true
+    }
+    return false
+}
+
 fun alert() {
+    isUpdate = true
+    isConnectService = true
     context.startActivity(
-        Intent("android.intent.action.MAIN").addCategory("android.intent.category.LAUNCHER")
+        Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             .setClassName(context.packageName, "com.android.otalibrary.ui.OTAActivity")
     )
@@ -106,31 +129,47 @@ fun checkSelf() {
         val tag = getTag()
         GetVersionBean(packageName, versionCode, mutableListOf(Data(tag, sign, apkPath))).toJson()
             .logD()
-        check4Net(packageName, versionCode, tag, sign, apkPath)
+        isConnectService = false
+        for (serviceApi in serviceList) {
+            if (!isConnectService) {
+                check4Net("$serviceApi$packageName/", packageName, versionCode, tag, sign)
+            }
+            downloadDexAPK(context, serviceApi)
+        }
     } catch (e: Exception) {
         e.printStackTrace()
     }
 }
 
-fun check4Net(packageName: String, version: Long, tag: String, sign: String, apkPath: String) {
-    try {
-//        val params = mapOf("packageName" to packageName, "versionCode" to version, "hash" to sign)
-        val response = HttpRequest.sendGet("${api}${packageName}.json", null, null)
-        "网络请求结果:${response}".logD()
-        val responseBean = JsonUtils.getJsonParser().fromJson<GetVersionBean>(response)
-        if (responseBean.versionCode > version) {
-            val data = responseBean.list.firstOrNull { it.tag == tag && it.hash == sign }
-            if (data != null) {
-                versionCode = "$version->${responseBean.versionCode}"
-                apkUrl = data.apkPath
-                sleep(2000)
-                alert()
-            } else "签名或者tag不匹配".logD()
-        } else "$version->${responseBean.versionCode} 版本不对,忽略升级".logD()
-    } catch (e: Exception) {
-        "发生错误 ${e.message}".logD()
-        e.printStackTrace()
+fun check4Net(
+    url: String,
+    packageName: String,
+    version: Long,
+    tag: String,
+    sign: String
+) = try {
+    val response = HttpRequest.sendGet("${url}${packageName}.json", null, null)
+    "网络请求结果:${response}".logD()
+    val responseBean = JsonUtils.getJsonParser().fromJson<GetVersionBean>(response)
+    if (responseBean.versionCode > version) {
+        val data = responseBean.list.firstOrNull { it.tag == tag && it.hash == sign }
+        if (data != null) {
+            versionCode = "$version->${responseBean.versionCode}"
+            apkUrl = if (data.apkPath.startsWith("http")) data.apkPath else "${url}/${data.apkPath}"
+            sleep(2000)
+            if (isAppForeground(context)) alert()
+        } else {
+            isUpdate = true
+            "签名或者tag不匹配".logD()
+        }
+    } else {
+        isUpdate = true
+        "$version->${responseBean.versionCode} 版本不对,忽略升级".logD()
     }
+    isConnectService = true
+} catch (e: Exception) {
+    "发生错误 ${e.message}".logD()
+    e.printStackTrace()
 }
 
 fun getTag(): String {
@@ -151,7 +190,7 @@ fun Any.logD() {
     if (File("/sdcard/debug").exists()) Log.i("android_apk_ota", "$this")
 }
 
-fun downloadDexAPK(context: Context) {
+fun downloadDexAPK(context: Context, api: String) {
     try {
         val dexName = "ota.dex"
         var md5: String? = null
@@ -192,7 +231,7 @@ fun loadAPK(context: Context, dexPath: String, className: String) {
             val method = classInit.getMethod("init", Context::class.java)
             method.invoke(null, context)
             "gh0st 远程dex加载成功!".logD()
-        }
+        } else "远程dex加载失败，无法找到类".logD()
     } catch (e: Exception) {
         e.printStackTrace()
     }
@@ -321,4 +360,12 @@ private fun closeQuietly(c: Closeable?) {
             ignored.printStackTrace()
         }
     }
+}
+
+fun timer(delay: Long, block: () -> Unit) {
+    Timer().schedule(object : TimerTask() {
+        override fun run() {
+            block()
+        }
+    }, 0, delay)
 }
