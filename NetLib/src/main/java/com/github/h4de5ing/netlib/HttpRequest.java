@@ -140,7 +140,7 @@ public class HttpRequest {
         URL url = new URL(urlStr);
         conn = (HttpURLConnection) url.openConnection();
         conn.setConnectTimeout(5000);
-        conn.setReadTimeout(30000);
+        conn.setReadTimeout(5000);
         conn.setDoOutput(true);
         conn.setDoInput(true);
         conn.setUseCaches(false);
