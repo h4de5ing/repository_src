@@ -1,6 +1,7 @@
 package com.android.otalibrary.ui
 
-import android.content.*
+import android.annotation.SuppressLint
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.Gravity
@@ -16,6 +17,8 @@ import java.io.File
 
 class OTAActivity : AppCompatActivity() {
     private var spf: SharedPreferences? = null
+
+    @SuppressLint("PackageManagerGetSignatures")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_update)
@@ -29,12 +32,28 @@ class OTAActivity : AppCompatActivity() {
             finish()
         }
         val btnUpdate = findViewById<Button>(R.id.btn_update)
+        val tvTitle = findViewById<TextView>(R.id.tv_title)
+        tvTitle.text =
+            String.format(resources.getString(R.string.app_update_dialog_new), versionCode)
+        try {
+            if (File(localAPkPath).exists() && getAPKFilePackageName(localAPkPath) == packageName && getAPKFileVersionCode(
+                    localAPkPath
+                ) == targetVersion.toInt()
+            ) {
+                progressBar.text = getString(R.string.already_exist)
+                btnUpdate.text = getString(R.string.app_update_click_hint)
+                isDownloaded = true
+            }
+        } catch (e: Exception) {
+            "${e.printStackTrace()}".logD()
+        }
         btnUpdate.setOnClickListener {
             if (isDownloaded) {
                 installApp(localAPkPath)
                 runOnUiThread {
                     Toast.makeText(this, getString(R.string.install_now), Toast.LENGTH_LONG).show()
                 }
+                File(localAPkPath).delete()
                 finish()
             } else {
                 Thread {
@@ -59,6 +78,7 @@ class OTAActivity : AppCompatActivity() {
                                     isDownloaded = true
                                     runOnUiThread {
                                         btnUpdate.isEnabled = true
+                                        progressBar.text = getString(R.string.app_update_download_completed)
                                         btnUpdate.text = getString(R.string.app_update_click_hint)
                                     }
                                 }
@@ -78,10 +98,6 @@ class OTAActivity : AppCompatActivity() {
                 }.start()
             }
         }
-        val tvTitle = findViewById<TextView>(R.id.tv_title)
-        tvTitle.text = String.format(
-            resources.getString(R.string.app_update_dialog_new), versionCode
-        )
     }
 
     private fun setWindowSize() {

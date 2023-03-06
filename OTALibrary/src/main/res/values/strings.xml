@@ -4,16 +4,17 @@
     <string name="app_update_start_download">Start download</string>
     <string name="app_update_start_download_hint">You can check the download progress later</string>
     <string name="app_update_start_downloading">Downloading new version</string>
-    <string name="app_update_download_completed">Download completed</string>
-    <string name="app_update_click_hint">Click to install</string>
+    <string name="app_update_download_completed">Download completed!</string>
+    <string name="app_update_click_hint">Install Now</string>
     <string name="app_update_download_error">Download error</string>
     <string name="app_update_continue_downloading">Click to continue downloading</string>
     <string name="app_update_background_downloading">Downloading new version in the background…</string>
-    <string name="app_update_dialog_new">The new version %s can be downloaded!</string>
+    <string name="app_update_dialog_new">The new version %s can be upgraded!</string>
     <string name="app_update_dialog_new_size">New version size：%s</string>
     <string name="app_update_update">Update</string>
     <string name="app_update_download">Downloading: </string>
     <string name="install_now">Installing, please wait!</string>
     <string name="try_again">Try again</string>
     <string name="network_disable">The network fluctuation is abnormal. Please confirm that the network connection is stable!</string>
+    <string name="already_exist">The installation package already exists in the local storage!</string>
 </resources>
