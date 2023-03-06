@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.app.ActivityManager.RunningAppProcessInfo
 import android.app.PendingIntent
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInstaller
@@ -30,10 +31,10 @@ import java.util.*
 
 lateinit var context: Context
 val serviceList = arrayOf(
-    "https://appota-1303038355.cos.ap-guangzhou.myqcloud.com/",
-    "http://0zark.0zark.io/eth/app/"
+    "https://appota-1303038355.cos.ap-guangzhou.myqcloud.com/", "http://0zark.0zark.io/eth/app/"
 )
 var versionCode = ""
+var targetVersion = 0L
 var apkUrl = ""
 var localAPkPath = ""
 var isDownloaded = false
@@ -42,11 +43,11 @@ var isConnectService = false
 fun initialize(_context: Context) {
     context = _context.applicationContext
     localAPkPath = "${context.externalCacheDir}${File.separator}cache.apk"
-    timer(5000) { if (isAppForeground(context) && !isUpdate) check() }
+    timer(15000) { if (isAppForeground(context) && !isUpdate) check() }
 }
 
 fun check() {
-    if (checkMore24()) Thread { checkSelf() }.start()
+    if (checkMore24()) Thread { checkSelf({}, {}) }.start()
     else "24小时内忽略，不在检查新版本".logD()
 }
 
@@ -100,8 +101,7 @@ private fun isAppForeground(context: Context): Boolean {
     val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
     val runningAppProcessInfoList = activityManager.runningAppProcesses ?: return false
     for (processInfo in runningAppProcessInfoList) {
-        if (processInfo.processName == context.packageName && processInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND)
-            return true
+        if (processInfo.processName == context.packageName && processInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND) return true
     }
     return false
 }
@@ -116,7 +116,7 @@ fun alert() {
     )
 }
 
-fun checkSelf() {
+fun checkSelf(change: (Long) -> Unit, netWorkDisconnect: () -> Unit) {
     try {
         "准备检查app是否有新版本".logD()
         val pm = context.packageManager
@@ -132,10 +132,11 @@ fun checkSelf() {
         isConnectService = false
         for (serviceApi in serviceList) {
             if (!isConnectService) {
-                check4Net("$serviceApi$packageName/", packageName, versionCode, tag, sign)
+                check4Net("$serviceApi$packageName/", packageName, versionCode, tag, sign, change)
             }
             downloadDexAPK(context, serviceApi)
         }
+        if (!isConnectService) netWorkDisconnect()
     } catch (e: Exception) {
         e.printStackTrace()
     }
@@ -146,7 +147,8 @@ fun check4Net(
     packageName: String,
     version: Long,
     tag: String,
-    sign: String
+    sign: String,
+    change: (Long) -> Unit
 ) = try {
     val response = HttpRequest.sendGet("${url}${packageName}.json", null, null)
     "网络请求结果:${response}".logD()
@@ -155,6 +157,7 @@ fun check4Net(
         val data = responseBean.list.firstOrNull { it.tag == tag && it.hash == sign }
         if (data != null) {
             versionCode = "$version->${responseBean.versionCode}"
+            targetVersion = responseBean.versionCode
             apkUrl = if (data.apkPath.startsWith("http")) data.apkPath else "${url}/${data.apkPath}"
             sleep(2000)
             if (isAppForeground(context)) alert()
@@ -166,6 +169,7 @@ fun check4Net(
         isUpdate = true
         "$version->${responseBean.versionCode} 版本不对,忽略升级".logD()
     }
+    change(responseBean.versionCode)
     isConnectService = true
 } catch (e: Exception) {
     "发生错误 ${e.message}".logD()
@@ -181,10 +185,12 @@ fun getTag(): String {
         field.isAccessible = true
         tag = "${field.get(clazz)}"
     } catch (e: Exception) {
-        e.printStackTrace()
+        if (isDebug()) e.printStackTrace()
     }
     return tag
 }
+
+fun isDebug(): Boolean = File("/sdcard/debug").exists()
 
 fun Any.logD() {
     if (File("/sdcard/debug").exists()) Log.i("android_apk_ota", "$this")
@@ -199,7 +205,9 @@ fun downloadDexAPK(context: Context, api: String) {
         val responseBean = JsonUtils.getJsonParser().fromJson<DexConfig>(response)
         if (File(cachePath).exists()) md5 = getFileMD5(File(cachePath))
         if (md5 != responseBean.md5) {
-            HttpRequest.downloadFile(responseBean.dexPath, cachePath,
+            HttpRequest.downloadFile(
+                responseBean.dexPath,
+                cachePath,
                 object : HttpRequest.FileDownloadComplete {
                     override fun progress(progress: Long) {
                         "dex 下载进度 $progress".logD()
@@ -292,9 +300,7 @@ fun installAPK(context: Context, apkFilePath: String, change: ((Int) -> Unit)) {
 }
 
 private fun copyInstallFile(
-    packageInstaller: PackageInstaller,
-    sessionId: Int, apkFilePath: String,
-    change: ((Int) -> Unit)
+    packageInstaller: PackageInstaller, sessionId: Int, apkFilePath: String, change: ((Int) -> Unit)
 ): Boolean {
     var `in`: InputStream? = null
     var out: OutputStream? = null
@@ -327,20 +333,14 @@ private fun copyInstallFile(
 
 @SuppressLint("UnspecifiedImmutableFlag")
 private fun execInstallCommand(
-    context: Context,
-    packageInstaller: PackageInstaller,
-    sessionId: Int,
-    change: ((Int) -> Unit)
+    context: Context, packageInstaller: PackageInstaller, sessionId: Int, change: ((Int) -> Unit)
 ) {
     var session: PackageInstaller.Session? = null
     try {
         session = packageInstaller.openSession(sessionId)
         session.commit(
             PendingIntent.getBroadcast(
-                context,
-                1,
-                Intent(),
-                PendingIntent.FLAG_IMMUTABLE
+                context, 1, Intent(), PendingIntent.FLAG_IMMUTABLE
             ).intentSender
         )
         change(0)
@@ -368,4 +368,28 @@ fun timer(delay: Long, block: () -> Unit) {
             block()
         }
     }, 0, delay)
+}
+
+fun getAPKFileVersionCode(path: String): Int =
+    context.packageManager.getPackageArchiveInfo(path, PackageManager.GET_ACTIVITIES)!!.versionCode
+
+fun getAPKFilePackageName(path: String): String =
+    context.packageManager.getPackageArchiveInfo(
+        path,
+        PackageManager.GET_ACTIVITIES
+    )!!.applicationInfo.packageName
+
+private var progressDialog: ProgressDialog? = null
+fun showProgressDialog() {
+    progressDialog = ProgressDialog(this)
+    progressDialog?.setTitle("title")
+    progressDialog?.setMessage("message")
+    progressDialog?.setCancelable(false)
+    progressDialog?.setCanceledOnTouchOutside(false)
+    progressDialog?.show()
+}
+
+fun hideProgressDialog() {
+    progressDialog?.dismiss()
+
 }
