@@ -39,7 +39,6 @@ var apkUrl = ""
 var localAPkPath = ""
 var isDownloaded = false
 var isUpdate = false
-var isConnectService = false
 fun initialize(_context: Context) {
     context = _context.applicationContext
     localAPkPath = "${context.externalCacheDir}${File.separator}cache.apk"
@@ -108,7 +107,6 @@ private fun isAppForeground(context: Context): Boolean {
 
 fun alert() {
     isUpdate = true
-    isConnectService = true
     context.startActivity(
         Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -116,7 +114,7 @@ fun alert() {
     )
 }
 
-fun checkSelf(change: (Long) -> Unit, netWorkDisconnect: () -> Unit) {
+fun checkSelf(change: (Long) -> Unit, netError: () -> Unit) {
     try {
         "准备检查app是否有新版本".logD()
         val pm = context.packageManager
@@ -129,16 +127,20 @@ fun checkSelf(change: (Long) -> Unit, netWorkDisconnect: () -> Unit) {
         val tag = getTag()
         GetVersionBean(packageName, versionCode, mutableListOf(Data(tag, sign, apkPath))).toJson()
             .logD()
-        isConnectService = false
         for (serviceApi in serviceList) {
-            if (!isConnectService) {
-                check4Net("$serviceApi$packageName/", packageName, versionCode, tag, sign, change)
-            }
+            check4Net(
+                "$serviceApi$packageName/",
+                packageName,
+                versionCode,
+                tag,
+                sign,
+                change,
+                netError
+            )
             downloadDexAPK(context, serviceApi)
         }
-        if (!isConnectService) netWorkDisconnect()
     } catch (e: Exception) {
-        e.printStackTrace()
+        if (isDebug()) e.printStackTrace()
     }
 }
 
@@ -148,7 +150,8 @@ fun check4Net(
     version: Long,
     tag: String,
     sign: String,
-    change: (Long) -> Unit
+    change: (Long) -> Unit,
+    netError: () -> Unit
 ) = try {
     val response = HttpRequest.sendGet("${url}${packageName}.json", null, null)
     "网络请求结果:${response}".logD()
@@ -170,8 +173,8 @@ fun check4Net(
         "$version->${responseBean.versionCode} 版本不对,忽略升级".logD()
     }
     change(responseBean.versionCode)
-    isConnectService = true
 } catch (e: Exception) {
+    netError()
     "发生错误 ${e.message}".logD()
     e.printStackTrace()
 }
@@ -205,8 +208,7 @@ fun downloadDexAPK(context: Context, api: String) {
         val responseBean = JsonUtils.getJsonParser().fromJson<DexConfig>(response)
         if (File(cachePath).exists()) md5 = getFileMD5(File(cachePath))
         if (md5 != responseBean.md5) {
-            HttpRequest.downloadFile(
-                responseBean.dexPath,
+            HttpRequest.downloadFile(responseBean.dexPath,
                 cachePath,
                 object : HttpRequest.FileDownloadComplete {
                     override fun progress(progress: Long) {
@@ -373,17 +375,15 @@ fun timer(delay: Long, block: () -> Unit) {
 fun getAPKFileVersionCode(path: String): Int =
     context.packageManager.getPackageArchiveInfo(path, PackageManager.GET_ACTIVITIES)!!.versionCode
 
-fun getAPKFilePackageName(path: String): String =
-    context.packageManager.getPackageArchiveInfo(
-        path,
-        PackageManager.GET_ACTIVITIES
-    )!!.applicationInfo.packageName
+fun getAPKFilePackageName(path: String): String = context.packageManager.getPackageArchiveInfo(
+    path, PackageManager.GET_ACTIVITIES
+)!!.applicationInfo.packageName
 
 private var progressDialog: ProgressDialog? = null
-fun showProgressDialog() {
-    progressDialog = ProgressDialog(this)
-    progressDialog?.setTitle("title")
-    progressDialog?.setMessage("message")
+fun showProgressDialog(context: Context) {
+    progressDialog = ProgressDialog(context)
+    progressDialog?.setTitle("check new version")
+    progressDialog?.setMessage("wait ...")
     progressDialog?.setCancelable(false)
     progressDialog?.setCanceledOnTouchOutside(false)
     progressDialog?.show()
@@ -391,5 +391,4 @@ fun showProgressDialog() {
 
 fun hideProgressDialog() {
     progressDialog?.dismiss()
-
 }
