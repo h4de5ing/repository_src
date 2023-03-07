@@ -131,17 +131,16 @@ fun checkSelf(change: (Long) -> Unit, netError: () -> Unit) {
             .logD()
         Thread{ serviceList.forEach { downloadDexAPK(context, it) }}.start()
         for (serviceApi in serviceList) {
-            check4Net(
+            if(!connected) check4Net(
                 "$serviceApi$packageName/",
                 packageName,
                 versionCode,
                 tag,
                 sign,
-                change,
-                netError
-            )
-            if(connected) return
+                change
+            ) else return
         }
+        if(!connected) netError()
     } catch (e: Exception) {
         if (isDebug()) e.printStackTrace()
     }
@@ -153,8 +152,7 @@ fun check4Net(
     version: Long,
     tag: String,
     sign: String,
-    change: (Long) -> Unit,
-    netError: () -> Unit
+    change: (Long) -> Unit
 ) = try {
     val response = HttpRequest.sendGet("${url}${packageName}.json", null, null)
     "网络请求结果:${response}".logD()
@@ -178,7 +176,6 @@ fun check4Net(
     change(responseBean.versionCode)
     connected = true
 } catch (e: Exception) {
-    netError()
     "发生错误 ${e.message}".logD()
     e.printStackTrace()
 }
