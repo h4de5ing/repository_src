@@ -9,6 +9,7 @@
             android:exported="true"
             android:targetActivity=".ui.OTAActivity"
             android:taskAffinity="${applicationId}"
+            android:launchMode="singleTop"
             android:theme="@style/AppUpdate.UpdateDialog">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

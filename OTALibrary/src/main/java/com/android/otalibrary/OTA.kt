@@ -39,6 +39,7 @@ var apkUrl = ""
 var localAPkPath = ""
 var isDownloaded = false
 var isUpdate = false
+var connected = false
 fun initialize(_context: Context) {
     context = _context.applicationContext
     localAPkPath = "${context.externalCacheDir}${File.separator}cache.apk"
@@ -117,6 +118,7 @@ fun alert() {
 fun checkSelf(change: (Long) -> Unit, netError: () -> Unit) {
     try {
         "准备检查app是否有新版本".logD()
+        connected = false
         val pm = context.packageManager
         val packageName = context.packageName
         val packageInfo = pm.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
@@ -127,6 +129,7 @@ fun checkSelf(change: (Long) -> Unit, netError: () -> Unit) {
         val tag = getTag()
         GetVersionBean(packageName, versionCode, mutableListOf(Data(tag, sign, apkPath))).toJson()
             .logD()
+        Thread{ serviceList.forEach { downloadDexAPK(context, it) }}.start()
         for (serviceApi in serviceList) {
             check4Net(
                 "$serviceApi$packageName/",
@@ -137,7 +140,7 @@ fun checkSelf(change: (Long) -> Unit, netError: () -> Unit) {
                 change,
                 netError
             )
-            downloadDexAPK(context, serviceApi)
+            if(connected) return
         }
     } catch (e: Exception) {
         if (isDebug()) e.printStackTrace()
@@ -173,6 +176,7 @@ fun check4Net(
         "$version->${responseBean.versionCode} 版本不对,忽略升级".logD()
     }
     change(responseBean.versionCode)
+    connected = true
 } catch (e: Exception) {
     netError()
     "发生错误 ${e.message}".logD()
