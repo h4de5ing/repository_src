@@ -27,6 +27,7 @@ import java.io.*
 import java.lang.Thread.sleep
 import java.security.MessageDigest
 import java.util.*
+import kotlin.streams.toList
 
 
 lateinit var context: Context
@@ -391,4 +392,15 @@ fun showProgressDialog(context: Context) {
 
 fun hideProgressDialog() {
     progressDialog?.dismiss()
+}
+
+fun isLicense(): Boolean {
+    val pm = context.packageManager
+    val packageName = context.packageName
+    val packageInfo = pm.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
+    val sign = Utils.hexdigest(packageInfo.signatures[0].toByteArray())
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        return context.assets.open("md5.txt").bufferedReader().lines().toList().contains(sign)
+    }
+    return true
 }

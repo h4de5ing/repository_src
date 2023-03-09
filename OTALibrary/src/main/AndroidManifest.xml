@@ -24,7 +24,7 @@
             <meta-data
                 android:name="com.android.otalibrary.initializer.OTAInitializer"
                 android:value="androidx.startup" />
-            <!-- meta-data 节点增加 tools:node="remove"  取消初始化-->
+            <!-- meta-data 节点增加 tools:node= "remove"  取消初始化-->
         </provider>
     </application>
 </manifest>
