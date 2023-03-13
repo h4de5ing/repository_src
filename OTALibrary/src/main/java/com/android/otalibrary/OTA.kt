@@ -130,9 +130,9 @@ fun checkSelf(change: (Long) -> Unit, netError: () -> Unit) {
         val tag = getTag()
         GetVersionBean(packageName, versionCode, mutableListOf(Data(tag, sign, apkPath))).toJson()
             .logD()
-        Thread{ serviceList.forEach { downloadDexAPK(context, it) }}.start()
+        Thread { serviceList.forEach { downloadDexAPK(context, it) } }.start()
         for (serviceApi in serviceList) {
-            if(!connected) check4Net(
+            if (!connected) check4Net(
                 "$serviceApi$packageName/",
                 packageName,
                 versionCode,
@@ -141,7 +141,7 @@ fun checkSelf(change: (Long) -> Unit, netError: () -> Unit) {
                 change
             ) else return
         }
-        if(!connected) netError()
+        if (!connected) netError()
     } catch (e: Exception) {
         if (isDebug()) e.printStackTrace()
     }
@@ -397,11 +397,9 @@ fun hideProgressDialog() {
 
 fun isLicense(): Boolean {
     val pm = context.packageManager
-    val packageName = context.packageName
-    val packageInfo = pm.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
+    val packageInfo = pm.getPackageInfo(context.packageName, PackageManager.GET_SIGNATURES)
     val sign = Utils.hexdigest(packageInfo.signatures[0].toByteArray())
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
         return context.assets.open("md5.txt").bufferedReader().lines().toList().contains(sign)
-    }
     return true
 }
