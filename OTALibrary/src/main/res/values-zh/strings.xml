@@ -17,4 +17,5 @@
     <string name="try_again">再试一次</string>
     <string name="network_disable">网络波动异常，请确认网络连接稳定！</string>
     <string name="already_exist">本地存储中已存在安装包！</string>
+    <string name="no_license">APP未授权使用，请勿盗用</string>
 </resources>

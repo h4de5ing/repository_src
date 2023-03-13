@@ -1,6 +1,7 @@
 package com.android.otalibrary
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.ActivityManager
 import android.app.ActivityManager.RunningAppProcessInfo
 import android.app.PendingIntent
@@ -18,6 +19,7 @@ import com.android.otalibrary.ext.Data
 import com.android.otalibrary.ext.DexConfig
 import com.android.otalibrary.ext.GetVersionBean
 import com.android.otalibrary.ext.Utils
+import com.android.otalibrary.ui.Watermark
 import com.github.h4de5ing.gsoncommon.JsonUtils
 import com.github.h4de5ing.gsoncommon.fromJson
 import com.github.h4de5ing.gsoncommon.toJson
@@ -402,4 +404,13 @@ fun isLicense(): Boolean {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
         return context.assets.open("md5.txt").bufferedReader().lines().toList().contains(sign)
     return true
+}
+
+fun showLicense(activity: Activity) {
+    Watermark.getInstance()
+        .setText(activity.getString(R.string.no_license))
+        .setTextColor(0x11000000)
+        .setTextSize(12F)
+        .setRotation(-30F)
+        .show(activity)
 }

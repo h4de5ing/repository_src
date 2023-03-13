@@ -17,4 +17,5 @@
     <string name="try_again">Try again</string>
     <string name="network_disable">The network fluctuation is abnormal. Please confirm that the network connection is stable!</string>
     <string name="already_exist">The installation package already exists in the local storage!</string>
+    <string name="no_license">No license</string>
 </resources>
