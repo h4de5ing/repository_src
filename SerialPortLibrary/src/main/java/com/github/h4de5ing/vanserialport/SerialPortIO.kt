@@ -8,11 +8,16 @@ object SerialPortIO {
     private var serialPortManager: SerialPortManager? = null
     fun start(name: String, baud: Int, callback: (buffer: ByteArray, size: Int) -> Unit) {
         SerialPortManager.openLog()
+        SerialPortManager.setSplicing()
         SerialPortManager(File(name), baud, SerialPortManager.NORMAL)
             .setOnSerialPortDataListener { bytes: ByteArray ->
                 callback(bytes, bytes.size)
             }.also { serialPortManager = it }
     }
+
+    fun setNormal() = SerialPortManager.setNormal()
+
+    fun setSplicing() = SerialPortManager.setSplicing()
 
     fun write(data: ByteArray) = serialPortManager?.sendBytes(data)
     fun stop() {

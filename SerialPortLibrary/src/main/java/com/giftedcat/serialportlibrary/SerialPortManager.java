@@ -38,7 +38,7 @@ public class SerialPortManager extends SerialPort {
     /**
      * 数据读取方式
      */
-    private int readType;
+    private static int readType;
 
     /**
      * 打开串口
@@ -52,7 +52,7 @@ public class SerialPortManager extends SerialPort {
     }
 
     public SerialPortManager(File device, int baudRate, int readType) {
-        this.readType = readType;
+        readType = readType;
         logger.info("openSerialPort: " + String.format("打开串口 %s  波特率 %s", device.getPath(), baudRate));
         // 校验串口权限
 //        if (!device.canRead() || !device.canWrite()) {
@@ -81,6 +81,14 @@ public class SerialPortManager extends SerialPort {
             }
             e.printStackTrace();
         }
+    }
+
+    public static void setNormal() {
+        readType = SerialPortManager.NORMAL;
+    }
+
+    public static void setSplicing() {
+        readType = SerialPortManager.SPLICING;
     }
 
     /**
