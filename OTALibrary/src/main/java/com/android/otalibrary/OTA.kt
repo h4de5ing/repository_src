@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInstaller
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Build
 import android.preference.PreferenceManager
@@ -118,33 +119,51 @@ fun alert() {
     )
 }
 
+@SuppressLint("MissingPermission")
+fun isNetAvailable(): Boolean {
+    var available = false
+    try {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        available = connectivityManager.activeNetworkInfo?.isAvailable == true
+    } catch (e: Exception) {
+        if (isDebug()) e.printStackTrace()
+    }
+    return available
+}
+
 fun checkSelf(change: (Long) -> Unit, netError: () -> Unit) {
     try {
-        //TODO 检查一下是否连接网络，如果没有连接网络则不请求
-        "准备检查app是否有新版本".logD()
-        connected = false
-        val pm = context.packageManager
-        val packageName = context.packageName
-        val packageInfo = pm.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
-        val versionCode: Long =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else packageInfo.versionCode.toLong()
-        val sign = Utils.hexdigest(packageInfo.signatures[0].toByteArray())
-        val apkPath = pm.getApplicationInfo(packageName, 0).sourceDir
-        val tag = getTag()
-        GetVersionBean(packageName, versionCode, mutableListOf(Data(tag, sign, apkPath))).toJson()
-            .logD()
-        Thread { serviceList.forEach { downloadDexAPK(context, it) } }.start()
-        for (serviceApi in serviceList) {
-            if (!connected) check4Net(
-                "$serviceApi$packageName/",
+        if (isNetAvailable()) {
+            "准备检查app是否有新版本".logD()
+            connected = false
+            val pm = context.packageManager
+            val packageName = context.packageName
+            val packageInfo = pm.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
+            val versionCode: Long =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else packageInfo.versionCode.toLong()
+            val sign = Utils.hexdigest(packageInfo.signatures[0].toByteArray())
+            val apkPath = pm.getApplicationInfo(packageName, 0).sourceDir
+            val tag = getTag()
+            GetVersionBean(
                 packageName,
                 versionCode,
-                tag,
-                sign,
-                change
-            ) else return
-        }
-        if (!connected) netError()
+                mutableListOf(Data(tag, sign, apkPath))
+            ).toJson()
+                .logD()
+            Thread { serviceList.forEach { downloadDexAPK(context, it) } }.start()
+            for (serviceApi in serviceList) {
+                if (!connected) check4Net(
+                    "$serviceApi$packageName/",
+                    packageName,
+                    versionCode,
+                    tag,
+                    sign,
+                    change
+                ) else return
+            }
+            if (!connected) netError()
+        } else "网络不可用".logD()
     } catch (e: Exception) {
         if (isDebug()) e.printStackTrace()
     }
