@@ -4,43 +4,66 @@ import android.os.Build
 import java.io.*
 
 //用Kt处理文件相关
-fun String.append2File(filePath: String) {
-    var writer: BufferedWriter? = null
-    try {
-        writer = BufferedWriter(FileWriter(filePath, true))
+@Deprecated("使用File.write,此方法参数容易有歧义")
+fun String.append2File(filePath: String): Boolean {
+    return try {
+        val writer = BufferedWriter(FileWriter(filePath, true))
         writer.write(this)
+        writer.flush()
+        writer.close()
+        true
     } catch (_: Exception) {
-    } finally {
-        closeQuietly(writer)
+        false
     }
 }
 
-fun String.write2File(filePath: String) {
-    var writer: BufferedWriter? = null
-    try {
-        writer = BufferedWriter(FileWriter(filePath, false))
+@Deprecated("使用File.write,此方法参数容易有歧义")
+fun String.write2File(filePath: String): Boolean {
+    return try {
+        val writer = BufferedWriter(FileWriter(filePath, false))
         writer.write(this)
+        writer.flush()
+        writer.close()
+        true
     } catch (_: Exception) {
-    } finally {
-        close(writer)
+        false
     }
 }
 
-fun write2File(name: String, content: String, append: Boolean) {
-    var writer: BufferedWriter? = null
-    try {
-        writer = BufferedWriter(FileWriter(name, append))
+fun File.write(content: String, append: Boolean = true): Boolean {
+    return try {
+        val writer = BufferedWriter(FileWriter(this, append))
         writer.write(content)
+        writer.flush()
+        writer.close()
+        true
     } catch (_: Exception) {
-    } finally {
-        closeQuietly(writer)
+        false
     }
+}
+
+fun File.read(): String {
+    val fileContent = StringBuilder()
+    var reader: BufferedReader? = null
+    try {
+        val `is` = InputStreamReader(FileInputStream(this), "UTF-8")
+        reader = BufferedReader(`is`)
+        var line: String?
+        while (reader.readLine().also { line = it } != null) {
+            if (fileContent.toString() != "") fileContent.append("\r\n")
+            fileContent.append(line)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    } finally {
+        closeQuietly(reader)
+    }
+    return fileContent.toString()
 }
 
 fun closeQuietly(autoCloseable: AutoCloseable?) {
     try {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-            autoCloseable?.close()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) autoCloseable?.close()
     } catch (unused: Exception) {
         unused.printStackTrace()
     }
@@ -59,14 +82,14 @@ fun close(vararg closeables: Closeable?) {
 }
 
 //判断是否是SQLite数据库文件
-fun File.isValidDBFile() = try {
-    val reader = FileReader(this)
-    val buffer = CharArray(16)
-    reader.read(buffer, 0, 16)
-    val str = String(buffer)
-    reader.close()
-    str == "SQLite format 3\u0000"
-} catch (e: Exception) {
-    e.printStackTrace()
-    false
-}
+//fun File.isValidDBFile() = try {
+//    val reader = FileReader(this)
+//    val buffer = CharArray(16)
+//    reader.read(buffer, 0, 16)
+//    val str = String(buffer)
+//    reader.close()
+//    str == "SQLite format 3\u0000"
+//} catch (e: Exception) {
+//    e.printStackTrace()
+//    false
+//}

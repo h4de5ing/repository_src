@@ -10,6 +10,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://github.com/h4de5ing/repository/raw/master/repository' }
     }
 }
 rootProject.name = "repository"
@@ -18,10 +19,12 @@ rootProject.name = "repository"
 //include ':GsonCommon'
 //include ':NetLib'
 //include ':OKPermission'
-include ':filepicker'
+//include ':filepicker'
 //include ':zxing'
 //include ':SerialPortLib'
 //include ':SerialPortLibrary'
 //include ':VanSerialPort'
 //include ':License'
-include ':OTALibrary'
+//include ':OTALibrary'
+//include ':NetLib'
+//project(':NetLib').projectDir = new File("D:\\repository\\repository_src\\NetLib")

@@ -120,6 +120,7 @@ fun alert() {
 
 fun checkSelf(change: (Long) -> Unit, netError: () -> Unit) {
     try {
+        //TODO 检查一下是否连接网络，如果没有连接网络则不请求
         "准备检查app是否有新版本".logD()
         connected = false
         val pm = context.packageManager

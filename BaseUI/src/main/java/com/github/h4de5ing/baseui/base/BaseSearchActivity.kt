@@ -9,7 +9,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.MutableLiveData
 import com.github.h4de5ing.baseui.R
 import com.github.h4de5ing.baseui.base.adapter.CustomSuggestionsAdapter
-import kotlinx.android.synthetic.main.activity_tradeogre.*
 
 /**
  * 继承本类需要设置主题
@@ -67,8 +66,7 @@ abstract class BaseSearchActivity : BaseReturnActivity() {
 
     @SuppressLint("RestrictedApi")
     fun closeSearchView() {
-        if (toolbar != null)
-            toolbar.collapseActionView()
+//        if (toolbar != null) toolbar.collapseActionView()
     }
 
     override fun onBackPressed() {
