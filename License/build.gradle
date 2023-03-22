@@ -26,15 +26,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
+    kotlinOptions { jvmTarget = '1.8' }
 }
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.9.0'
-//    implementation 'androidx.appcompat:appcompat:1.5.1'
-//    implementation 'com.google.android.material:material:1.7.0'
 }
 afterEvaluate {
     publishing {
@@ -42,12 +38,6 @@ afterEvaluate {
             def today = new Date().format('yyyyMMdd')
             release(MavenPublication) {
                 from components.release
-                groupId = 'com.github.h4de5ing.license'
-                artifactId = 'license'
-                version = "1.0-$today"
-            }
-            debug(MavenPublication) {
-                from components.debug
                 groupId = 'com.github.h4de5ing.license'
                 artifactId = 'license'
                 version = "1.0-$today"

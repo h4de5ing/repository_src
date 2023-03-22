@@ -5,10 +5,11 @@ plugins {
 }
 
 android {
-    compileSdkVersion 33
+    compileSdk 33
+    namespace 'com.github.h4de5ing.base'
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 33
+        minSdk 16
+        targetSdk 33
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -24,9 +25,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
+    kotlinOptions { jvmTarget = '1.8' }
 }
 
 afterEvaluate {
@@ -35,12 +34,6 @@ afterEvaluate {
             def today = new Date().format('yyyyMMdd')
             release(MavenPublication) {
                 from components.release
-                groupId = 'com.github.h4de5ing.base'
-                artifactId = 'base'
-                version = "1.0-$today"
-            }
-            debug(MavenPublication) {
-                from components.debug
                 groupId = 'com.github.h4de5ing.base'
                 artifactId = 'base'
                 version = "1.0-$today"

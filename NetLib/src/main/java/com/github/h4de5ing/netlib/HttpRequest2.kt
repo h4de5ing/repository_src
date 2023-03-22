@@ -186,7 +186,7 @@ interface FileDownloadComplete {
     fun complete(file: File?)
 }
 
-fun downloadFile(downloadUrl: String, fileSavePath: String?, complete: FileDownloadComplete) {
+fun downloadFile(downloadUrl: String, fileSavePath: String, complete: FileDownloadComplete) {
     var downloadFile: File? = null
     var connection: HttpURLConnection? = null
     try {

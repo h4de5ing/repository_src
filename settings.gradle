@@ -14,17 +14,14 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "repository"
-//include ':Base'
+include ':Base'
 include ':BaseUI'
-//include ':GsonCommon'
-//include ':NetLib'
-//include ':OKPermission'
-//include ':filepicker'
-//include ':zxing'
-//include ':SerialPortLib'
-//include ':SerialPortLibrary'
-//include ':VanSerialPort'
-//include ':License'
+include ':GsonCommon'
+include ':NetLib'
+include ':filepicker'
+include ':zxing'
+include ':SerialPortLib'
+include ':SerialPortLibrary'
+include ':VanSerialPort'
+include ':License'
 include ':OTALibrary'
-//include ':NetLib'
-//project(':NetLib').projectDir = new File("D:\\repository\\repository_src\\NetLib")

@@ -4,12 +4,11 @@ plugins {
 }
 
 android {
-    compileSdkVersion 33
+    compileSdk 33
+    namespace 'com.google.zxing.client.android'
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 33
-        versionCode 1
-        versionName "1.0"
+        minSdk 21
+        targetSdk 33
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -30,29 +29,23 @@ android {
 dependencies {
     api 'com.google.zxing:core:3.5.1'
 }
-//afterEvaluate {
-//    publishing {
-//        publications {
-//            def today = new Date().format('yyyyMMdd')
-//            release(MavenPublication) {
-//                from components.release
-//                groupId = 'com.github.h4de5ing.zxing'
-//                artifactId = 'zxing'
-//                version = "1.0-$today"
-//            }
-//            debug(MavenPublication) {
-//                from components.debug
-//                groupId = 'com.github.h4de5ing.zxing'
-//                artifactId = 'zxing'
-//                version = "1.0-$today"
-//            }
-//        }
-//        repositories {
-//            mavenLocal()
-//            maven {
-//                url uri('D://repository/repository/repository')
-//            }
-//        }
-//    }
-//}
+afterEvaluate {
+    publishing {
+        publications {
+            def today = new Date().format('yyyyMMdd')
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.h4de5ing.zxing'
+                artifactId = 'zxing'
+                version = "1.0-$today"
+            }
+        }
+        repositories {
+            mavenLocal()
+            maven {
+                url uri('D://repository/repository/repository')
+            }
+        }
+    }
+}
 //gradlew publish

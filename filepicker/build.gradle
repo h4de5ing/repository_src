@@ -35,12 +35,6 @@ afterEvaluate {
                 artifactId = 'filepicker'
                 version = "1.0-$today"
             }
-            debug(MavenPublication) {
-                from components.debug
-                groupId = 'com.github.h4de5ing.filepicker'
-                artifactId = 'filepicker'
-                version = "1.0-$today"
-            }
         }
         repositories {
             mavenLocal()
