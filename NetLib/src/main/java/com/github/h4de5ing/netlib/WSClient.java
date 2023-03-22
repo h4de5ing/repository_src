@@ -16,9 +16,7 @@ public class WSClient {
     private long counter = 0;
 
     public static WSClient getInstance() {
-        if (wsClient == null) {
-            wsClient = new WSClient();
-        }
+        if (wsClient == null) wsClient = new WSClient();
         return wsClient;
     }
 

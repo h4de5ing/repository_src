@@ -44,34 +44,3 @@ fun String.httpGet(headerMap: HashMap<String, String>, block: ((String) -> Unit)
         System.err.println("未知错误：${e.message}")
     }
 }
-//
-//fun String.httpGet(param: Map<String, String>, block: ((String) -> Unit)) {
-//    val response = HttpRequest.sendGet(this, param, headerMap)
-//    block(response)
-//}
-//
-//fun String.httpPost(param: Map<String, String>, block: ((String) -> Unit)) {
-//    val response = HttpRequest.sendPost(this, param, headerMap)
-//    block(response)
-//}
-//
-//fun String.httpPostJson(
-//    jsonStr: String, block: ((String) -> Unit)
-//) {
-//    val response = HttpRequest.postJson(this, jsonStr, headerMap)
-//    block(response)
-//}
-//
-//fun String.httpPostLongTimeOut(param: Map<String, String>, block: ((String) -> Unit)) {
-//    val response = HttpRequest.sendPost(this, param, headerMap)
-//    block(response)
-//}
-//
-//fun String.uploadFile(
-//    fileMap: Map<String, File>,
-//    param: Map<String, String>,
-//    block: ((String) -> Unit)
-//) {
-//    val response = HttpRequest.uploadFile(this, fileMap, param, headerMap)
-//    block(response)
-//}
