@@ -26,20 +26,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-/**
- * Created by luowei on 2017/9/14.
- * https://github.com/luv135/SerialPortLib
- */
 public class SerialPort {
-    private static final String TAG = "SerialPort";
     private FileDescriptor mFd;
     private FileInputStream mFileInputStream;
     private FileOutputStream mFileOutputStream;
 
-    public SerialPort(File device, int baudrate, int flags) throws SecurityException, IOException {
-        mFd = open(device.getAbsolutePath(), baudrate, flags);
+    public SerialPort(File device, int baudRate, int flags) throws SecurityException, IOException {
+        mFd = open(device.getAbsolutePath(), baudRate, flags);
         if (mFd == null) {
-            Log.e(TAG, "native open returns null");
+            Log.e("SerialPort", "native open returns null");
             throw new IOException();
         }
         mFileInputStream = new FileInputStream(mFd);
@@ -54,8 +49,7 @@ public class SerialPort {
         return mFileOutputStream;
     }
 
-    // JNI
-    private native static FileDescriptor open(String path, int baudrate, int flags);
+    private native static FileDescriptor open(String path, int baudRate, int flags);
 
     public native void close();
 
