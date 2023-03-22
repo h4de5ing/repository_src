@@ -27,11 +27,12 @@ public class HttpRequest {
     public static String sendGet(String url, Map<String, Object> params, Map<String, String> header) throws Exception {
         StringBuilder result = new StringBuilder();
         BufferedReader in;
-        String param = "";
+        StringBuilder param = new StringBuilder();
         if (params != null && params.size() > 0) {
-            param = param + "?";
-            for (String key : params.keySet()) param = param + key + "=" + params.get(key) + "&";
-            param = param.substring(0, param.length() - 1);
+            param.append("?");
+            for (String key : params.keySet())
+                param.append(key).append("=").append(params.get(key)).append("&");
+            param = new StringBuilder(param.substring(0, param.length() - 1));
         }
         URL realUrl = new URL(url + param);
         HttpURLConnection conn = (HttpURLConnection) realUrl.openConnection();

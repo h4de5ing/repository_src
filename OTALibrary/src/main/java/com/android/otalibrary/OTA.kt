@@ -46,7 +46,7 @@ var isUpdate = false
 var connected = false
 fun initialize(_context: Context) {
     context = _context.applicationContext
-    localAPkPath = "${context.externalCacheDir}${File.separator}cache.apk"
+    localAPkPath = "${context.cacheDir}${File.separator}cache.apk"
     timer(15000) { if (isAppForeground(context) && !isUpdate) check() }
 }
 

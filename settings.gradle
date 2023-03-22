@@ -15,7 +15,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "repository"
 //include ':Base'
-//include ':BaseUI'
+include ':BaseUI'
 //include ':GsonCommon'
 //include ':NetLib'
 //include ':OKPermission'
@@ -25,6 +25,6 @@ rootProject.name = "repository"
 //include ':SerialPortLibrary'
 //include ':VanSerialPort'
 //include ':License'
-//include ':OTALibrary'
+include ':OTALibrary'
 //include ':NetLib'
 //project(':NetLib').projectDir = new File("D:\\repository\\repository_src\\NetLib")

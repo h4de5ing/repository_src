@@ -60,6 +60,7 @@ fun File.read(): String {
     }
     return fileContent.toString()
 }
+//BufferedInputStream(FileInputStream("/sdcard/data.txt")).bufferedReader().readLines()
 
 fun closeQuietly(autoCloseable: AutoCloseable?) {
     try {

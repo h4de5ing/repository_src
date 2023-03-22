@@ -14,7 +14,6 @@ import androidx.appcompat.widget.AppCompatSpinner
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.chip.Chip
 import com.google.android.material.switchmaterial.SwitchMaterial
-import com.google.android.material.textfield.TextInputEditText
 
 //常见view扩展封装
 fun AppCompatSpinner.selected(selected: ((Int) -> Unit)) {
@@ -69,16 +68,18 @@ fun RadioGroup.checkedChange(checked: ((Int) -> Unit)) {
     }
 }
 
-fun TextInputEditText.textChanged(change: ((CharSequence) -> Unit)) {
-    this.addTextChangedListener(object : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+class EditTextWatcher(private val change: (String) -> Unit) : TextWatcher {
+    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
 
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) =
-            change.invoke(s)
+    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
 
-        override fun afterTextChanged(s: Editable?) = Unit
-    })
+    override fun afterTextChanged(s: Editable?) {
+        change.invoke(s.toString())
+    }
 }
+
+fun TextView.textChanged(change: ((String) -> Unit)) =
+    addTextChangedListener(EditTextWatcher(change))
 
 fun MaterialCheckBox.checkedChange(change: ((Boolean) -> Unit)) {
     this.setOnCheckedChangeListener { _, isChecked ->
