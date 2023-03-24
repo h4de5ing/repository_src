@@ -66,9 +66,12 @@ private fun checkMore24(): Boolean {
     return false
 }
 
-fun installApp(path: String) {
+fun installApp(path: String, change: ((Int) -> Unit)) {
     "开始安装APK:${path}".logD()
-    installAPK(context, path) {}
+    installAPK(context, path) {
+        "静默安装结果:${it}".logD()
+        change(it)
+    }
 }
 
 //跳转到activity安装
@@ -306,6 +309,11 @@ fun bytesToHexString(src: ByteArray?): String? {
 
 /**
  * 静默安装apk
+ * -3 执行安装命令IO异常
+ * -2 拷贝文件IO异常
+ * -1 安装异常
+ * 0 安装成功
+ *
  */
 fun installAPK(context: Context, apkFilePath: String, change: ((Int) -> Unit)) {
     try {

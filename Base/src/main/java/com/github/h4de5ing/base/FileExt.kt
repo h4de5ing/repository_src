@@ -30,9 +30,21 @@ fun String.write2File(filePath: String): Boolean {
     }
 }
 
-fun File.write(content: String, append: Boolean = true): Boolean {
+fun File.append(content: String): Boolean {
     return try {
-        val writer = BufferedWriter(FileWriter(this, append))
+        val writer = BufferedWriter(FileWriter(this, true))
+        writer.write(content)
+        writer.flush()
+        writer.close()
+        true
+    } catch (_: Exception) {
+        false
+    }
+}
+
+fun File.write(content: String): Boolean {
+    return try {
+        val writer = BufferedWriter(FileWriter(this, false))
         writer.write(content)
         writer.flush()
         writer.close()

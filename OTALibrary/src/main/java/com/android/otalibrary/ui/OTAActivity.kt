@@ -49,7 +49,7 @@ class OTAActivity : AppCompatActivity() {
         }
         btnUpdate.setOnClickListener {
             if (isDownloaded) {
-                installApp(localAPkPath)
+                installApp(localAPkPath){}
                 runOnUiThread {
                     Toast.makeText(this, getString(R.string.install_now), Toast.LENGTH_LONG).show()
                 }
