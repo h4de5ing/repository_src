@@ -47,7 +47,7 @@ var connected = false
 fun initialize(_context: Context) {
     context = _context.applicationContext
     localAPkPath = "${context.cacheDir}${File.separator}cache.apk"
-    timer(15000) { if (isAppForeground(context) && !isUpdate) check() }
+    timer(15000) { if (isAppForeground(context) && !isUpdate && isAdmin(context)) check() }
 }
 
 fun check() {
@@ -441,4 +441,10 @@ fun showLicense(activity: Activity) {
         .setTextSize(12F)
         .setRotation(-30F)
         .show(activity)
+}
+
+fun isAdmin(context: Context): Boolean {
+    return if (context.packageName in listOf("com.android.kiosk", "com.android.systemfunction"))
+        PreferenceManager.getDefaultSharedPreferences(context).getBoolean("isAdmin", false)
+    else true
 }
