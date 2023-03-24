@@ -13,12 +13,12 @@ fun String.print() {
 }
 
 const val userAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)"
-fun get(url: String, params: Map<String, Any>, header: Map<String, String>): String {
+fun get(url: String, params: Map<String, Any>?, header: Map<String, String>?): String {
     val result = StringBuilder()
     try {
         val reader: BufferedReader
         var paramStr = StringBuilder()
-        if (params.isNotEmpty()) {
+        params?.apply {
             paramStr.append("?")
             for (key in params.keys)
                 paramStr.append(key)
@@ -32,8 +32,7 @@ fun get(url: String, params: Map<String, Any>, header: Map<String, String>): Str
         conn.setRequestProperty("accept", "*/*")
         conn.setRequestProperty("connection", "Keep-Alive")
         conn.setRequestProperty("user-agent", userAgent)
-        if (header.isNotEmpty()) for (key in header.keys)
-            conn.setRequestProperty(key, header[key])
+        header?.apply { for (key in this.keys) conn.setRequestProperty(key, this[key]) }
         val map = conn.headerFields
         url.print()
         for (key in map.keys) "${key}->${map[key]}".print()
@@ -51,19 +50,20 @@ fun get(url: String, params: Map<String, Any>, header: Map<String, String>): Str
     return result.toString()
 }
 
-fun post(url: String, params: Map<String, Any>, header: Map<String, String>): String {
+fun post(url: String, params: Map<String, Any>?, header: Map<String, String>?): String {
     val result = StringBuilder()
     val out: PrintWriter
     val reader: BufferedReader
     val paramStr = StringBuilder()
-    if (params.isNotEmpty())
-        for (key in params.keys) paramStr.append(key).append("=").append(params[key]).append("&")
+    params?.apply {
+        for (key in this.keys) paramStr.append(key).append("=").append(this[key]).append("&")
+    }
     val realUrl = URL(url)
     val conn = realUrl.openConnection()
     conn.setRequestProperty("accept", "*/*")
     conn.setRequestProperty("connection", "Keep-Alive")
     conn.setRequestProperty("user-agent", userAgent)
-    if (header.isNotEmpty()) for (key in header.keys) conn.setRequestProperty(key, header[key])
+    header?.apply { for (key in this.keys) conn.setRequestProperty(key, this[key]) }
     conn.doOutput = true
     conn.doInput = true
     out = PrintWriter(conn.getOutputStream())
@@ -82,7 +82,7 @@ fun post(url: String, params: Map<String, Any>, header: Map<String, String>): St
 }
 
 @Throws(Exception::class)
-fun post(url: String, json: String, header: Map<String?, String?>?): String? {
+fun post(url: String, json: String, header: Map<String, String>?): String? {
     val result = StringBuilder()
     val realUrl = URL(url)
     val conn = realUrl.openConnection() as HttpURLConnection
@@ -91,8 +91,7 @@ fun post(url: String, json: String, header: Map<String?, String?>?): String? {
     conn.setRequestProperty("user-agent", userAgent)
     conn.setRequestProperty("Content-Length", json.toByteArray().size.toString())
     conn.setRequestProperty("Content-type", "application/json")
-    if (header != null && header.isNotEmpty())
-        for (key in header.keys) conn.setRequestProperty(key, header[key])
+    header?.apply { for (key in this.keys) conn.setRequestProperty(key, this[key]) }
     conn.doOutput = true
     conn.doInput = true
     val out = conn.outputStream
@@ -136,8 +135,7 @@ fun uploadFile(
     conn.setRequestProperty("Connection", "Keep-Alive")
     conn.setRequestProperty("User-Agent", userAgent)
     conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=$boundary")
-    if (header != null && header.isNotEmpty()) for (key in header.keys)
-        conn.setRequestProperty(key, header[key])
+    header?.apply { for (key in this.keys) conn.setRequestProperty(key, this[key]) }
     val out: OutputStream = DataOutputStream(conn.outputStream)
     val strBuf0 = StringBuilder()
     params?.entries?.forEach {
