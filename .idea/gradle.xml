@@ -11,7 +11,9 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/Base" />
+            <option value="$PROJECT_DIR$/OTALibrary" />
+            <option value="$PROJECT_DIR$/filepicker" />
+            <option value="$PROJECT_DIR$/zxing" />
           </set>
         </option>
       </GradleProjectSettings>

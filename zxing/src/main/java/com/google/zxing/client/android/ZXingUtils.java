@@ -8,6 +8,7 @@ import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Hashtable;
 
 public class ZXingUtils {
@@ -15,8 +16,9 @@ public class ZXingUtils {
 
     public static Bitmap createQRCode(String str, int matrixWidth, int matrixHeight) throws WriterException {
         Hashtable<EncodeHintType, String> hint = new Hashtable<>();
-        hint.put(EncodeHintType.CHARACTER_SET, "utf-8");
-        BitMatrix matrix = new MultiFormatWriter().encode(str, BarcodeFormat.QR_CODE, matrixWidth, matrixHeight);
+        hint.put(EncodeHintType.CHARACTER_SET, StandardCharsets.UTF_8.name());
+        String newString = new String(str.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
+        BitMatrix matrix = new MultiFormatWriter().encode(newString, BarcodeFormat.QR_CODE, matrixWidth, matrixHeight);
         int width = matrix.getWidth();
         int height = matrix.getHeight();
         int[] pixels = new int[width * height];
