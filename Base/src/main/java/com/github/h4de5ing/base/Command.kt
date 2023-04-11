@@ -24,7 +24,56 @@ class CommandResult {
     }
 }
 
-fun exec(command: String): CommandResult = exec(arrayOf(command))
+fun exec(command: String): CommandResult {
+    val commandResult = CommandResult()
+    var process: Process? = null
+    var os: DataOutputStream? = null
+    var successResult: BufferedReader? = null
+    var errorResult: BufferedReader? = null
+    val successMsg: StringBuilder
+    val errorMsg: StringBuilder
+    try {
+        process =
+            if (command.contains("|")) Runtime.getRuntime().exec(arrayOf(COMMAND_SH, "-c", command))
+            else Runtime.getRuntime().exec(COMMAND_SH)
+        os = DataOutputStream(process.outputStream)
+        os.writeBytes(COMMAND_EXIT)
+        os.flush()
+        commandResult.result = process.waitFor()
+        successMsg = StringBuilder()
+        errorMsg = StringBuilder()
+        successResult = BufferedReader(InputStreamReader(process.inputStream))
+        errorResult = BufferedReader(InputStreamReader(process.errorStream))
+        var s: String?
+        while (successResult.readLine().also { s = it } != null) successMsg.append(s).append("\n")
+        while (errorResult.readLine().also { s = it } != null) errorMsg.append(s).append("\n")
+        commandResult.successMsg = successMsg.toString()
+        commandResult.errorMsg = errorMsg.toString()
+    } catch (e: Exception) {
+        val errMsg = e.message
+        if (errMsg != null) {
+            Log.e(TAG, errMsg)
+        } else {
+            e.printStackTrace()
+        }
+    } finally {
+        try {
+            os?.close()
+            successResult?.close()
+            errorResult?.close()
+        } catch (e: IOException) {
+            val errMsg = e.message
+            if (errMsg != null) {
+                Log.e(TAG, errMsg)
+            } else {
+                e.printStackTrace()
+            }
+        }
+        process?.destroy()
+    }
+    return commandResult
+}
+
 fun exec(commands: Array<String>?): CommandResult {
     val commandResult = CommandResult()
     if (commands == null || commands.isEmpty()) return commandResult

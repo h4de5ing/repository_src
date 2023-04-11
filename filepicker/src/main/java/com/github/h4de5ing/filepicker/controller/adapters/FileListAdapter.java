@@ -132,27 +132,18 @@ public class FileListAdapter extends BaseAdapter {
             holder.type.setText(context.getString(R.string.last_edit) + sdate.format(date) + ", " + stime.format(date));
         }
         if (holder.fmark.getVisibility() == View.VISIBLE) {
-            if (i == 0 && item.getFilename().startsWith(context.getString(R.string.label_parent_dir))) {
+            if (i == 0 && item.getFilename().startsWith(context.getString(R.string.label_parent_dir)))
                 holder.fmark.setVisibility(View.INVISIBLE);
-            }
-            if (MarkedItemList.hasItem(item.getLocation())) {
-                holder.fmark.setChecked(true);
-            } else {
-                holder.fmark.setChecked(false);
-            }
+            holder.fmark.setChecked(MarkedItemList.hasItem(item.getLocation()));
         }
 
         holder.fmark.setOnCheckedChangedListener((checkbox, isChecked) -> {
             item.setMarked(isChecked);
             if (item.isMarked()) {
-                if (properties.selection_mode == DialogConfigs.MULTI_MODE) {
+                if (properties.selection_mode == DialogConfigs.MULTI_MODE)
                     MarkedItemList.addSelectedItem(item);
-                } else {
-                    MarkedItemList.addSingleFile(item);
-                }
-            } else {
-                MarkedItemList.removeSelectedItem(item.getLocation());
-            }
+                else MarkedItemList.addSingleFile(item);
+            } else MarkedItemList.removeSelectedItem(item.getLocation());
             notifyItemChecked.notifyCheckBoxIsClicked();
         });
         return view;

@@ -42,6 +42,7 @@ fun File.append(content: String): Boolean {
     }
 }
 
+@Deprecated("有bug，写中文字符串会乱码,用kotlin writeText方法替代")
 fun File.write(content: String): Boolean {
     return try {
         val writer = BufferedWriter(FileWriter(this, false))
@@ -62,7 +63,7 @@ fun File.read(): String {
         reader = BufferedReader(`is`)
         var line: String?
         while (reader.readLine().also { line = it } != null) {
-            if (fileContent.toString() != "") fileContent.append("\r\n")
+            if (fileContent.toString() != "") fileContent.append("\n")
             fileContent.append(line)
         }
     } catch (e: Exception) {
