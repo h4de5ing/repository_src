@@ -49,9 +49,19 @@ class OTAActivity : AppCompatActivity() {
         }
         btnUpdate.setOnClickListener {
             if (isDownloaded) {
-                installApp(localAPkPath){}
-                runOnUiThread {
-                    Toast.makeText(this, getString(R.string.install_now), Toast.LENGTH_LONG).show()
+                installApp(localAPkPath) {
+                    runOnUiThread {
+                        if (it == 0) Toast.makeText(
+                            this,
+                            getString(R.string.install_success),
+                            Toast.LENGTH_LONG
+                        ).show()
+                        else Toast.makeText(
+                            this,
+                            getString(R.string.install_fail),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
                 File(localAPkPath).delete()
                 finish()
@@ -78,7 +88,8 @@ class OTAActivity : AppCompatActivity() {
                                     isDownloaded = true
                                     runOnUiThread {
                                         btnUpdate.isEnabled = true
-                                        progressBar.text = getString(R.string.app_update_download_completed)
+                                        progressBar.text =
+                                            getString(R.string.app_update_download_completed)
                                         btnUpdate.text = getString(R.string.app_update_click_hint)
                                     }
                                 }

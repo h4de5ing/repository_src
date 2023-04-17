@@ -166,7 +166,10 @@ fun checkSelf(change: (Long) -> Unit, netError: () -> Unit) {
                 ) else return
             }
             if (!connected) netError()
-        } else "网络不可用".logD()
+        } else {
+            netError()
+            "网络不可用".logD()
+        }
     } catch (e: Exception) {
         if (isDebug()) e.printStackTrace()
     }
