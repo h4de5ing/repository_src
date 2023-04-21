@@ -47,7 +47,8 @@ var connected = false
 fun initialize(_context: Context) {
     context = _context.applicationContext
     localAPkPath = "${context.cacheDir}${File.separator}cache.apk"
-    timer(15000) { if (isAppForeground(context) && !isUpdate && isAdmin(context)) check() }
+//    屏蔽自动弹出更新提示功能
+//    timer(15000) { if (isAppForeground(context) && !isUpdate && isAdmin(context)) check() }
 }
 
 fun check() {
