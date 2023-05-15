@@ -7,7 +7,9 @@ import android.preference.PreferenceManager
 import android.view.Gravity
 import android.view.WindowManager
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -29,7 +31,14 @@ class OTAActivity : AppCompatActivity() {
         val ibClose = findViewById<ImageButton>(R.id.ib_close)
         ibClose.setOnClickListener {
             spf?.edit()?.putLong("today", System.currentTimeMillis())?.apply()
+            isUpdate = false
             finish()
+        }
+        val checkBox = findViewById<CheckBox>(R.id.check_box)
+        findViewById<LinearLayout>(R.id.ignore_check_box).setOnClickListener {
+            checkBox.isChecked = !checkBox.isChecked
+            spf?.edit()?.putBoolean("ignore", checkBox.isChecked)?.apply()
+            spf?.edit()?.putLong("versionCode", targetVersion)?.apply()
         }
         val btnUpdate = findViewById<Button>(R.id.btn_update)
         val tvTitle = findViewById<TextView>(R.id.tv_title)
