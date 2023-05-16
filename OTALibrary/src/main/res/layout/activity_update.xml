@@ -59,12 +59,37 @@
                 tools:text="描述信息\n1.增加了新功能\n2.修复了bug\n3.提升了性能" />
         </ScrollView>
 
+        <LinearLayout
+            android:id="@+id/ignore_check_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="11dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/check_box"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@android:color/black"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:text="@string/not_show"
+                android:textColor="@android:color/black"
+                tools:text="此版本不在提示！" />
+
+        </LinearLayout>
+
+
         <Button
             android:id="@+id/btn_update"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="18dp"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="16dp"
             android:background="@drawable/button_effect"

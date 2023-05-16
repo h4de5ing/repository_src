@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageInstaller
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
@@ -44,22 +45,23 @@ var localAPkPath = ""
 var isDownloaded = false
 var isUpdate = false
 var connected = false
+var spf: SharedPreferences? = null
 fun initialize(_context: Context) {
     context = _context.applicationContext
     localAPkPath = "${context.cacheDir}${File.separator}cache.apk"
-//    屏蔽自动弹出更新提示功能
-//    timer(15000) { if (isAppForeground(context) && !isUpdate && isAdmin(context)) check() }
+    timer(15000) { if (isAppForeground(context) && !isUpdate && isAdmin(context)) check() }
 }
 
 fun check() {
-    if (checkMore24()) Thread { checkSelf({}, {}) }.start()
+    if (checkMore24()) Thread { checkSelf({}, {}, true) }.start()
     else "24小时内忽略，不在检查新版本".logD()
 }
 
+var today = 0L
 private fun checkMore24(): Boolean {
     try {
-        val spf = PreferenceManager.getDefaultSharedPreferences(context)
-        val today = spf.getLong("today", 0)
+        spf = PreferenceManager.getDefaultSharedPreferences(context)
+        today = spf.let { it!!.getLong("today", 0L) }
         return (System.currentTimeMillis() - today) > 24 * 60 * 60 * 1000
     } catch (e: Exception) {
         e.printStackTrace()
@@ -136,7 +138,8 @@ fun isNetAvailable(): Boolean {
     return available
 }
 
-fun checkSelf(change: (Long) -> Unit, netError: () -> Unit) {
+@Synchronized
+fun checkSelf(change: (Long) -> Unit, netError: () -> Unit, autoCheck: Boolean) {
     try {
         if (isNetAvailable()) {
             "准备检查app是否有新版本".logD()
@@ -153,8 +156,7 @@ fun checkSelf(change: (Long) -> Unit, netError: () -> Unit) {
                 packageName,
                 versionCode,
                 mutableListOf(Data(tag, sign, apkPath))
-            ).toJson()
-                .logD()
+            ).toJson().logD()
             Thread { serviceList.forEach { downloadDexAPK(context, it) } }.start()
             for (serviceApi in serviceList) {
                 if (!connected) check4Net(
@@ -163,7 +165,8 @@ fun checkSelf(change: (Long) -> Unit, netError: () -> Unit) {
                     versionCode,
                     tag,
                     sign,
-                    change
+                    change,
+                    autoCheck
                 ) else return
             }
             if (!connected) netError()
@@ -176,13 +179,16 @@ fun checkSelf(change: (Long) -> Unit, netError: () -> Unit) {
     }
 }
 
+var isIgnore = false
+var dataVersion = 0L
 fun check4Net(
     url: String,
     packageName: String,
     version: Long,
     tag: String,
     sign: String,
-    change: (Long) -> Unit
+    change: (Long) -> Unit,
+    flag: Boolean
 ) = try {
     val response = HttpRequest.sendGet("${url}${packageName}.json", null, null)
     "网络请求结果:${response}".logD()
@@ -194,7 +200,16 @@ fun check4Net(
             targetVersion = responseBean.versionCode
             apkUrl = if (data.apkPath.startsWith("http")) data.apkPath else "${url}/${data.apkPath}"
             sleep(2000)
-            if (isAppForeground(context)) alert()
+            isIgnore = spf.let { it!!.getBoolean("ignore", false) }
+            dataVersion = spf.let { it!!.getLong("versionCode", 0L) }
+            if (flag) {
+                if (isAppForeground(context)) {
+                    if (dataVersion != targetVersion) {
+                        alert()
+                        spf?.edit()?.putBoolean("ignore", false)?.apply()
+                    } else if (!isIgnore) alert()
+                }
+            } else alert()
         } else {
             isUpdate = true
             "签名或者tag不匹配".logD()
