@@ -61,7 +61,7 @@ var today = 0L
 private fun checkMore24(): Boolean {
     try {
         spf = PreferenceManager.getDefaultSharedPreferences(context)
-        today = spf.let { it!!.getLong("today", 0L) }
+        today = spf?.getLong("today", 0L) ?: 0
         return (System.currentTimeMillis() - today) > 24 * 60 * 60 * 1000
     } catch (e: Exception) {
         e.printStackTrace()
@@ -200,8 +200,8 @@ fun check4Net(
             targetVersion = responseBean.versionCode
             apkUrl = if (data.apkPath.startsWith("http")) data.apkPath else "${url}/${data.apkPath}"
             sleep(2000)
-            isIgnore = spf.let { it!!.getBoolean("ignore", false) }
-            dataVersion = spf.let { it!!.getLong("versionCode", 0L) }
+            isIgnore = spf?.getBoolean("ignore", false) ?: false
+            dataVersion = spf?.getLong("versionCode", 0L) ?: 0L
             if (flag) {
                 if (isAppForeground(context)) {
                     if (dataVersion != targetVersion) {
@@ -211,11 +211,11 @@ fun check4Net(
                 }
             } else alert()
         } else {
-            isUpdate = true
+            isUpdate = false
             "签名或者tag不匹配".logD()
         }
     } else {
-        isUpdate = true
+        isUpdate = false
         "$version->${responseBean.versionCode} 版本不对,忽略升级".logD()
     }
     change(responseBean.versionCode)
