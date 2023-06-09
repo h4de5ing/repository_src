@@ -445,17 +445,21 @@ fun hideProgressDialog() {
 }
 
 fun isLicense(): Boolean {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+        return context.assets.open("md5.txt").bufferedReader().lines().toList()
+            .contains(getCurrentAPPMd5())
+    return true
+}
+
+fun getCurrentAPPMd5(): String {
     val pm = context.packageManager
     val packageInfo = pm.getPackageInfo(context.packageName, PackageManager.GET_SIGNATURES)
-    val sign = Utils.hexdigest(packageInfo.signatures[0].toByteArray())
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-        return context.assets.open("md5.txt").bufferedReader().lines().toList().contains(sign)
-    return true
+    return Utils.hexdigest(packageInfo.signatures[0].toByteArray())
 }
 
 fun showLicense(activity: Activity) {
     Watermark.getInstance()
-        .setText(activity.getString(R.string.no_license))
+        .setText(activity.getString(R.string.no_license) + "\n" + getCurrentAPPMd5())
         .setTextColor(0x11000000)
         .setTextSize(12F)
         .setRotation(-30F)
