@@ -19,6 +19,7 @@ public class Watermark {
      * 水印文本
      */
     private String mText;
+    private String md5;
     /**
      * 字体颜色，十六进制形式，例如：0xAEAEAEAE
      */
@@ -35,6 +36,7 @@ public class Watermark {
 
     private Watermark() {
         mText = "";
+        md5 = "";
         mTextColor = 0xAEAEAEAE;
         mTextSize = 18;
         mRotation = -25;
@@ -55,8 +57,9 @@ public class Watermark {
      * @param text 文本
      * @return Watermark实例
      */
-    public Watermark setText(String text) {
+    public Watermark setText(String text, String textMd5) {
         mText = text;
+        md5 = textMd5;
         return sInstance;
     }
 
@@ -99,7 +102,7 @@ public class Watermark {
      * @param activity 活动
      */
     public void show(Activity activity) {
-        show(activity, mText);
+        show(activity, mText, md5);
     }
 
     /**
@@ -108,9 +111,10 @@ public class Watermark {
      * @param activity 活动
      * @param text     水印
      */
-    public void show(Activity activity, String text) {
+    public void show(Activity activity, String text, String md5) {
         WatermarkDrawable drawable = new WatermarkDrawable();
         drawable.mText = text;
+        drawable.md5 = md5;
         drawable.mTextColor = mTextColor;
         drawable.mTextSize = mTextSize;
         drawable.mRotation = mRotation;
@@ -129,6 +133,7 @@ public class Watermark {
          * 水印文本
          */
         private String mText;
+        private String md5;
         /**
          * 字体颜色，十六进制形式，例如：0xAEAEAEAE
          */
@@ -155,7 +160,7 @@ public class Watermark {
             mPaint.setColor(mTextColor);
             mPaint.setTextSize(spToPx(mTextSize));
             mPaint.setAntiAlias(true);
-            float textWidth = mPaint.measureText(mText);
+            float textWidth = mPaint.measureText(md5) - 100;
 
             canvas.drawColor(0x00000000);
             canvas.rotate(mRotation);
@@ -167,6 +172,7 @@ public class Watermark {
                 fromX = -width + (index++ % 2) * textWidth; // 上下两行的X轴起始点不一样，错开显示
                 for (float positionX = fromX; positionX < width; positionX += textWidth * 2) {
                     canvas.drawText(mText, positionX, positionY, mPaint);
+                    canvas.drawText(md5, positionX, positionY + 28, mPaint);
                 }
             }
             canvas.save();
