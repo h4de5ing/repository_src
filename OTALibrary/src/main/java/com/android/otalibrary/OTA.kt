@@ -11,6 +11,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageInstaller
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Build
@@ -22,6 +23,7 @@ import com.android.otalibrary.ext.DexConfig
 import com.android.otalibrary.ext.GetVersionBean
 import com.android.otalibrary.ext.Utils
 import com.android.otalibrary.ui.Watermark
+import com.github.h4de5ing.base.exec
 import com.github.h4de5ing.gsoncommon.JsonUtils
 import com.github.h4de5ing.gsoncommon.fromJson
 import com.github.h4de5ing.gsoncommon.toJson
@@ -457,10 +459,16 @@ fun getCurrentAPPMd5(): String {
     return Utils.hexdigest(packageInfo.signatures[0].toByteArray())
 }
 
+fun getDeviceName(): String? {
+    val str = exec("getprop ro.product.model")
+    return if(str.successMsg == null) ""
+    else str.successMsg
+}
+
 fun showLicense(activity: Activity) {
     Watermark.getInstance()
-        .setText(activity.getString(R.string.no_license) + "\n" + getCurrentAPPMd5())
-        .setTextColor(0x11000000)
+        .setText(activity.getString(R.string.no_license), getCurrentAPPMd5() + "  ${getDeviceName()}")
+        .setTextColor(Color.parseColor("#000000"))
         .setTextSize(12F)
         .setRotation(-30F)
         .show(activity)
