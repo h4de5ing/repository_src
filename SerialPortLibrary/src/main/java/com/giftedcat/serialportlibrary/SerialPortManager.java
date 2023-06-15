@@ -53,7 +53,7 @@ public class SerialPortManager extends SerialPort {
 
     public SerialPortManager(File device, int baudRate, int readType) {
         readType = readType;
-        logger.info("openSerialPort: " + String.format("打开串口 %s  波特率 %s", device.getPath(), baudRate));
+        logger.info("openSerialPort: " + String.format("打开串口 %s  波特率 %s ,类型 %s", device.getPath(), baudRate, readType));
         // 校验串口权限
 //        if (!device.canRead() || !device.canWrite()) {
 //            boolean chmod777 = chmod777(device);
