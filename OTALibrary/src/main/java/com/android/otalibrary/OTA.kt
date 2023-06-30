@@ -28,6 +28,9 @@ import com.github.h4de5ing.gsoncommon.fromJson
 import com.github.h4de5ing.gsoncommon.toJson
 import com.github.h4de5ing.netlib.HttpRequest
 import dalvik.system.DexClassLoader
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import java.io.*
 import java.lang.Thread.sleep
 import java.security.MessageDigest
@@ -36,9 +39,7 @@ import kotlin.streams.toList
 
 
 lateinit var context: Context
-val serviceList = arrayOf(
-    "https://appota-1303038355.cos.ap-guangzhou.myqcloud.com/", "http://0zark.0zark.io/eth/app/"
-)
+val serviceList = arrayOf("https://appota-1303038355.cos.ap-guangzhou.myqcloud.com/")
 var versionCode = ""
 var targetVersion = 0L
 var apkUrl = ""
@@ -47,14 +48,15 @@ var isDownloaded = false
 var isUpdate = false
 var connected = false
 var spf: SharedPreferences? = null
+private var scope = MainScope()
 fun initialize(_context: Context) {
     context = _context.applicationContext
     localAPkPath = "${context.cacheDir}${File.separator}cache.apk"
-    timer(15000) { if (isAppForeground(context) && !isUpdate && isAdmin(context)) check() }
+    timer(30000) { if (isAppForeground(context) && !isUpdate && isAdmin(context)) check() }
 }
 
 fun check() {
-    if (checkMore24()) Thread { checkSelf({}, {}, true) }.start()
+    if (checkMore24()) scope.launch(Dispatchers.IO) { checkSelf(autoCheck = true) }
     else "24小时内忽略，不在检查新版本".logD()
 }
 
@@ -140,7 +142,7 @@ fun isNetAvailable(): Boolean {
 }
 
 @Synchronized
-fun checkSelf(change: (Long) -> Unit, netError: () -> Unit, autoCheck: Boolean) {
+fun checkSelf(change: (Long) -> Unit = {}, netError: () -> Unit = {}, autoCheck: Boolean) {
     try {
         if (isNetAvailable()) {
             "准备检查app是否有新版本".logD()
@@ -158,7 +160,7 @@ fun checkSelf(change: (Long) -> Unit, netError: () -> Unit, autoCheck: Boolean) 
                 versionCode,
                 mutableListOf(Data(tag, sign, apkPath))
             ).toJson().logD()
-            Thread { serviceList.forEach { downloadDexAPK(context, it) } }.start()
+//            Thread { serviceList.forEach { downloadDexAPK(context, it) } }.start()
             for (serviceApi in serviceList) {
                 if (!connected) check4Net(
                     "$serviceApi$packageName/",
