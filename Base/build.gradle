@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
     namespace 'com.github.h4de5ing.base'
     defaultConfig {
         minSdk 16
-        targetSdk 33
+        targetSdk 34
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
     namespace 'com.github.h4de5ing.vanserialport'
     defaultConfig {
         minSdk 21
-        targetSdk 33
+        targetSdk 34
         //noinspection ChromeOsAbiSupport
         ndk { abiFilters "armeabi", "armeabi-v7a" }
     }

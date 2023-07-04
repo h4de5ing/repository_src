@@ -4,11 +4,12 @@ import android.content.Context
 import androidx.startup.Initializer
 import com.android.otalibrary.CrashHandler
 import com.android.otalibrary.initialize
+import com.android.otalibrary.isDebug
 
 class OTAInitializer : Initializer<Unit> {
 
     override fun create(context: Context) {
-        CrashHandler.getInstance().init(context)
+        if (!isDebug()) CrashHandler.getInstance().init(context)
         initialize(context)
     }
 

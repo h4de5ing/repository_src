@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
     namespace 'com.google.zxing.client.android'
     defaultConfig {
         minSdk 21
-        targetSdk 33
+        targetSdk 34
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
