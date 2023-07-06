@@ -35,7 +35,6 @@ import java.io.*
 import java.lang.Thread.sleep
 import java.security.MessageDigest
 import java.util.*
-import kotlin.streams.toList
 
 
 lateinit var context: Context
@@ -447,11 +446,16 @@ fun hideProgressDialog() {
     progressDialog?.dismiss()
 }
 
-fun isLicense(): Boolean {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-        return context.assets.open("md5.txt").bufferedReader().lines().toList()
-            .contains(getCurrentAPPMd5())
-    return true
+fun isLicense(): Boolean =
+    context.assets.open("md5.txt").bufferedReader().read2().contains(getCurrentAPPMd5())
+
+fun BufferedReader.read2(): MutableList<String> {
+    val list = mutableListOf<String>()
+    var line: String?
+    while (readLine().also { line = it } != null) {
+        list.add("$line")
+    }
+    return list
 }
 
 fun getCurrentAPPMd5(): String {
