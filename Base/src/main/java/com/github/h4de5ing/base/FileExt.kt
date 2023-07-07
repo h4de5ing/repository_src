@@ -12,7 +12,8 @@ fun String.append2File(filePath: String): Boolean {
         writer.flush()
         writer.close()
         true
-    } catch (_: Exception) {
+    } catch (e: Exception) {
+        e.printStackTrace()
         false
     }
 }
@@ -25,11 +26,12 @@ fun String.write2File(filePath: String): Boolean {
         writer.flush()
         writer.close()
         true
-    } catch (_: Exception) {
+    } catch (e: Exception) {
+        e.printStackTrace()
         false
     }
 }
-
+@Deprecated("有bug，写中文字符串会乱码,用kotlin appendText方法替代")
 fun File.append(content: String): Boolean {
     return try {
         val writer = BufferedWriter(FileWriter(this, true))
@@ -37,7 +39,8 @@ fun File.append(content: String): Boolean {
         writer.flush()
         writer.close()
         true
-    } catch (_: Exception) {
+    } catch (e: Exception) {
+        e.printStackTrace()
         false
     }
 }
@@ -50,7 +53,8 @@ fun File.write(content: String): Boolean {
         writer.flush()
         writer.close()
         true
-    } catch (_: Exception) {
+    } catch (e: Exception) {
+        e.printStackTrace()
         false
     }
 }
@@ -73,7 +77,6 @@ fun File.read(): String {
     }
     return fileContent.toString()
 }
-//BufferedInputStream(FileInputStream("/sdcard/data.txt")).bufferedReader().readLines()
 
 fun closeQuietly(autoCloseable: AutoCloseable?) {
     try {

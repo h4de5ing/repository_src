@@ -40,7 +40,7 @@ afterEvaluate {
         repositories {
             mavenLocal()
             maven {
-                url uri('D://repository/repository/test')
+                url uri('D://repository/repository/repository')
             }
         }
     }
