@@ -16,8 +16,8 @@ object SerialPortIO {
             readThread = ReadThread(callback)
             readThread?.start()
             Log.i("gh0st", "$name open success [$baud]")
-        } catch (e: Exception) {
-            val result = "exception:${e.message}".toByteArray()
+        } catch (e: LastError) {
+            val result = "$e".toByteArray()
             callback(result, result.size)
             e.printStackTrace()
         }
@@ -42,7 +42,6 @@ object SerialPortIO {
                         try {
                             readSize = this.read(readBuffer, readBuffer.size, 50, 1)
                             callback.invoke(readBuffer, readSize)
-//                            sleep(100)
                         } catch (e: Exception) {
                             e.printStackTrace()
                         }
@@ -52,40 +51,29 @@ object SerialPortIO {
                 e.printStackTrace()
             }
         }
-
-//        fun close() {
-//            interrupt()
-//        }
     }
 
     fun stop() {
-//        readThread?.close()
         readThread = null
         serialPort?.close()
         serialPort = null
     }
 
-    fun getBaudRate(baudrate: Int): BaudRate {
-        val value: BaudRate?
-        when (baudrate) {
-            1200 -> value = BaudRate.B1200
-            2400 -> value = BaudRate.B2400
-            4800 -> value = BaudRate.B4800
-            9600 -> value = BaudRate.B9600
-            19200 -> value = BaudRate.B19200
-            38400 -> value = BaudRate.B38400
-            57600 -> value = BaudRate.B57600
-            115200 -> value = BaudRate.B115200
-            230400 -> value = BaudRate.B230400
-            else -> {
-                value = BaudRate.B115200
-                Exception("not support baudrate [$baudrate]")
-            }
+    fun getBaudRate(baudRate: Int): BaudRate {
+        return when (baudRate) {
+            1200 -> BaudRate.B1200
+            2400 -> BaudRate.B2400
+            4800 -> BaudRate.B4800
+            9600 -> BaudRate.B9600
+            19200 -> BaudRate.B19200
+            38400 -> BaudRate.B38400
+            57600 -> BaudRate.B57600
+            115200 -> BaudRate.B115200
+            230400 -> BaudRate.B230400
+            else -> BaudRate.B115200
         }
-        return value
     }
 
-    fun getSupportBauds(): Array<Int> {
-        return arrayOf(1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400)
-    }
+    fun getSupportBauds(): Array<Int> =
+        arrayOf(1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400)
 }
