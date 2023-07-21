@@ -8,15 +8,17 @@ import com.van.uart.UartManager.BaudRate
 object SerialPortIO {
     private var serialPort: UartManager? = null
     private var readThread: ReadThread? = null
+    var isSuccess: Boolean = false
     fun start(name: String, baud: Int, callback: (buffer: ByteArray, size: Int) -> Unit) {
         try {
             val devName: String = name.split("/dev/").toTypedArray()[1]
             serialPort = UartManager()
-            serialPort?.open(devName, getBaudRate(baud))
+            isSuccess = serialPort?.open(devName, getBaudRate(baud)) ?: false
             readThread = ReadThread(callback)
             readThread?.start()
             Log.i("gh0st", "$name open success [$baud]")
         } catch (e: LastError) {
+            isSuccess = false
             val result = "$e".toByteArray()
             callback(result, result.size)
             e.printStackTrace()

@@ -11,60 +11,14 @@ public class UartManager {
     }
 
     private int id;
-    private String name;
-    private BaudRate baudRate;
 
     public UartManager() {
         id = -1;
-        name = "";
-        baudRate = BaudRate.B115200;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public BaudRate getBaudRate() {
-        return baudRate;
-    }
-
-    public static UartManager.BaudRate getBaudRate(int baudrate) {
-        UartManager.BaudRate value = null;
-        switch (baudrate) {
-            case 9600:
-                value = UartManager.BaudRate.B9600;
-                break;
-            case 19200:
-                value = UartManager.BaudRate.B19200;
-                break;
-            case 57600:
-                value = UartManager.BaudRate.B57600;
-                break;
-            case 115200:
-                value = UartManager.BaudRate.B115200;
-                break;
-            case 230400:
-                value = UartManager.BaudRate.B230400;
-                break;
-        }
-        return value;
-    }
-
-    public void open(String name, BaudRate baudRate) throws LastError {
-        int ids = open(name, baudRate.ordinal());
-        System.out.println("打开结果：" + ids);
-        this.id = ids;
-        this.name = name;
-        this.baudRate = baudRate;
-    }
-
-    public boolean open2(String name, BaudRate baudRate) throws LastError {
-        int ids = open(name, baudRate.ordinal());
-        System.out.println("打开结果：" + ids);
-        this.id = ids;
-        this.name = name;
-        this.baudRate = baudRate;
-        return ids == 0;
+    public boolean open(String name, BaudRate baudRate) throws LastError {
+        id = open(name, baudRate.ordinal());
+        return id == 0;
     }
 
     public void close() {

@@ -6,13 +6,17 @@ import java.io.File
 //https://github.com/Giftedcat/AndroidSerialPortManager
 object SerialPortIO {
     private var serialPortManager: SerialPortManager? = null
+    var isSuccess: Boolean = false
     fun start(name: String, baud: Int, callback: (buffer: ByteArray, size: Int) -> Unit) {
         SerialPortManager.openLog()
         SerialPortManager.setSplicing()
         SerialPortManager(File(name), baud, SerialPortManager.NORMAL)
             .setOnSerialPortDataListener { bytes: ByteArray ->
                 callback(bytes, bytes.size)
-            }.also { serialPortManager = it }
+            }.also {
+                serialPortManager = it
+                isSuccess = true
+            }
     }
 
     fun setNormal() = SerialPortManager.setNormal()

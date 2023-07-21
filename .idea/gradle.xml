@@ -11,7 +11,9 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/OTALibrary" />
+            <option value="$PROJECT_DIR$/SerialPortLib" />
+            <option value="$PROJECT_DIR$/SerialPortLibrary" />
+            <option value="$PROJECT_DIR$/VanSerialPort" />
           </set>
         </option>
       </GradleProjectSettings>

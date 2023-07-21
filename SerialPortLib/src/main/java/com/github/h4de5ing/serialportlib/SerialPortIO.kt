@@ -5,8 +5,10 @@ import java.io.File
 
 object SerialPortIO : BaseIO() {
     private var serialPort: SerialPort? = null
+    var isSuccess: Boolean = false
     fun start(name: String, baud: Int, callback: (buffer: ByteArray, size: Int) -> Unit) {
         serialPort = SerialPort(File(name), baud, 0)
+        isSuccess = serialPort?.isSuccess ?:false
         super.start(serialPort!!.inputStream, serialPort!!.outputStream, callback)
     }
 
