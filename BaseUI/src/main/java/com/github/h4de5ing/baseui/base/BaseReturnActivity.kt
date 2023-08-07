@@ -10,10 +10,9 @@ open class BaseReturnActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val supportActionBar = supportActionBar
-        if (supportActionBar != null) {
-            supportActionBar.setHomeButtonEnabled(true)
-            supportActionBar.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.apply {
+            setHomeButtonEnabled(true)
+            setDisplayHomeAsUpEnabled(true)
         }
     }
 }

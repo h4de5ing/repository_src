@@ -12,14 +12,12 @@ open class BaseFullScreenActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         window.setFormat(PixelFormat.TRANSLUCENT)
         try {
-            if (Build.VERSION.SDK_INT >= 11) {
-                window.setFlags(
-                    android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-                    android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
-                )
-            }
+            window.setFlags(
+                android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
+            )
             hideBottomUIMenu()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
     }
 

@@ -439,11 +439,12 @@ fun showProgressDialog(context: Context) {
     progressDialog?.setMessage("wait ...")
     progressDialog?.setCancelable(false)
     progressDialog?.setCanceledOnTouchOutside(false)
+    progressDialog?.apply { if (isShowing) dismiss() }
     progressDialog?.show()
 }
 
 fun hideProgressDialog() {
-    progressDialog?.dismiss()
+    progressDialog?.apply { if (isShowing) dismiss() }
 }
 
 fun isLicense(): Boolean =

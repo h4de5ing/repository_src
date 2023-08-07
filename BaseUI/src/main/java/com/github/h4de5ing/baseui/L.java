@@ -21,6 +21,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+@Deprecated
 public class L {
     private static String TAG = "gh0st";
     private static boolean LOG_DEBUG = BuildConfig.DEBUG;

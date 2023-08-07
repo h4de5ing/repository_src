@@ -9,14 +9,19 @@ import android.graphics.Paint
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.*
-import androidx.appcompat.widget.AppCompatSpinner
-import com.google.android.material.checkbox.MaterialCheckBox
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.CheckBox
+import android.widget.CompoundButton
+import android.widget.RadioGroup
+import android.widget.SeekBar
+import android.widget.Spinner
+import android.widget.TextView
+import android.widget.Toast
 import com.google.android.material.chip.Chip
-import com.google.android.material.switchmaterial.SwitchMaterial
 
 //常见view扩展封装
-fun AppCompatSpinner.selected(selected: ((Int) -> Unit)) {
+fun Spinner.selected(selected: ((Int) -> Unit)) {
     this.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
         override fun onNothingSelected(parent: AdapterView<*>?) {
         }
@@ -32,13 +37,13 @@ fun AppCompatSpinner.selected(selected: ((Int) -> Unit)) {
     }
 }
 
-fun SwitchMaterial.changed(change: ((Boolean) -> Unit)) =
+fun CompoundButton.changed(change: ((Boolean) -> Unit)) =
     this.setOnCheckedChangeListener { _, isChecked -> change(isChecked) }
 
 /**
  * 这个方式，如果是代码调用是不会响应回调
  */
-fun SwitchMaterial.changedNoIsPressed(change: ((Boolean) -> Unit)) =
+fun CompoundButton.changedNoIsPressed(change: ((Boolean) -> Unit)) =
     this.setOnCheckedChangeListener { view, isChecked ->
         //如果没有按下，则认为是代码设置的，直接拦截
         if (view.isPressed) return@setOnCheckedChangeListener
@@ -81,7 +86,7 @@ class EditTextWatcher(private val change: (String) -> Unit) : TextWatcher {
 fun TextView.textChanged(change: ((String) -> Unit)) =
     addTextChangedListener(EditTextWatcher(change))
 
-fun MaterialCheckBox.checkedChange(change: ((Boolean) -> Unit)) {
+fun CheckBox.checkedChange(change: ((Boolean) -> Unit)) {
     this.setOnCheckedChangeListener { _, isChecked ->
         change(isChecked)
     }
@@ -92,17 +97,17 @@ fun <T> androidx.appcompat.app.AlertDialog.Builder.changed(
     title: String,
     change: ((T) -> Unit)
 ) {
-    this.setTitle(title)
-    val adapter = ArrayAdapter(this.context, android.R.layout.simple_list_item_1, items)
-    this.setSingleChoiceItems(
+    setTitle(title)
+    val adapter = ArrayAdapter(context, android.R.layout.simple_list_item_1, items)
+    setSingleChoiceItems(
         adapter, 0
     ) { dialog, which ->
         change(items[which])
         dialog.dismiss()
     }
-    this.setCancelable(false)
-    //this.setNegativeButton(android.R.string.cancel, null)
-    this.create().show()
+    setCancelable(false)
+    //setNegativeButton(android.R.string.cancel, null)
+    create().show()
 }
 
 //弹出确认按钮
@@ -121,25 +126,22 @@ fun alertConfirmJustOk(context: Context, message: String, block: ((Boolean) -> U
     builder.create().show()
 }
 
-//判断任何对象是否为空
-//fun Any?.isNotEmpty(): Boolean = this != null
-
 /**
  * 设置View为可见
  */
-fun View.visible() = run { this.visibility = View.VISIBLE }
+fun View.visible() = run { visibility = View.VISIBLE }
 
 /**
  * 设置View不可见，占用布局空间
  */
-fun View.invisible() = run { this.visibility = View.INVISIBLE }
+fun View.invisible() = run { visibility = View.INVISIBLE }
 
 /**
  * 设置View不可见，不占用位置
  */
-fun View.gone() = run { this.visibility = View.GONE }
+fun View.gone() = run { visibility = View.GONE }
 fun View.isVisible(isShowed: Boolean) =
-    run { if (isShowed) this.visibility = View.VISIBLE else View.GONE }
+    run { if (isShowed) visibility = View.VISIBLE else View.GONE }
 
 /**
  * 设置View的黑色主题
@@ -149,7 +151,7 @@ fun View.darkTheme() {
     colorMatrix.setSaturation(0f)
     val paint = Paint()
     paint.colorFilter = ColorMatrixColorFilter(colorMatrix)
-    this.setLayerType(View.LAYER_TYPE_HARDWARE, paint)
+    setLayerType(View.LAYER_TYPE_HARDWARE, paint)
 }
 
 /**

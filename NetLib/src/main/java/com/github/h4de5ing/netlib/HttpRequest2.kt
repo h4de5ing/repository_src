@@ -82,7 +82,7 @@ fun post(url: String, params: Map<String, Any>?, header: Map<String, String>?): 
 }
 
 @Throws(Exception::class)
-fun post(url: String, json: String, header: Map<String, String>?): String? {
+fun post(url: String, json: String, header: Map<String, String>?): String {
     val result = StringBuilder()
     val realUrl = URL(url)
     val conn = realUrl.openConnection() as HttpURLConnection
@@ -117,13 +117,17 @@ fun uploadFile(
     fileMap: Map<String, File>?,
     params: Map<String, Any>?,
     header: Map<String, String>?
-): String? {
+): String {
     val result: String
     val conn: HttpURLConnection
     //boundary就是request头和上传文件内容的分隔符
     val boundary = "---------------------------123821742118716"
-    if (params != null && params.isNotEmpty()) for (key in params.keys) "上传参数：${key}->${params[key]}".print()
-    if (header != null && header.isNotEmpty()) for (key in header.keys) "上传头：${key}->${header[key]}".print()
+    params?.apply {
+        for (key in keys) "上传参数：${key}->${params[key]}".print()
+    }
+    header?.apply {
+        for (key in keys) "上传头：${key}->${header[key]}".print()
+    }
     val url = URL(urlStr)
     conn = url.openConnection() as HttpURLConnection
     conn.connectTimeout = 5000
@@ -147,9 +151,9 @@ fun uploadFile(
         strBuf0.append(inputValue)
     }
     out.write(strBuf0.toString().toByteArray())
-    fileMap?.entries?.forEach {
-        val inputName: String = it.key
-        val file: File = it.value
+    fileMap?.entries?.forEach { fileEntry ->
+        val inputName: String = fileEntry.key
+        val file: File = fileEntry.value
         val filename = file.name
         val strBuf =
             "\r\n--${boundary}\r\nContent-Disposition: form-data; name=\"${inputName}\"; filename=\"${filename}\"\r\nContent-Type:multipart/form-data\r\n\r\n" +
