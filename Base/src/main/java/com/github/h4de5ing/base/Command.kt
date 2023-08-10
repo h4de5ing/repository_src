@@ -37,6 +37,8 @@ fun exec(command: String): CommandResult {
             if (command.contains("|")) Runtime.getRuntime().exec(arrayOf(COMMAND_SH, "-c", command))
             else Runtime.getRuntime().exec(COMMAND_SH)
         os = DataOutputStream(process.outputStream)
+        os.write(command.toByteArray())
+        os.writeBytes(COMMAND_LINE_END)
         os.writeBytes(COMMAND_EXIT)
         os.flush()
         commandResult.result = process.waitFor()
@@ -74,9 +76,8 @@ fun exec(command: String): CommandResult {
     return commandResult
 }
 
-fun exec(commands: Array<String>?): CommandResult {
+fun exec(commands: Array<String>): CommandResult {
     val commandResult = CommandResult()
-    if (commands == null || commands.isEmpty()) return commandResult
     var process: Process? = null
     var os: DataOutputStream? = null
     var successResult: BufferedReader? = null
