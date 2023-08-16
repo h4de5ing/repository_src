@@ -4,7 +4,8 @@ import java.util.Date
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("maven-publish")
+//    id("maven-publish")
+    `maven-publish`
 }
 
 android {
@@ -46,6 +47,7 @@ publishing {
             artifactId = "document"
             val today = SimpleDateFormat("yyyyMMdd").format(Date())
             version = "1.0-${today}"
+            artifact("$buildDir/outputs/aar/Document-release.aar")
         }
     }
     repositories {
