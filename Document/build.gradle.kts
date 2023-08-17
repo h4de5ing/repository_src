@@ -13,7 +13,7 @@ android {
     compileSdk = 33
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 21
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -43,7 +43,7 @@ dependencies {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "com.github.h4de5ing"
+            groupId = "com.github.h4de5ing.document"
             artifactId = "document"
             val today = SimpleDateFormat("yyyyMMdd").format(Date())
             version = "1.0-${today}"
