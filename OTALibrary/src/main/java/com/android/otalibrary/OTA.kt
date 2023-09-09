@@ -205,7 +205,7 @@ fun check4Net(
             isIgnore = spf?.getBoolean("ignore", false) ?: false
             dataVersion = spf?.getLong("versionCode", 0L) ?: 0L
             if (flag) {
-                if (isAppForeground(context)) {
+                if (isAppForeground(context) && isAdmin(context)) {
                     if (dataVersion != targetVersion) {
                         alert()
                         spf?.edit()?.putBoolean("ignore", false)?.apply()
