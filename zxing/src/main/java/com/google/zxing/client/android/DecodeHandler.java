@@ -73,27 +73,23 @@ final class DecodeHandler extends Handler {
      * @param height The height of the preview frame.
      */
     private void decode(byte[] data, int width, int height) {
-        Camera.Size size = activity.getCameraManager().getPreviewSize();
-
-        // 这里需要将获取的data翻转一下，因为相机默认拿的的横屏的数据
-        byte[] rotatedData = new byte[data.length];
-        for (int y = 0; y < size.height; y++) {
-            for (int x = 0; x < size.width; x++)
-                rotatedData[x * size.height + size.height - y - 1] = data[x + y * size.width];
-        }
-
-        // 宽高也要调整
-        int tmp = size.width;
-        size.width = size.height;
-        size.height = tmp;
-
         long start = System.currentTimeMillis();
         Result rawResult = null;
-        PlanarYUVLuminanceSource source = buildLuminanceSource(rotatedData, size.width, size.height);
+        byte[] rotatedData = new byte[data.length];
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++)
+                rotatedData[x * height + height - y - 1] = data[x + y * width];
+        }
+
+        int tmp = width;
+        width = height;
+        height = tmp;
+
+        PlanarYUVLuminanceSource source = activity.getCameraManager().buildLuminanceSource(rotatedData, width, height);
         if (source != null) {
             BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
             try {
-                rawResult = multiFormatReader.decodeWithState(bitmap);
+                rawResult = multiFormatReader.decode(bitmap);
             } catch (ReaderException re) {
                 // continue
             } finally {
