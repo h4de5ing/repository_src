@@ -129,13 +129,7 @@ fun ByteArray.toHexString(length: Int): String {
  * 数组拼接
  * @return {0x01}+{0x02,0x03}={0x01,0x02,0x03}
  */
-fun ByteArray.add(data: ByteArray): ByteArray {
-    val resultData = ByteArray(this.size + data.size)
-    System.arraycopy(this, 0, resultData, 0, this.size)
-    resultData[this.size] = data.size.toByte()
-    System.arraycopy(data, 0, resultData, this.size, data.size)
-    return resultData
-}
+fun ByteArray.add(data: ByteArray): ByteArray = this + data
 
 /**
  * 字符串转数组
@@ -143,16 +137,13 @@ fun ByteArray.add(data: ByteArray): ByteArray {
  * @return 返回 {0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08}
  */
 fun String.toHexByteArray(): ByteArray {
-    var newStr = this.replace(" ", "")
-    val data = ByteArray(newStr.length / 2)
-    try {
-        if (newStr.length % 2 != 0)
-            newStr = newStr.substring(0, newStr.length - 1) + "0" +
-                    newStr.substring(newStr.length - 1, newStr.length)
-        for (j in data.indices) {
-            data[j] = (Integer.valueOf(newStr.substring(j * 2, j * 2 + 2), 16) and 0xff).toByte()
-        }
-    } catch (_: Exception) {
+    var hex = replace(" ", "")
+    if (hex.length % 2 != 0) hex = "0${hex}"
+    val result = ByteArray(hex.length / 2)
+    for (i in result.indices) {
+        val index = i * 2
+        val hexByte = hex.substring(index, index + 2)
+        result[i] = hexByte.toInt(16).toByte()
     }
-    return data
+    return result
 }
