@@ -142,7 +142,6 @@ abstract class BaseIO {
 //                }
 //            }
             while (!isInterrupted) {
-                if (null == inputStream) return
                 var size = 0
                 try {
                     /** 获取流中数据的量 */
