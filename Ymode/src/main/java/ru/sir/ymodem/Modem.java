@@ -3,8 +3,6 @@ package ru.sir.ymodem;
 
 import android.util.Log;
 
-import com.code19.mcuupdate.DataUtils;
-import com.code19.mcuupdate.OnChangeListener;
 import com.van.uart.LastError;
 import com.van.uart.UartManager;
 

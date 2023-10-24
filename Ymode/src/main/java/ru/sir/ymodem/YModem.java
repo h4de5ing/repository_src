@@ -1,6 +1,5 @@
 package ru.sir.ymodem;
 
-import com.code19.mcuupdate.OnChangeListener;
 import com.van.uart.UartManager;
 
 import java.io.DataInputStream;

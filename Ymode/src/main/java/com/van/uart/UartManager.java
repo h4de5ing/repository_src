@@ -2,7 +2,8 @@ package com.van.uart;
 
 import android.util.Log;
 
-import com.code19.mcuupdate.DataUtils;
+import ru.sir.ymodem.DataUtils;
+
 
 public class UartManager {
 

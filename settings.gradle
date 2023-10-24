@@ -25,4 +25,5 @@ rootProject.name = "repository"
 //include ':VanSerialPort'
 //include ':License'
 //include ':OTALibrary'
-include ':Document'
+//include ':Document'
+include ':Ymode'
