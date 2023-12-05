@@ -26,4 +26,6 @@ rootProject.name = "repository"
 //include ':License'
 //include ':OTALibrary'
 //include ':Document'
-include ':Ymode'
+//include ':Ymode'
+include ':usbSerialForAndroid'
+include ':usbserial'

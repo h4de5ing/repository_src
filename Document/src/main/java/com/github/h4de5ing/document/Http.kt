@@ -1,6 +1,7 @@
 package com.github.h4de5ing.document
 
 import android.content.Context
+import android.util.Log
 import fi.iki.elonen.NanoHTTPD
 import java.io.BufferedReader
 import java.io.IOException
@@ -73,11 +74,11 @@ class Http(private val context: Context, port: Int) : NanoHTTPD(port) {
             }
         } else {
             try {
-                if (filename.endsWith(".md") || filename.endsWith(".markdown")) response.append("<script src=\"")
-                    .append("./md-page.js\"></script><noscript>")
+                if (filename.endsWith(".md") || filename.endsWith(".markdown"))
+                    response.append("<script src=\"./md-page.js\"></script><noscript>")
                 reader = BufferedReader(InputStreamReader(getAssets(filename)))
-                while (reader.readLine().also { line = it } != null) response.append(line)
-                    .append("\n")
+                while (reader.readLine().also { line = it } != null)
+                    response.append(line).append("\n")
                 reader.close()
             } catch (e: IOException) {
                 e.printStackTrace()

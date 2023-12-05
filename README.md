@@ -25,5 +25,8 @@ Terminal -> gradlew publish
 - HttpRequest 基于Java原生的网络请求库
 
 
+[usbSerialForAndroid_573c7e4](https://github.com/mik3y/usb-serial-for-android) 
+[usbserial_7ad6c9f](https://github.com/felHR85/UsbSerial)
+
 参考
 https://github.com/kymjs/Common/blob/master/Common/common/src/main/java/com/kymjs/kotlin/common/extension/ExtensionDensity.kt

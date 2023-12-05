@@ -1,0 +1,51 @@
+plugins {
+    id 'com.android.library'
+    id 'maven-publish'
+}
+
+android {
+    compileSdk 34
+    namespace 'com.hoho.android.usbserial'
+    defaultConfig {
+        minSdk 17
+        targetSdk 34
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    publishing {
+        // if coverage is enabled, change 'release' to 'anyDeviceRelease' or comment out publishing rule
+        singleVariant('release') {
+            withSourcesJar()
+        }
+    }
+    buildFeatures {
+        buildConfig true
+    }
+}
+
+dependencies {
+    implementation "androidx.annotation:annotation:1.7.0"
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            def today = new Date().format('yyyyMMdd')
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.mik3y'
+                artifactId = 'usb-serial-for-android'
+                version = "1.0-$today"
+            }
+        }
+        repositories {
+            mavenLocal()
+            maven {
+                url uri('D://repository/repository/repository')
+            }
+        }
+    }
+}
+//gradlew publish

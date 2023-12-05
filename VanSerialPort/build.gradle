@@ -23,6 +23,7 @@ android {
             jniLibs.srcDirs = ['/src/main/jniLibs']
         }
     }
+    buildFeatures { buildConfig true }
 }
 afterEvaluate {
     publishing {
