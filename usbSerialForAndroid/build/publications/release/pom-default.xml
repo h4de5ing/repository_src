@@ -9,7 +9,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.mik3y</groupId>
   <artifactId>usb-serial-for-android</artifactId>
-  <version>1.0-20231205</version>
+  <version>4.0-20231206</version>
   <packaging>aar</packaging>
   <dependencies>
     <dependency>

@@ -37,7 +37,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.github.mik3y'
                 artifactId = 'usb-serial-for-android'
-                version = "1.0-$today"
+                version = "4.0-$today"
             }
         }
         repositories {

@@ -28,4 +28,4 @@ rootProject.name = "repository"
 //include ':Document'
 //include ':Ymode'
 include ':usbSerialForAndroid'
-include ':usbserial'
+//include ':usbserial'
