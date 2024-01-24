@@ -4,14 +4,19 @@ import android.text.TextUtils
 import android.util.Log
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.File
 
 private val FILE_NAME = Thread.currentThread().stackTrace[2].fileName
 private var tag = Log::class.simpleName
 private var isShow = true
-
+private var logFile = "/sdcard/log.txt"
 fun Any.initLog(initIsShow: Boolean, initTag: String) {
     isShow = initIsShow
     tag = initTag
+}
+
+fun Any.initLogFile(file: String) {
+    logFile = file
 }
 
 //日志格式:TAG (类名:行数)[调用对象类型$方法名称] 日志内容
@@ -44,7 +49,12 @@ fun Any.logA() = log(ASSERT, buildMessage(javaClass.simpleName, arrayOf("$this")
 fun Any.logJ() = log(JSON, buildMessage(javaClass.simpleName, arrayOf("$this")))
 
 fun Any.logX() = log(XML, buildMessage(javaClass.simpleName, arrayOf("$this")))
-
+fun Any.logF() {
+    try {
+        File(logFile).writeText("$this")
+    } catch (_: Exception) {
+    }
+}
 
 private const val VERBOSE = 2
 private const val DEBUG = 3
