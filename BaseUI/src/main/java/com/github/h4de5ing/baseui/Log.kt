@@ -51,7 +51,8 @@ fun Any.logJ() = log(JSON, buildMessage(javaClass.simpleName, arrayOf("$this")))
 fun Any.logX() = log(XML, buildMessage(javaClass.simpleName, arrayOf("$this")))
 fun Any.logF() {
     try {
-        File(logFile).writeText("$this")
+        this.logD()
+        File(logFile).writeText("${this}\n")
     } catch (_: Exception) {
     }
 }

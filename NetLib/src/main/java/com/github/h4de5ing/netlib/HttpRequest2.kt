@@ -7,7 +7,7 @@ import java.net.URL
 
 
 @SuppressLint("SdCardPath")
-fun isDebug(): Boolean = File("/sdcard/debug").exists() or BuildConfig.DEBUG
+fun isDebug(): Boolean = File("/sdcard/debug").exists()
 fun String.print() {
     if (isDebug()) println(this)
 }
