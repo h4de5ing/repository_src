@@ -15,7 +15,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "repository"
 //include ':Base'
-include ':BaseUI'
+//include ':BaseUI'
 //include ':GsonCommon'
 //include ':NetLib'
 //include ':filepicker'
@@ -27,5 +27,5 @@ include ':BaseUI'
 //include ':OTALibrary'
 //include ':Document'
 //include ':Ymode'
-include ':usbSerialForAndroid'
+//include ':usbSerialForAndroid'
 //include ':usbserial'

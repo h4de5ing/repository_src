@@ -52,7 +52,7 @@ fun Any.logX() = log(XML, buildMessage(javaClass.simpleName, arrayOf("$this")))
 fun Any.logF() {
     try {
         this.logD()
-        File(logFile).writeText("${this}\n")
+        File(logFile).appendText("${this}\n")
     } catch (_: Exception) {
     }
 }
