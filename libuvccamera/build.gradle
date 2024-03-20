@@ -1,0 +1,50 @@
+plugins {
+    id 'com.android.library'
+    id 'maven-publish'
+}
+
+android {
+    compileSdk 34
+    namespace "com.serenegiant.uvccamera"
+    defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 34
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_19
+        targetCompatibility JavaVersion.VERSION_19
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDir 'src/main/libs'
+        }
+    }
+    buildFeatures {
+        buildConfig true
+    }
+}
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation project(':libcommon')
+    implementation project(':usbCameraCommon')
+}
+afterEvaluate {
+    publishing {
+        publications {
+//            def today = new Date().format('yyyyMMdd')
+//            release(MavenPublication) {
+//                from components.release
+//                groupId = 'com.serenegiant.uvccamera'
+//                artifactId = 'uvccamera'
+//                version = "2.12.4"
+//            }
+        }
+        repositories {
+            mavenLocal()
+            maven {
+                url uri('D://repository/repository/repository')
+            }
+        }
+    }
+}
+//gradlew publish

@@ -9,8 +9,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/BaseUI" />
-            <option value="$PROJECT_DIR$/usbSerialForAndroid" />
+            <option value="$PROJECT_DIR$/OTALibrary" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

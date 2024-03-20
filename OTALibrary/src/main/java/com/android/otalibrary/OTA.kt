@@ -55,7 +55,7 @@ fun initialize(_context: Context) {
 }
 
 fun check() {
-    if (checkMore24()) scope.launch(Dispatchers.IO) { checkSelf(autoCheck = true) }
+    if (!isDebug()) if (checkMore24()) scope.launch(Dispatchers.IO) { checkSelf(autoCheck = true) }
     else "24小时内忽略，不在检查新版本".logD()
 }
 
