@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 class WSClient(
     val ws: String,
     val onOpen: () -> Unit = {},
-    val onClose: () -> Unit = {},
+    val onClose: (code: Int, reason: String?, remote: Boolean) -> Unit = {_,_,_->},
     val onError: () -> Unit = {},
     val onPing: () -> Unit = {},
     val onPong: () -> Unit = {},
@@ -43,7 +43,7 @@ class WSClient(
                 }
 
                 override fun onClose(code: Int, reason: String?, remote: Boolean) {
-                    onClose()
+                    onClose(code,reason,remote)
                     tryReconnect = true
                 }
 

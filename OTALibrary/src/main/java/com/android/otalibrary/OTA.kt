@@ -31,10 +31,17 @@ import dalvik.system.DexClassLoader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import java.io.*
+import java.io.BufferedReader
+import java.io.Closeable
+import java.io.File
+import java.io.FileInputStream
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 import java.lang.Thread.sleep
 import java.security.MessageDigest
-import java.util.*
+import java.util.Timer
+import java.util.TimerTask
 
 
 lateinit var context: Context
@@ -51,7 +58,7 @@ private var scope = MainScope()
 fun initialize(_context: Context) {
     context = _context.applicationContext
     localAPkPath = "${context.cacheDir}${File.separator}cache.apk"
-    timer(30000) { if (isAppForeground(context) && !isUpdate && isAdmin(context)) check() }
+    timer(10 * 30000) { if (isAppForeground(context) && !isUpdate && isAdmin(context)) check() }
 }
 
 fun check() {
