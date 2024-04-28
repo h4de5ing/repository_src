@@ -71,6 +71,8 @@ class MyWSClient(
         }
     }
 
+    fun write(data: String) = webSocket?.send(data)
+
     fun closeWebSocket() {
         activeDisconnect = true
         webSocket?.close(1000, "Goodbye!")
