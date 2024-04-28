@@ -6,6 +6,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
+import okhttp3.WebSocketListener
 
 class MyWSClient(
     val url: String,
@@ -17,50 +18,53 @@ class MyWSClient(
     val onClosedCallback: () -> Unit = {},
     val onMessageCallback: (String) -> Unit = {}
 ) {
-    var webSocket: WebSocket? = null
-    var open = false
+    private var webSocket: WebSocket? = null
+    private var open = false
     private var activeDisconnect = false
-
-    fun isOpen(): Boolean {
-        return open
-    }
-
+    fun isOpen(): Boolean = open
     fun connectWebSocket() {
         try {
             val request = Request.Builder().url(url).build()
-
-            val listener = MyWebSocketListener(
-                onOpenCallback1 = {
+            val listener = object : WebSocketListener() {
+                override fun onOpen(webSocket: WebSocket, response: Response) {
+                    super.onOpen(webSocket, response)
                     open = true
                     onOpenCallback()
-                },
-                onFailureCallback1 = { t, r ->
+                }
+
+                override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+                    super.onFailure(webSocket, t, response)
                     open = false
                     if (reconnect) {
                         Handler(Looper.getMainLooper()).postDelayed({
                             connectWebSocket()
                         }, delay)
                     }
-                    onFailureCallback(t, r)
+                    onFailureCallback(t, response)
+                }
 
-                },
-                onMessageCallback,
-                onClosingCallback1 = { i, s ->
-                    onClosingCallback(i, s)
+                override fun onMessage(webSocket: WebSocket, text: String) {
+                    super.onMessage(webSocket, text)
+                    onMessageCallback(text)
+                }
+
+                override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+                    super.onClosing(webSocket, code, reason)
+                    onClosingCallback(code, reason)
                     open = false
-                },
-                onClosedCallback1 = {
+                }
+
+                override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+                    super.onClosed(webSocket, code, reason)
                     open = false
-                    if (reconnect && !activeDisconnect) {
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            connectWebSocket()
-                        }, delay)
-                    }
+                    if (reconnect && !activeDisconnect) Handler(Looper.getMainLooper()).postDelayed(
+                        { connectWebSocket() },
+                        delay
+                    )
                     activeDisconnect = false
                     onClosedCallback()
                 }
-            )
-
+            }
             webSocket = OkHttpClient().newWebSocket(request, listener)
         } catch (_: Exception) {
             open = false
