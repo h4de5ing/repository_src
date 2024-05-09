@@ -1,29 +1,29 @@
 package com.github.h4de5ing.netlib
 
+import android.os.Handler
+import android.os.Looper
 import org.java_websocket.WebSocket
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.framing.Framedata
 import org.java_websocket.handshake.ServerHandshake
 import java.net.URI
-import java.util.Timer
-import java.util.TimerTask
-import java.util.concurrent.TimeUnit
 
 class WSClient(
     val ws: String,
+    val reconnect: Boolean = false,
+    val delay: Long = 10000,
     val onOpen: () -> Unit = {},
-    val onClose2: (code: Int, reason: String?, remote: Boolean) -> Unit = {_,_,_->},
+    val onClose2: (code: Int, reason: String?, remote: Boolean) -> Unit = { _, _, _ -> },
     val onError: () -> Unit = {},
     val onPing: () -> Unit = {},
     val onPong: () -> Unit = {},
     val onMessage2: ((String) -> Unit),
 ) {
     private var client: WebSocketClient? = null
-    private var tryReconnect: Boolean = false
+    private var activeDisconnect = false
 
     init {
         create()
-        circlePing()
     }
 
     fun isOpen(): Boolean = client?.isOpen ?: false
@@ -34,17 +34,15 @@ class WSClient(
             client = object : WebSocketClient(URI(ws)) {
                 override fun onOpen(handshakedata: ServerHandshake?) {
                     onOpen()
-                    tryReconnect = false
                 }
 
                 override fun onMessage(message: String?) {
-                    tryReconnect = false
                     message?.apply { onMessage2(this) }
                 }
 
                 override fun onClose(code: Int, reason: String?, remote: Boolean) {
-                    onClose2(code,reason,remote)
-                    tryReconnect = true
+                    onClose2(code, reason, remote)
+                    reConnect()
                 }
 
 
@@ -59,37 +57,31 @@ class WSClient(
                 }
 
                 override fun onError(ex: Exception?) {
-                    tryReconnect = true
                     onError()
                 }
             }
-            client?.connectBlocking(10, TimeUnit.SECONDS)
+            client?.connect()
         } catch (e: Exception) {
-            tryReconnect = true
+            reConnect()
             e.printStackTrace()
         }
     }
 
-    private fun needReconnect() {
+    private fun reConnect() {
+        if (!activeDisconnect && reconnect) Handler(Looper.getMainLooper()).postDelayed(
+            { client?.reconnect() },
+            delay
+        )
+        activeDisconnect = false
+    }
+
+    fun closeWebSocket() {
         try {
-            if (tryReconnect) {
-                client?.apply {
-                    if (isOpen) closeConnection(2, "reconnect stop")
-                }
-                client = null
-                create()
-            }
+            activeDisconnect = true
+            client?.apply { if (isOpen) closeConnection(1000, "Goodbye!") }
+            client = null
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }
-
-    private fun circlePing() {
-        Timer().schedule(object : TimerTask() {
-            override fun run() {
-                //client?.apply { if (isOpen) sendPing() }
-                if (tryReconnect) needReconnect()
-            }
-        }, 0, 5000)
     }
 }
