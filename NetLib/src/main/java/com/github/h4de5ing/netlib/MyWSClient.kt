@@ -51,17 +51,17 @@ class MyWSClient(
                 override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
                     super.onClosing(webSocket, code, reason)
                     onClosingCallback(code, reason)
+                    if (reconnect && !activeDisconnect) Handler(Looper.getMainLooper()).postDelayed(
+                        { connectWebSocket() },
+                        delay
+                    )
+                    activeDisconnect = false
                     open = false
                 }
 
                 override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                     super.onClosed(webSocket, code, reason)
                     open = false
-                    if (reconnect && !activeDisconnect) Handler(Looper.getMainLooper()).postDelayed(
-                        { connectWebSocket() },
-                        delay
-                    )
-                    activeDisconnect = false
                     onClosedCallback()
                 }
             }
