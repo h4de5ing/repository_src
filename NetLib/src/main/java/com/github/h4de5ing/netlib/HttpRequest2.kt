@@ -182,13 +182,8 @@ fun uploadFile(
     return result
 }
 
-interface FileDownloadComplete {
-    fun error(throwable: Throwable?)
-    fun progress(progress: Long)
-    fun complete(file: File?)
-}
 
-fun downloadFile(downloadUrl: String, fileSavePath: String, complete: FileDownloadComplete) {
+fun downloadFile(downloadUrl: String, fileSavePath: String, progress:(Long)->Unit,error:(Throwable)->Unit,complete:(File)->Unit) {
     var downloadFile: File? = null
     var connection: HttpURLConnection? = null
     try {
@@ -212,7 +207,7 @@ fun downloadFile(downloadUrl: String, fileSavePath: String, complete: FileDownlo
             while (`is`.read(buf).also { len = it } != -1) {
                 os.write(buf, 0, len)
                 totalRead += len.toLong()
-                complete.progress(totalRead * 100 / contentLength)
+                progress(totalRead * 100 / contentLength)
             }
             os.flush()
             os.fd.sync()
@@ -220,10 +215,10 @@ fun downloadFile(downloadUrl: String, fileSavePath: String, complete: FileDownlo
             closeSilently(os)
             closeSilently(`is`)
         }
-        complete.complete(temp)
+        complete(temp)
         "download complete url=${downloadUrl}, fileSize=${temp.length()}".print()
     } catch (e: Exception) {
-        complete.error(e)
+        error(e)
         downloadFile?.delete()
     } finally {
         connection?.disconnect()

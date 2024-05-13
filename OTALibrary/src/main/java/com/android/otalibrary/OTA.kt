@@ -248,7 +248,7 @@ fun getTag(): String {
     return tag
 }
 
-fun isDebug(): Boolean = BuildConfig.DEBUG && File("/sdcard/debug").exists()
+fun isDebug(): Boolean = BuildConfig.DEBUG || File("/sdcard/debug").exists()
 
 fun Any.logD() {
     if (File("/sdcard/debug").exists()) Log.i("android_apk_ota", "$this")

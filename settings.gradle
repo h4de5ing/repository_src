@@ -16,7 +16,6 @@ dependencyResolutionManagement {
 rootProject.name = "repository"
 //include ':Base'
 //include ':BaseUI'
-//include ':GsonCommon'
 include ':NetLib'
 //include ':filepicker'
 //include ':zxing'

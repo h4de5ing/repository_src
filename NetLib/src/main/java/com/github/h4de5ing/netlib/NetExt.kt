@@ -9,7 +9,7 @@ import java.net.ProtocolException
 
 fun String.httpGet(block: ((String) -> Unit)) {
     try {
-        val response = HttpRequest.sendGet(this, null, null)
+        val response = get(this, null, null)
         block(response)
     } catch (e: MalformedURLException) {
         System.err.println("URL格式错误：${e.message}")
@@ -28,7 +28,7 @@ fun String.httpGet(block: ((String) -> Unit)) {
 
 fun String.httpGet(headerMap: HashMap<String, String>, block: ((String) -> Unit)) {
     try {
-        val response = HttpRequest.sendGet(this, null, headerMap)
+        val response = get(this, null, headerMap)
         block(response)
     } catch (e: MalformedURLException) {
         System.err.println("URL格式错误：${e.message}")
