@@ -26,7 +26,8 @@ import com.android.otalibrary.ui.Watermark
 import com.github.h4de5ing.gsoncommon.JsonUtils
 import com.github.h4de5ing.gsoncommon.fromJson
 import com.github.h4de5ing.gsoncommon.toJson
-import com.github.h4de5ing.netlib.HttpRequest
+import com.github.h4de5ing.netlib.downloadFile
+import com.github.h4de5ing.netlib.get
 import dalvik.system.DexClassLoader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -199,7 +200,7 @@ fun check4Net(
     change: (Long) -> Unit,
     flag: Boolean
 ) = try {
-    val response = HttpRequest.sendGet("${url}${packageName}.json", null, null)
+    val response = get("${url}${packageName}.json", null, null)
     "网络请求结果:${response}".logD()
     val responseBean = JsonUtils.getJsonParser().fromJson<GetVersionBean>(response)
     if (responseBean.versionCode > version) {
@@ -259,24 +260,17 @@ fun downloadDexAPK(context: Context, api: String) {
         val dexName = "ota.dex"
         var md5: String? = null
         val cachePath = context.externalCacheDir!!.absolutePath + File.separator + dexName
-        val response = HttpRequest.sendGet("${api}config.json", null, null)
+        val response = get("${api}config.json", null, null)
         val responseBean = JsonUtils.getJsonParser().fromJson<DexConfig>(response)
         if (File(cachePath).exists()) md5 = getFileMD5(File(cachePath))
         if (md5 != responseBean.md5) {
-            HttpRequest.downloadFile(responseBean.dexPath,
+            downloadFile(responseBean.dexPath,
                 cachePath,
-                object : HttpRequest.FileDownloadComplete {
-                    override fun progress(progress: Long) {
-                        "dex 下载进度 $progress".logD()
-                    }
-
-                    override fun complete(file: File?) {
-                        "dex 下载完成 ${file?.absolutePath}".logD()
-                        loadAPK(context, file?.absolutePath!!, responseBean.runPath)
-                    }
-
-                    override fun error(throwable: Throwable) {
-                    }
+                progress = { "dex 下载进度 $it".logD() },
+                error = {},
+                complete = {
+                    "dex 下载完成 ${it.absolutePath}".logD()
+                    loadAPK(context, it.absolutePath, responseBean.runPath)
                 })
         } else {
             loadAPK(context, cachePath, responseBean.runPath)

@@ -13,8 +13,18 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.android.otalibrary.*
-import com.github.h4de5ing.netlib.HttpRequest
+import com.android.otalibrary.R
+import com.android.otalibrary.apkUrl
+import com.android.otalibrary.getAPKFilePackageName
+import com.android.otalibrary.getAPKFileVersionCode
+import com.android.otalibrary.installApp
+import com.android.otalibrary.isDownloaded
+import com.android.otalibrary.isUpdate
+import com.android.otalibrary.localAPkPath
+import com.android.otalibrary.logD
+import com.android.otalibrary.targetVersion
+import com.android.otalibrary.versionCode
+import com.github.h4de5ing.netlib.downloadFile
 import java.io.File
 
 class OTAActivity : AppCompatActivity() {
@@ -81,34 +91,29 @@ class OTAActivity : AppCompatActivity() {
                             progressBar.text = getString(R.string.app_update_download) + "0%"
                             btnUpdate.isEnabled = false
                         }
-                        HttpRequest.downloadFile(
+                        downloadFile(
                             apkUrl,
                             localAPkPath,
-                            object : HttpRequest.FileDownloadComplete {
-                                override fun progress(progress: Long) {
-//                                println("下载进度 $progress")
-                                    runOnUiThread {
-                                        progressBar.text =
-                                            getString(R.string.app_update_download) + "${progress}%"
-                                    }
+                            progress = {
+                                runOnUiThread {
+                                    progressBar.text =
+                                        getString(R.string.app_update_download) + "${it}%"
                                 }
-
-                                override fun complete(file: File?) {
-                                    isDownloaded = true
-                                    runOnUiThread {
-                                        btnUpdate.isEnabled = true
-                                        progressBar.text =
-                                            getString(R.string.app_update_download_completed)
-                                        btnUpdate.text = getString(R.string.app_update_click_hint)
-                                    }
+                            },
+                            error = {
+                                runOnUiThread {
+                                    btnUpdate.isEnabled = true
+                                    progressBar.text = getString(R.string.network_disable)
+                                    btnUpdate.text = getString(R.string.try_again)
                                 }
-
-                                override fun error(throwable: Throwable) {
-                                    runOnUiThread {
-                                        btnUpdate.isEnabled = true
-                                        progressBar.text = getString(R.string.network_disable)
-                                        btnUpdate.text = getString(R.string.try_again)
-                                    }
+                            },
+                            complete = {
+                                isDownloaded = true
+                                runOnUiThread {
+                                    btnUpdate.isEnabled = true
+                                    progressBar.text =
+                                        getString(R.string.app_update_download_completed)
+                                    btnUpdate.text = getString(R.string.app_update_click_hint)
                                 }
                             })
                     } catch (e: Exception) {

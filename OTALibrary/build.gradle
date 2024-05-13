@@ -23,7 +23,7 @@ android {
 dependencies {
     implementation "androidx.startup:startup-runtime:1.1.1"
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.github.h4de5ing.netlib:netlib:2.0-20230322'
+    implementation 'com.github.h4de5ing.netlib:netlib:2.0-20240513'
     implementation 'com.github.h4de5ing.gsoncommon:gsoncommon:1.0-20211125'
 }
 afterEvaluate {

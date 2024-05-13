@@ -183,7 +183,13 @@ fun uploadFile(
 }
 
 
-fun downloadFile(downloadUrl: String, fileSavePath: String, progress:(Long)->Unit,error:(Throwable)->Unit,complete:(File)->Unit) {
+fun downloadFile(
+    downloadUrl: String,
+    fileSavePath: String,
+    progress: (Long) -> Unit = {},
+    error: (Throwable) -> Unit = {},
+    complete: (File) -> Unit = {}
+) {
     var downloadFile: File? = null
     var connection: HttpURLConnection? = null
     try {
