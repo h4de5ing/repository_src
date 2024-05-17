@@ -14,7 +14,6 @@ class MyWSClient(
     val delay: Long = 10000,
     val onOpenCallback: () -> Unit = {},
     val onFailureCallback: (Throwable, Response?) -> Unit = { _, _ -> },
-    val onClosingCallback: (Int, String) -> Unit = { _, _ -> },
     val onClosedCallback: () -> Unit = {},
     val onMessageCallback: (String) -> Unit = {}
 ) {
@@ -35,11 +34,9 @@ class MyWSClient(
                 override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
                     super.onFailure(webSocket, t, response)
                     open = false
-                    if (reconnect) {
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            connectWebSocket()
-                        }, delay)
-                    }
+                    if (reconnect && !activeDisconnect)
+                        Handler(Looper.getMainLooper())
+                            .postDelayed({ connectWebSocket() }, delay)
                     onFailureCallback(t, response)
                 }
 
@@ -48,20 +45,10 @@ class MyWSClient(
                     onMessageCallback(text)
                 }
 
-                override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-                    super.onClosing(webSocket, code, reason)
-                    onClosingCallback(code, reason)
-                    if (reconnect && !activeDisconnect) Handler(Looper.getMainLooper()).postDelayed(
-                        { connectWebSocket() },
-                        delay
-                    )
-                    activeDisconnect = false
-                    open = false
-                }
-
                 override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                     super.onClosed(webSocket, code, reason)
                     open = false
+                    activeDisconnect = true
                     onClosedCallback()
                 }
             }
