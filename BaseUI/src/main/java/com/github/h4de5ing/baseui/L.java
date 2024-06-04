@@ -24,7 +24,7 @@ import javax.xml.transform.stream.StreamSource;
 @Deprecated
 public class L {
     private static String TAG = "gh0st";
-    private static boolean LOG_DEBUG = BuildConfig.DEBUG;
+    private static boolean LOG_DEBUG = false;
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
     private static final int VERBOSE = 2;
     private static final int DEBUG = 3;
@@ -154,7 +154,7 @@ public class L {
             if (!dir.exists()) {
                 dir.mkdirs();
             }
-            File file = new File(dir, String.format(Locale.CHINA, "%tY%tm%td_%s_%s.txt", curDate, curDate, curDate, BuildConfig.LIBRARY_PACKAGE_NAME, fileName));
+            File file = new File(dir, String.format(Locale.CHINA, "%tY%tm%td_%s_%s.txt", curDate, curDate, curDate, "log", fileName));
             if (!file.exists()) {
                 file.createNewFile();
             }
@@ -172,7 +172,7 @@ public class L {
         if (TextUtils.isEmpty(tag)) {
             tag = TAG;
         }
-        if (!BuildConfig.DEBUG && type == ERROR) {
+        if (!LOG_DEBUG && type == ERROR) {
             write2File(msg, "error");
         }
         printLine(tag, true);

@@ -1,7 +1,6 @@
 package com.github.h4de5ing.document
 
 import android.content.Context
-import android.util.Log
 import fi.iki.elonen.NanoHTTPD
 import java.io.BufferedReader
 import java.io.IOException

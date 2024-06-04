@@ -4,13 +4,12 @@ import java.util.Date
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-//    id("maven-publish")
-    `maven-publish`
+    id("maven-publish")
 }
 
 android {
     namespace = "com.github.h4de5ing.document"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 21
@@ -31,7 +30,7 @@ android {
 }
 
 dependencies {
-    implementation("org.nanohttpd:nanohttpd:2.3.1")
+    api("org.nanohttpd:nanohttpd:2.3.1")
 }
 publishing {
     publications {
@@ -40,7 +39,7 @@ publishing {
             artifactId = "document"
             val today = SimpleDateFormat("yyyyMMdd").format(Date())
             version = "1.0-${today}"
-            artifact("$buildDir/outputs/aar/Document-release.aar")
+            artifact("${layout.buildDirectory.get().asFile}/outputs/aar/Document-release.aar")
         }
     }
     repositories {

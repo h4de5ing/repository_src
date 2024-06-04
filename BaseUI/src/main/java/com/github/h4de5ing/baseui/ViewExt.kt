@@ -3,9 +3,16 @@ package com.github.h4de5ing.baseui
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
+import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.PixelFormat
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -19,6 +26,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.chip.Chip
+import java.io.ByteArrayOutputStream
 
 //常见view扩展封装
 fun Spinner.selected(selected: ((Int) -> Unit)) {
@@ -162,3 +170,49 @@ fun View.resetTheme() = this.setLayerType(View.LAYER_TYPE_HARDWARE, Paint())
 fun Activity.toast(text: CharSequence): Unit = Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
 fun Activity.longToast(text: CharSequence): Unit =
     Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+
+//序列化 Drawable->Bitmap->ByteArray
+fun drawable2ByteArray(icon: Drawable): ByteArray {
+    return bitmap2ByteArray(drawable2Bitmap(icon))
+}
+
+fun bitmap2ByteArray(bitmap: Bitmap): ByteArray {
+    val baos = ByteArrayOutputStream()
+    bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
+    return baos.toByteArray()
+}
+
+//反序列化 ByteArray->Bitmap->Drawable
+fun byteArray2Drawable(byteArray: ByteArray): Drawable? {
+    val bitmap = byteArray2Bitmap(byteArray)
+    return if (bitmap == null) null else BitmapDrawable(bitmap)
+}
+
+fun byteArray2Bitmap(byteArray: ByteArray): Bitmap? {
+    return if (byteArray.isNotEmpty()) BitmapFactory.decodeByteArray(
+        byteArray,
+        0,
+        byteArray.size
+    ) else null
+}
+
+fun drawable2Bitmap(icon: Drawable): Bitmap {
+    val bitmap =
+        Bitmap.createBitmap(
+            icon.intrinsicWidth,
+            icon.intrinsicHeight,
+            if (icon.opacity == PixelFormat.OPAQUE) Bitmap.Config.RGB_565 else Bitmap.Config.ARGB_8888
+        )
+    val canvas = Canvas(bitmap)
+    icon.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
+    icon.draw(canvas)
+    return bitmap.thumbnail()
+}
+
+fun Bitmap.thumbnail(): Bitmap {
+    val scaleWidth = 72.0f / width
+    val scaleHeight = 72.0f / height
+    val matrix = Matrix()
+    matrix.postScale(scaleWidth, scaleHeight)
+    return Bitmap.createBitmap(this, 0, 0, width, height, matrix, true)
+}

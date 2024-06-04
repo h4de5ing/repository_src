@@ -48,6 +48,7 @@ import static android.graphics.BlurMaskFilter.Blur;
  *     https://upload-images.jianshu.io/upload_images/1944467-f689981357b37435.png
  * </pre>
  */
+@Deprecated
 public class SpannableStringUtils {
 
     private SpannableStringUtils() {
