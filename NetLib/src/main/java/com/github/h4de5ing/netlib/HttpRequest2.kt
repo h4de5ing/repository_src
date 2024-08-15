@@ -111,12 +111,27 @@ fun post(url: String, json: String, header: Map<String, String>?): String {
     return result.toString()
 }
 
+
+/**
+ * @description 文件上传
+ * @param fileType Content-Type 类型，默认为：multipart/form-data
+ * application/x-www-form-urlencoded：这是默认的表单数据编码类型
+ * application/json：用于发送 JSON 格式的数据
+ * text/plain：表示纯文本内容
+ * text/html：表示 HTML 文档
+ * image/jpeg：表示jpeg类型图片
+ * image/png：表示png类型图片
+ * application/pdf：用于表示 PDF 文档
+ * application/octet-stream：表示二进制数据流
+ * @return result
+ */
 @Throws(Exception::class)
 fun uploadFile(
     urlStr: String?,
     fileMap: Map<String, File>?,
     params: Map<String, Any>?,
-    header: Map<String, String>?
+    header: Map<String, String>?,
+    fileType: String = "multipart/form-data"
 ): String {
     val result: String
     val conn: HttpURLConnection
@@ -156,8 +171,7 @@ fun uploadFile(
         val file: File = fileEntry.value
         val filename = file.name
         val strBuf =
-            "\r\n--${boundary}\r\nContent-Disposition: form-data; name=\"${inputName}\"; filename=\"${filename}\"\r\nContent-Type:multipart/form-data\r\n\r\n" +
-                    "\n"
+            "--${boundary}\r\nContent-Disposition: form-data; name=\"${inputName}\"; filename=\"${filename}\"\r\nContent-Type:$fileType\r\n\r\n"
         out.write(strBuf.toByteArray())
         val `in` = DataInputStream(FileInputStream(file))
         var bytes: Int
@@ -165,7 +179,7 @@ fun uploadFile(
         while (`in`.read(bufferOut).also { bytes = it } != -1) out.write(bufferOut, 0, bytes)
         `in`.close()
     }
-    val endData = "\r\n--$boundary--\r\n".toByteArray()
+    val endData = "\r\n--$boundary".toByteArray()
     out.write(endData)
     out.flush()
     out.close()
