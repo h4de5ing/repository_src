@@ -21,13 +21,16 @@ class WSClient(
 ) {
     private var client: WebSocketClient? = null
     private var activeDisconnect = false
+    private var delayReconnect = 0L
 
     init {
         create()
+        delayReconnect = delay
     }
 
     fun isOpen(): Boolean = client?.isOpen ?: false
     fun send(text: String) = client?.apply { send(text) }
+    fun setReconnectDelay(delayByUser: Long) = client?.apply { delayReconnect = delayByUser }
 
     private fun create() {
         try {
@@ -70,7 +73,7 @@ class WSClient(
     private fun reConnect() {
         if (!activeDisconnect && reconnect) Handler(Looper.getMainLooper()).postDelayed(
             { client?.reconnect() },
-            delay
+            delayReconnect
         )
         activeDisconnect = false
     }
