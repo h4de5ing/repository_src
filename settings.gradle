@@ -21,7 +21,7 @@ rootProject.name = "repository"
 //include ':libcommon'
 //include ':libuvccamera'
 //include ':License'
-//include ':NetLib'
+include ':NetLib'
 //include ':OTALibrary'
 //include ':SerialPortLib'
 //include ':SerialPortLibrary'
