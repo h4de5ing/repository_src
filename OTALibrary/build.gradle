@@ -6,11 +6,11 @@ plugins {
 
 android {
     namespace 'com.android.otalibrary'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         minSdk 21
-        targetSdk 34
+        targetSdk 35
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -21,10 +21,10 @@ android {
 }
 
 dependencies {
-    implementation "androidx.startup:startup-runtime:1.1.1"
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.github.h4de5ing.netlib:netlib:2.0-20240513'
-    implementation 'com.github.h4de5ing.gsoncommon:gsoncommon:1.0-20211125'
+    implementation "androidx.startup:startup-runtime:1.2.0"
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.github.h4de5ing.netlib:netlib:2.0-20240905'
+    implementation 'com.github.h4de5ing.gsoncommon:gsoncommon:1.0-20230322'
 }
 afterEvaluate {
     publishing {

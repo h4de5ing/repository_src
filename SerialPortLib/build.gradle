@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    compileSdk 34
+    compileSdk 35
     namespace 'com.github.h4de5ing.serialportlib'
     defaultConfig {
         minSdk 16
-        targetSdk 34
+        targetSdk 35
         //noinspection ChromeOsAbiSupport
         ndk { abiFilters 'arm64-v8a', 'armeabi', 'armeabi-v7a', 'x86' }
     }

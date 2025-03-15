@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.github.h4de5ing.document"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 21

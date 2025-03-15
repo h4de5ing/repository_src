@@ -1,7 +1,18 @@
 package com.github.h4de5ing.netlib
 
 import android.annotation.SuppressLint
-import java.io.*
+import java.io.BufferedReader
+import java.io.Closeable
+import java.io.DataInputStream
+import java.io.DataOutputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStreamReader
+import java.io.OutputStream
+import java.io.PrintWriter
+import java.math.BigDecimal
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -196,11 +207,17 @@ fun uploadFile(
     return result
 }
 
+private fun Long.ratio(bottom: Long): Double {
+    if (bottom <= 0) return 0.0
+    val result = (this * 100.0).toBigDecimal()
+        .divide((bottom * 1.0).toBigDecimal(), 2, BigDecimal.ROUND_HALF_UP)
+    return result.toDouble()
+}
 
 fun downloadFile(
     downloadUrl: String,
     fileSavePath: String,
-    progress: (Long) -> Unit = {},
+    progress: (Int) -> Unit = {},
     error: (Throwable) -> Unit = {},
     complete: (File) -> Unit = {}
 ) {
@@ -226,8 +243,8 @@ fun downloadFile(
         try {
             while (`is`.read(buf).also { len = it } != -1) {
                 os.write(buf, 0, len)
-                totalRead += len.toLong()
-                progress(totalRead * 100 / contentLength)
+                totalRead += len
+                progress((totalRead.ratio(contentLength.toLong())).toInt())
             }
             os.flush()
             os.fd.sync()
@@ -240,6 +257,7 @@ fun downloadFile(
     } catch (e: Exception) {
         error(e)
         downloadFile?.delete()
+        e.printStackTrace()
     } finally {
         connection?.disconnect()
     }
@@ -248,6 +266,6 @@ fun downloadFile(
 fun closeSilently(closeable: Any?) {
     try {
         if (closeable != null) if (closeable is Closeable) closeable.close()
-    } catch (ignored: IOException) {
+    } catch (_: IOException) {
     }
 }
