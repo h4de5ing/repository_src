@@ -9,12 +9,14 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.OutputStream
 import java.io.PrintWriter
-import java.math.BigDecimal
 import java.net.HttpURLConnection
 import java.net.URL
+import kotlin.math.log10
+import kotlin.math.pow
 
 
 @SuppressLint("SdCardPath")
@@ -31,11 +33,8 @@ fun get(url: String, params: Map<String, Any>?, header: Map<String, String>?): S
         var paramStr = StringBuilder()
         params?.apply {
             paramStr.append("?")
-            for (key in params.keys)
-                paramStr.append(key)
-                    .append("=")
-                    .append(params[key])
-                    .append("&")
+            for (key in params.keys) paramStr.append(key).append("=").append(params[key])
+                .append("&")
             paramStr = StringBuilder(paramStr.substring(0, paramStr.length - 1))
         }
         val realUrl = URL(url + paramStr)
@@ -53,8 +52,7 @@ fun get(url: String, params: Map<String, Any>?, header: Map<String, String>?): S
             var line: String?
             while (reader.readLine().also { line = it } != null) result.append(line).append("\n")
             reader.close()
-        } else
-            if (isDebug()) throw ResponseCodeErrorException(conn.responseCode.toString() + " " + conn.responseMessage)
+        } else if (isDebug()) throw ResponseCodeErrorException(conn.responseCode.toString() + " " + conn.responseMessage)
     } catch (e: Exception) {
         if (isDebug()) e.printStackTrace()
     }
@@ -207,58 +205,55 @@ fun uploadFile(
     return result
 }
 
-private fun Long.ratio(bottom: Long): Double {
-    if (bottom <= 0) return 0.0
-    val result = (this * 100.0).toBigDecimal()
-        .divide((bottom * 1.0).toBigDecimal(), 2, BigDecimal.ROUND_HALF_UP)
-    return result.toDouble()
+fun formatFileSize(bytes: Long): String {
+    if (bytes <= 0) return "0B"
+    val units = arrayOf("B", "KB", "MB", "GB", "TB")
+    val digitGroups = (log10(bytes.toDouble()) / log10(1024.0)).toInt()
+    val size = bytes / 1024.0.pow(digitGroups.toDouble())
+    return "%.1f%s".format(size, units[digitGroups])
 }
 
 fun downloadFile(
     downloadUrl: String,
     fileSavePath: String,
-    progress: (Int) -> Unit = {},
+    progress: (Int, String) -> Unit = { _, _ -> },
     error: (Throwable) -> Unit = {},
     complete: (File) -> Unit = {}
 ) {
-    var downloadFile: File? = null
     var connection: HttpURLConnection? = null
+    var inputStream: InputStream? = null
+    var outputStream: FileOutputStream? = null
     try {
-        Thread.currentThread().priority = Thread.MIN_PRIORITY
         val url = URL(downloadUrl)
         connection = url.openConnection() as HttpURLConnection
-        connection.connectTimeout = 5000
-        connection.readTimeout = 60000
-        connection.doInput = true
-        val `is` = connection.inputStream
-        val temp = File(fileSavePath)
-        if (temp.exists()) temp.delete()
-        temp.createNewFile()
-        downloadFile = temp
-        val contentLength = connection.contentLength
-        val os = FileOutputStream(temp)
-        val buf = ByteArray(8 * 1024)
-        var len: Int
-        var totalRead: Long = 0
-        try {
-            while (`is`.read(buf).also { len = it } != -1) {
-                os.write(buf, 0, len)
-                totalRead += len
-                progress((totalRead.ratio(contentLength.toLong())).toInt())
-            }
-            os.flush()
-            os.fd.sync()
-        } finally {
-            closeSilently(os)
-            closeSilently(`is`)
+        connection.connect()
+        if (connection.responseCode != HttpURLConnection.HTTP_OK) {
+            error(IOException("Server returned HTTP ${connection.responseCode} ${connection.responseMessage}"))
         }
-        complete(temp)
-        "download complete url=${downloadUrl}, fileSize=${temp.length()}".print()
+        val fileSize = connection.contentLengthLong
+        val file = File(fileSavePath)
+        file.parentFile?.mkdirs()
+        inputStream = connection.inputStream
+        outputStream = FileOutputStream(file)
+        val buffer = ByteArray(8 * 1024)
+        var totalBytesRead: Long = 0
+        var bytesRead: Int
+        while (inputStream.read(buffer).also { bytesRead = it } != -1) {
+            outputStream.write(buffer, 0, bytesRead)
+            totalBytesRead += bytesRead
+            if (fileSize > 0) {
+                val percent = (totalBytesRead * 100 / fileSize).toInt()
+                // Format downloaded and total size (e.g., "5.2MB / 10MB")
+                val downloadedStr = formatFileSize(totalBytesRead)
+                progress(percent, "${downloadedStr}/${formatFileSize(fileSize)}")
+            }
+        }
+        complete(file)
     } catch (e: Exception) {
         error(e)
-        downloadFile?.delete()
-        e.printStackTrace()
     } finally {
+        inputStream?.close()
+        outputStream?.close()
         connection?.disconnect()
     }
 }

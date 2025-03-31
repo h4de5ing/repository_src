@@ -8,7 +8,7 @@ android {
     compileSdk 35
     namespace 'com.github.h4de5ing.netlib'
     defaultConfig {
-        minSdk 16
+        minSdk 24
         targetSdk 35
     }
     compileOptions {
