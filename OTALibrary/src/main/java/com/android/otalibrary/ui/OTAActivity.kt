@@ -94,7 +94,7 @@ class OTAActivity : AppCompatActivity() {
                         downloadFile(
                             apkUrl,
                             localAPkPath,
-                            progress = {
+                            progress = { it, message ->
                                 runOnUiThread {
                                     progressBar.text =
                                         getString(R.string.app_update_download) + "${it}%"

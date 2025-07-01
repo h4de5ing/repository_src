@@ -4,7 +4,7 @@ import android.os.SystemClock
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
-import java.util.*
+import java.util.LinkedList
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
@@ -63,7 +63,7 @@ abstract class BaseIO {
         private val readThread: ReadThread
     ) : Thread() {
         private val queen = LinkedList<Packet>()
-        private val objecz = Object()
+        private val object2 = Object()
 
         init {
             readThread.setWriteThread(this)
@@ -72,19 +72,21 @@ abstract class BaseIO {
         override fun run() {
             while (isRun) {
                 while (queen.isEmpty()) {
-                    synchronized(objecz) {
-                        objecz.wait()
+                    synchronized(object2) {
+                        object2.wait()
                     }
                 }
                 val poll = queen.poll()
                 try {
-                    write(poll.buffer)
-                    var buffer: ByteArray? = null
-                    if (poll.callback != null) {
-                        buffer = readThread.get(200)
+                    if (poll != null) {
+                        write(poll.buffer)
+                        var buffer: ByteArray? = null
+                        if (poll.callback != null) {
+                            buffer = readThread.get(200)
+                        }
+                        poll.callback?.invoke(buffer != null, buffer ?: poll.buffer)
                     }
-                    poll.callback?.invoke(buffer != null, buffer ?: poll.buffer)
-                } catch (e: Exception) {
+                } catch (_: Exception) {
                     //this@BaseIO.stop()
                 }
             }
@@ -101,8 +103,8 @@ abstract class BaseIO {
                 queen.offer(packet)
                 rt = true
             }
-            synchronized(objecz) {
-                objecz.notify()
+            synchronized(object2) {
+                object2.notify()
             }
             return rt
         }

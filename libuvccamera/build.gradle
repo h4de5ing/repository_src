@@ -4,27 +4,25 @@ plugins {
 }
 
 android {
-    compileSdk 35
+    compileSdk 36
     namespace "com.serenegiant.uvccamera"
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 35
+        targetSdkVersion 36
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_19
-        targetCompatibility JavaVersion.VERSION_19
+        sourceCompatibility JavaVersion.VERSION_22
+        targetCompatibility JavaVersion.VERSION_22
     }
     sourceSets {
         main {
             jniLibs.srcDir 'src/main/libs'
         }
     }
-    buildFeatures {
-        buildConfig true
-    }
+    buildFeatures { buildConfig true }
 }
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation project(':libcommon')
     implementation project(':usbCameraCommon')
 }

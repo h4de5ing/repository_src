@@ -29,8 +29,8 @@ class WSClient(
     }
 
     fun isOpen(): Boolean = client?.isOpen == true
-    fun send(text: String) = client?.apply { send(text) }
-    fun send(bytes: ByteArray) = client?.apply { send(bytes) }
+    fun send(text: String) = client?.send(text)
+    fun send(bytes: ByteArray) = client?.send(bytes)
     fun setReconnectDelay(delayByUser: Long) = client?.apply { delayReconnect = delayByUser }
 
     private fun create() {

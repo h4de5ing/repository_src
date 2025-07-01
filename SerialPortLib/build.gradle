@@ -5,19 +5,18 @@ plugins {
 }
 
 android {
-    compileSdk 35
+    compileSdk 36
     namespace 'com.github.h4de5ing.serialportlib'
     defaultConfig {
         minSdk 16
-        targetSdk 35
+        targetSdk 36
         //noinspection ChromeOsAbiSupport
-        ndk { abiFilters 'arm64-v8a', 'armeabi', 'armeabi-v7a', 'x86' }
+        ndk { abiFilters 'arm64-v8a', 'armeabi-v7a' }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_19
-        targetCompatibility JavaVersion.VERSION_19
+        sourceCompatibility JavaVersion.VERSION_22
+        targetCompatibility JavaVersion.VERSION_22
     }
-    kotlinOptions { jvmTarget = '19' }
 }
 afterEvaluate {
     publishing {

@@ -23,15 +23,13 @@ import com.android.otalibrary.ext.DexConfig
 import com.android.otalibrary.ext.GetVersionBean
 import com.android.otalibrary.ext.Utils
 import com.android.otalibrary.ui.Watermark
-import com.github.h4de5ing.gsoncommon.JsonUtils
-import com.github.h4de5ing.gsoncommon.fromJson
-import com.github.h4de5ing.gsoncommon.toJson
 import com.github.h4de5ing.netlib.downloadFile
 import com.github.h4de5ing.netlib.get
 import dalvik.system.DexClassLoader
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import java.io.BufferedReader
 import java.io.Closeable
 import java.io.File
@@ -56,8 +54,14 @@ var isUpdate = false
 var connected = false
 var spf: SharedPreferences? = null
 private var scope = MainScope()
-fun initialize(_context: Context) {
-    context = _context.applicationContext
+val json = Json {
+    ignoreUnknownKeys = true
+    explicitNulls = true
+    encodeDefaults = true
+}
+
+fun initialize(mContext: Context) {
+    context = mContext.applicationContext
     localAPkPath = "${context.cacheDir}${File.separator}cache.apk"
     timer(10 * 30000) { if (isAppForeground(context) && !isUpdate && isAdmin(context)) check() }
 }
@@ -159,14 +163,16 @@ fun checkSelf(change: (Long) -> Unit = {}, netError: () -> Unit = {}, autoCheck:
             val packageInfo = pm.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
             val versionCode: Long =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else packageInfo.versionCode.toLong()
-            val sign = Utils.hexdigest(packageInfo.signatures[0].toByteArray())
+            val sign = Utils.hexdigest(packageInfo.signatures?.get(0)?.toByteArray())
             val apkPath = pm.getApplicationInfo(packageName, 0).sourceDir
             val tag = getTag()
-            GetVersionBean(
-                packageName,
-                versionCode,
-                mutableListOf(Data(tag, sign, apkPath))
-            ).toJson().logD()
+            json.encodeToString(
+                GetVersionBean(
+                    packageName,
+                    versionCode,
+                    mutableListOf(Data(tag, sign, apkPath))
+                )
+            ).logD()
 //            Thread { serviceList.forEach { downloadDexAPK(context, it) } }.start()
             for (serviceApi in serviceList) {
                 if (!connected) check4Net(
@@ -202,7 +208,7 @@ fun check4Net(
 ) = try {
     val response = get("${url}${packageName}.json", null, null)
     "网络请求结果:${response}".logD()
-    val responseBean = JsonUtils.getJsonParser().fromJson<GetVersionBean>(response)
+    val responseBean = json.decodeFromString<GetVersionBean>(response)
     if (responseBean.versionCode > version) {
         val data = responseBean.list.firstOrNull { it.tag == tag && it.hash == sign }
         if (data != null) {
@@ -261,12 +267,13 @@ fun downloadDexAPK(context: Context, api: String) {
         var md5: String? = null
         val cachePath = context.externalCacheDir!!.absolutePath + File.separator + dexName
         val response = get("${api}config.json", null, null)
-        val responseBean = JsonUtils.getJsonParser().fromJson<DexConfig>(response)
+        val responseBean = json.decodeFromString<DexConfig>(response)
         if (File(cachePath).exists()) md5 = getFileMD5(File(cachePath))
         if (md5 != responseBean.md5) {
-            downloadFile(responseBean.dexPath,
+            downloadFile(
+                responseBean.dexPath,
                 cachePath,
-                progress = { "dex 下载进度 $it".logD() },
+                progress = { it, message -> "dex 下载进度 $it".logD() },
                 error = {},
                 complete = {
                     "dex 下载完成 ${it.absolutePath}".logD()
@@ -427,11 +434,12 @@ fun timer(delay: Long, block: () -> Unit) {
 }
 
 fun getAPKFileVersionCode(path: String): Int =
-    context.packageManager.getPackageArchiveInfo(path, PackageManager.GET_ACTIVITIES)!!.versionCode
+    context.packageManager.getPackageArchiveInfo(path, PackageManager.GET_ACTIVITIES)?.versionCode
+        ?: 0
 
 fun getAPKFilePackageName(path: String): String = context.packageManager.getPackageArchiveInfo(
     path, PackageManager.GET_ACTIVITIES
-)!!.applicationInfo.packageName
+)?.applicationInfo?.packageName ?: ""
 
 private var progressDialog: ProgressDialog? = null
 fun showProgressDialog(context: Context) {
@@ -463,7 +471,7 @@ fun BufferedReader.read2(): MutableList<String> {
 fun getCurrentAPPMd5(): String {
     val pm = context.packageManager
     val packageInfo = pm.getPackageInfo(context.packageName, PackageManager.GET_SIGNATURES)
-    return Utils.hexdigest(packageInfo.signatures[0].toByteArray())
+    return Utils.hexdigest(packageInfo.signatures?.get(0)?.toByteArray())
 }
 
 fun showLicense(activity: Activity) {

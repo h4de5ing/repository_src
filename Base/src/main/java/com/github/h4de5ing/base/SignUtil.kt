@@ -2,6 +2,7 @@ package com.github.h4de5ing.base
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import java.io.File
 import java.io.IOException
 import java.security.MessageDigest
@@ -35,10 +36,13 @@ object SignUtil {
         try {
             val packageInfo =
                 context.packageManager.getPackageInfo(pkgName!!, PackageManager.GET_SIGNATURES)
-            val signs = packageInfo.signatures
-            val sign = signs[0]
-            return hexDigest(sign.toByteArray(), algorithm)
-        } catch (e: PackageManager.NameNotFoundException) {
+            val sign = if (Build.VERSION.SDK_INT >= 28) {
+                packageInfo.signingInfo?.apkContentsSigners?.get(0)
+            } else {
+                packageInfo.signatures?.get(0)
+            }
+            return hexDigest(sign!!.toByteArray(), algorithm)
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         return ""

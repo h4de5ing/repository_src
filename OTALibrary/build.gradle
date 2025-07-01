@@ -6,25 +6,24 @@ plugins {
 
 android {
     namespace 'com.android.otalibrary'
-    compileSdk 35
+    compileSdk 36
 
     defaultConfig {
         minSdk 21
-        targetSdk 35
+        targetSdk 36
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_22
+        targetCompatibility JavaVersion.VERSION_22
     }
-    kotlinOptions { jvmTarget = '1.8' }
     buildFeatures { buildConfig true }
 }
 
 dependencies {
     implementation "androidx.startup:startup-runtime:1.2.0"
-    implementation 'androidx.appcompat:appcompat:1.7.0'
-    implementation 'com.github.h4de5ing.netlib:netlib:2.0-20250315'
-    implementation 'com.github.h4de5ing.gsoncommon:gsoncommon:1.0-20230322'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'com.github.h4de5ing.netlib:netlib:2.0-20250611'
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1"
 }
 afterEvaluate {
     publishing {

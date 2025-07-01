@@ -6,10 +6,10 @@ plugins {
 
 android {
     namespace 'com.github.h4de5ing.filepicker'
-    compileSdk 35
+    compileSdk 36
     defaultConfig {
         minSdk 21
-        targetSdk 35
+        targetSdk 36
     }
 
     buildTypes {
@@ -18,10 +18,9 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_22
+        targetCompatibility JavaVersion.VERSION_22
     }
-    kotlinOptions { jvmTarget = '1.8' }
 }
 afterEvaluate {
     publishing {

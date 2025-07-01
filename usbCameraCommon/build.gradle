@@ -27,15 +27,15 @@ plugins {
 }
 
 android {
-    compileSdk 35
+    compileSdk 36
     namespace "com.serenegiant"
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 35
+        targetSdkVersion 36
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_19
-        targetCompatibility JavaVersion.VERSION_19
+        sourceCompatibility JavaVersion.VERSION_22
+        targetCompatibility JavaVersion.VERSION_22
     }
 }
 

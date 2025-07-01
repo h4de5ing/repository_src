@@ -24,16 +24,11 @@ plugins {
 */
 
 android {
-    compileSdk 35
+    compileSdk 36
     namespace 'com.serenegiant.common'
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_19
-        targetCompatibility JavaVersion.VERSION_19
-    }
-
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 35
+        targetSdkVersion 36
         versionCode 2124
         versionName "2.12.4"
         buildConfigField 'int', 'VERSION_CODE', "2124"
@@ -46,30 +41,32 @@ android {
         buildConfig = true
 		dataBinding = true
     }
-
-    kotlinOptions.jvmTarget = "19"
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_22
+        targetCompatibility JavaVersion.VERSION_22
+    }
 }
 
 dependencies {
     // androidx
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
-    implementation "androidx.appcompat:appcompat:1.7.0"
+    implementation "androidx.appcompat:appcompat:1.7.1"
     implementation "androidx.recyclerview:recyclerview:1.4.0"
-    implementation "androidx.exifinterface:exifinterface:1.4.0"
+    implementation "androidx.exifinterface:exifinterface:1.4.1"
     implementation "com.google.android.material:material:1.12.0"
-    implementation "androidx.lifecycle:lifecycle-process:2.8.7"
-    implementation "androidx.databinding:databinding-common:8.9.1"
+    implementation "androidx.lifecycle:lifecycle-process:2.9.1"
+    implementation "androidx.databinding:databinding-common:8.11.0"
     // ktx
-    implementation "androidx.core:core-ktx:1.15.0"
+    implementation "androidx.core:core-ktx:1.16.0"
     implementation "androidx.preference:preference-ktx:1.2.1"
-    implementation "androidx.fragment:fragment-ktx:1.8.6"
+    implementation "androidx.fragment:fragment-ktx:1.8.8"
     def version = '2.8.7'
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${version}"
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:${version}"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:${version}"
     implementation "androidx.lifecycle:lifecycle-service:${version}"
     implementation "androidx.lifecycle:lifecycle-common-java8:${version}"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2"
 }
 afterEvaluate {
     publishing {

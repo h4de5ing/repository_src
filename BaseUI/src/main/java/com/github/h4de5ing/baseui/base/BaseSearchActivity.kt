@@ -9,6 +9,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.MutableLiveData
 import com.github.h4de5ing.baseui.R
 import com.github.h4de5ing.baseui.base.adapter.CustomSuggestionsAdapter
+import java.util.Locale.getDefault
 
 /**
  * 继承本类需要设置主题
@@ -52,7 +53,13 @@ abstract class BaseSearchActivity : BaseReturnActivity() {
                             SearchManager.SUGGEST_COLUMN_TEXT_2_URL
                         )
                     )
-                    allDataList.filter { it.second.toLowerCase().contains(query.toLowerCase()) }
+                    allDataList.filter {
+                        it.second.lowercase(getDefault()).contains(
+                            query.lowercase(
+                                getDefault()
+                            )
+                        )
+                    }
                         .forEachIndexed { index, any ->
                             newCursor.addRow(arrayOf(index, any.first, any.second, any.third))
                         }
