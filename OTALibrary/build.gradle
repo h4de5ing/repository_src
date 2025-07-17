@@ -23,7 +23,7 @@ dependencies {
     implementation "androidx.startup:startup-runtime:1.2.0"
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'com.github.h4de5ing.netlib:netlib:2.0-20250611'
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
 }
 afterEvaluate {
     publishing {

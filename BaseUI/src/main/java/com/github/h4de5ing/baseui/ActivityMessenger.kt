@@ -1,7 +1,6 @@
 @file:Suppress(
     "UNCHECKED_CAST",
     "unused",
-    "NON_PUBLIC_CALL_FROM_PUBLIC_INLINE",
     "SpellCheckingInspection"
 )
 
@@ -29,7 +28,7 @@ import kotlin.reflect.KProperty
  * @since 2019-08-05 上午11:56
  */
 object ActivityMessenger {
-    private var sRequestCode = 0
+    var sRequestCode = 0
         set(value) {
             field = if (value >= Integer.MAX_VALUE) 1 else value
         }

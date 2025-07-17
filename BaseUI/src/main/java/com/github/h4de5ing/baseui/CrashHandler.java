@@ -243,7 +243,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
         AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         PackageManager packageManager = mContext.getPackageManager();
         Intent intent = packageManager.getLaunchIntentForPackage(mContext.getPackageName());
-        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0x000001, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0x000001, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, 1000, pendingIntent);
     }
 

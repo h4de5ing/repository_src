@@ -1,7 +1,9 @@
 package com.github.h4de5ing.baseui
 
+import android.os.Build
 import android.text.TextUtils
 import android.util.Log
+import androidx.annotation.RequiresApi
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -114,7 +116,7 @@ private fun printSub(level: Int, message: String) {
 }
 
 private const val JSON_INDENT = 4
-private val LINE_SEPARATOR = System.getProperty("line.separator")
+private val LINE_SEPARATOR = System.lineSeparator()
 
 private fun printJson(context: Pair<String, String>) {
     var head = context.first

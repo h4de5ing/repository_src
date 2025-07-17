@@ -10,23 +10,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/Base" />
             <option value="$PROJECT_DIR$/BaseUI" />
-            <option value="$PROJECT_DIR$/Document" />
-            <option value="$PROJECT_DIR$/License" />
-            <option value="$PROJECT_DIR$/NetLib" />
-            <option value="$PROJECT_DIR$/OTALibrary" />
-            <option value="$PROJECT_DIR$/SerialPortLib" />
-            <option value="$PROJECT_DIR$/SerialPortLibrary" />
-            <option value="$PROJECT_DIR$/VanSerialPort" />
-            <option value="$PROJECT_DIR$/Ymode" />
-            <option value="$PROJECT_DIR$/filepicker" />
-            <option value="$PROJECT_DIR$/libcommon" />
-            <option value="$PROJECT_DIR$/libuvccamera" />
-            <option value="$PROJECT_DIR$/usbCameraCommon" />
-            <option value="$PROJECT_DIR$/usbSerialForAndroid" />
-            <option value="$PROJECT_DIR$/usbserial" />
-            <option value="$PROJECT_DIR$/zxing" />
           </set>
         </option>
       </GradleProjectSettings>
