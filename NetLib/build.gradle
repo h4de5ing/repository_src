@@ -15,12 +15,19 @@ android {
         sourceCompatibility JavaVersion.VERSION_22
         targetCompatibility JavaVersion.VERSION_22
     }
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
 }
 
 dependencies {
     api "org.java-websocket:Java-WebSocket:1.6.0"
-    implementation "com.squareup.okhttp3:okhttp:5.1.0"
+    implementation("com.squareup.okhttp3:okhttp:5.1.0")
+    implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:5.1.0")
 }
+
 afterEvaluate {
     publishing {
         publications {

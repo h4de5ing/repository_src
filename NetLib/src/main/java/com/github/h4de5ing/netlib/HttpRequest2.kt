@@ -52,7 +52,7 @@ fun get(url: String, params: Map<String, Any>?, header: Map<String, String>?): S
             var line: String?
             while (reader.readLine().also { line = it } != null) result.append(line).append("\n")
             reader.close()
-        } else if (isDebug()) throw ResponseCodeErrorException(conn.responseCode.toString() + " " + conn.responseMessage)
+        } else if (isDebug()) throw Exception(conn.responseCode.toString() + " " + conn.responseMessage)
     } catch (e: Exception) {
         if (isDebug()) e.printStackTrace()
     }
@@ -90,7 +90,6 @@ fun post(url: String, params: Map<String, Any>?, header: Map<String, String>?): 
     return result.toString()
 }
 
-@Throws(Exception::class)
 fun post(url: String, json: String, header: Map<String, String>?): String {
     val result = StringBuilder()
     val realUrl = URL(url)
@@ -116,7 +115,7 @@ fun post(url: String, json: String, header: Map<String, String>?): String {
         var line: String?
         while (reader.readLine().also { line = it } != null) result.append(line).append("\n")
         reader.close()
-    } else if (isDebug()) throw ResponseCodeErrorException(conn.responseCode.toString() + " " + conn.responseMessage)
+    } else if (isDebug()) throw Exception(conn.responseCode.toString() + " " + conn.responseMessage)
     return result.toString()
 }
 
@@ -134,7 +133,6 @@ fun post(url: String, json: String, header: Map<String, String>?): String {
  * application/octet-stream：表示二进制数据流
  * @return result
  */
-@Throws(Exception::class)
 fun uploadFile(
     urlStr: String?,
     fileMap: Map<String, File>?,
