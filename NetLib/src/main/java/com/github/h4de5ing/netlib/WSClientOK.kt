@@ -20,11 +20,8 @@ class WSClientOK(
     val onClose2: (code: Int, reason: String) -> Unit = { _, _ -> },
     val onError2: (Throwable) -> Unit = { },
     val onMessage2: (String) -> Unit = {}
-) : WSClient {
+) : WSA() {
     private var webSocket: WebSocket? = null
-    private var isConnect = false
-    private var delayReconnect = delay
-    override fun isOpen(): Boolean = isConnect
 
     init {
         Timer().schedule(object : TimerTask() {
@@ -53,7 +50,6 @@ class WSClientOK(
 
                 override fun onMessage(webSocket: WebSocket, text: String) {
                     super.onMessage(webSocket, text)
-                    isConnect = true
                     onMessage2(text)
                 }
 
@@ -64,8 +60,7 @@ class WSClientOK(
                 }
             }
 
-            webSocket = OkHttpClient.Builder()
-                .connectTimeout(15, TimeUnit.SECONDS)
+            webSocket = OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS)
 //                .doh()//TODO 增加这个功能
                 .build().newWebSocket(request, listener)
         } catch (e: Exception) {
@@ -82,10 +77,6 @@ class WSClientOK(
         webSocket?.send(bytes.toByteString())
     }
 
-    override fun setReconnectDelay(delayByUser: Long) {
-        delayReconnect = delayByUser
-    }
-
     override fun disconnect() {
         isConnect = false
         webSocket?.close(1000, "连接已正常关闭 WSClientOK")
@@ -93,8 +84,7 @@ class WSClientOK(
     }
 
     fun OkHttpClient.Builder.doh(
-        url: String = "https://cloudflare-dns.com/dns-query",
-        ips: List<String> = listOf(
+        url: String = "https://cloudflare-dns.com/dns-query", ips: List<String> = listOf(
             "162.159.36.1",
             "162.159.46.1",
             "1.1.1.1",
@@ -106,11 +96,7 @@ class WSClientOK(
             "2606:4700:4700::6400"
         )
     ) = dns(
-        DnsOverHttps
-            .Builder()
-            .client(build())
-            .url(url.toHttpUrl())
-            .bootstrapDnsHosts(ips.map { InetAddress.getByName(it) })
-            .build()
+        DnsOverHttps.Builder().client(build()).url(url.toHttpUrl())
+            .bootstrapDnsHosts(ips.map { InetAddress.getByName(it) }).build()
     )
 }

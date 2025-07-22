@@ -25,7 +25,7 @@ fun String.print() {
     if (isDebug()) println(this)
 }
 
-const val userAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)"
+const val userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
 fun get(url: String, params: Map<String, Any>?, header: Map<String, String>?): String {
     val result = StringBuilder()
     try {

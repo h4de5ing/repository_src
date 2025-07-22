@@ -5,8 +5,6 @@ import org.java_websocket.client.WebSocketClient
 import org.java_websocket.framing.Framedata
 import org.java_websocket.handshake.ServerHandshake
 import java.net.URI
-import java.util.Timer
-import java.util.TimerTask
 
 class WSClientJava(
     val url: String,
@@ -17,18 +15,8 @@ class WSClientJava(
     val onPing: () -> Unit = {},
     val onPong: () -> Unit = {},
     val onMessage2: ((String) -> Unit),
-) : WSClient {
+) : WSA() {
     private var client: WebSocketClient? = null
-    private var isConnect = false
-    private var delayReconnect = delay
-
-    init {
-        Timer().schedule(object : TimerTask() {
-            override fun run() {
-                if (!isConnect) connect()
-            }
-        }, 0, delayReconnect)
-    }
 
     override fun isOpen(): Boolean = isConnect && client?.isOpen == true
     override fun send(text: String) {
@@ -39,9 +27,6 @@ class WSClientJava(
         client?.send(bytes)
     }
 
-    override fun setReconnectDelay(delayByUser: Long) {
-        delayReconnect = delayByUser
-    }
 
     override fun connect() {
         try {
@@ -53,7 +38,6 @@ class WSClientJava(
 
                 override fun onMessage(message: String) {
                     onMessage2(message)
-                    isConnect = true
                 }
 
                 override fun onClose(code: Int, reason: String, remote: Boolean) {

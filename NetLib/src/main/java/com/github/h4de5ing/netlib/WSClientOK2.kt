@@ -7,8 +7,6 @@ import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
 import okio.ByteString.Companion.toByteString
-import java.util.Timer
-import java.util.TimerTask
 import java.util.concurrent.TimeUnit
 
 class WSClientOK2(
@@ -20,23 +18,10 @@ class WSClientOK2(
     val onPing: () -> Unit = {},
     val onPong: () -> Unit = {},
     val onMessage2: (String) -> Unit = {}
-) : WSClient {
-    private var delayReconnect = delay
-    private var isConnect = false
+) : WSA() {
     private var webSocket: WebSocket? = null
-
-    init {
-        Timer().schedule(object : TimerTask() {
-            override fun run() {
-                if (!isConnect) connect()
-            }
-        }, 0, delayReconnect)
-    }
-
     override fun connect() {
-        val okHttp = OkHttpClient.Builder()
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .build()
+        val okHttp = OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS).build()
         val request = Request.Builder().url(url).build()
         webSocket = okHttp.newWebSocket(request, InnerListener())
     }
@@ -46,18 +31,12 @@ class WSClientOK2(
         webSocket = null
     }
 
-    override fun isOpen(): Boolean = isConnect
-
     override fun send(text: String) {
         webSocket?.send(text) ?: Log.w("gh0st", "send: socket==null")
     }
 
     override fun send(bytes: ByteArray) {
         webSocket?.send(bytes.toByteString()) ?: Log.w("gh0st", "send: socket==null")
-    }
-
-    override fun setReconnectDelay(delayByUser: Long) {
-        delayReconnect = delayByUser
     }
 
     private inner class InnerListener : WebSocketListener() {
