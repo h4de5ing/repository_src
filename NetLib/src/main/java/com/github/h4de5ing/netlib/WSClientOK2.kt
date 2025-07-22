@@ -27,7 +27,7 @@ class WSClientOK2(
     }
 
     override fun disconnect() {
-        webSocket?.close(1000, "主动关闭")
+        webSocket?.close(1000, "连接已正常关闭 WSClientOK2")
         webSocket = null
     }
 

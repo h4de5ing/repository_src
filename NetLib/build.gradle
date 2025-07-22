@@ -1,6 +1,6 @@
 plugins {
     id 'com.android.library'
-    id 'kotlin-android'
+    id 'org.jetbrains.kotlin.android'
     id 'maven-publish'
 }
 
@@ -17,13 +17,13 @@ android {
     }
     publishing {
         singleVariant("release") {
-            withSourcesJar()
+            //withSourcesJar()
         }
     }
 }
 
 dependencies {
-    api "org.java-websocket:Java-WebSocket:1.6.0"
+    implementation("org.java-websocket:Java-WebSocket:1.6.0")
     implementation("com.squareup.okhttp3:okhttp:5.1.0")
     implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:5.1.0")
 }

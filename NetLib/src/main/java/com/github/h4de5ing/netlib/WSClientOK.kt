@@ -41,16 +41,16 @@ class WSClientOK(
                     onOpen()
                 }
 
+                override fun onMessage(webSocket: WebSocket, text: String) {
+                    super.onMessage(webSocket, text)
+                    onMessage2(text)
+                }
+
                 override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
                     super.onFailure(webSocket, t, response)
                     isConnect = false
                     onError2(t)
 
-                }
-
-                override fun onMessage(webSocket: WebSocket, text: String) {
-                    super.onMessage(webSocket, text)
-                    onMessage2(text)
                 }
 
                 override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
