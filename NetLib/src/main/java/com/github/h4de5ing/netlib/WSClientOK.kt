@@ -27,10 +27,10 @@ class WSClientOK(
     private var isConnect = false
     private var delayReconnect = delay
     override fun isOpen(): Boolean = isConnect
-    private var tag = "gh0st"
 
     init {
         connect()
+        if (reconnect) reConnect()
     }
 
     override fun connect() {
@@ -45,7 +45,6 @@ class WSClientOK(
 
                 override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
                     super.onFailure(webSocket, t, response)
-                    Log.e(tag, "onFailure: ${t.message},${response?.message ?: ""}")
                     isConnect = false
                     onError2(t)
 
@@ -59,7 +58,6 @@ class WSClientOK(
 
                 override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                     super.onClosed(webSocket, code, reason)
-                    Log.e(tag, "onClosed: code=${code},${reason}")
                     isConnect = false
                     onClose2(code, reason)
                     reConnect()
@@ -95,9 +93,11 @@ class WSClientOK(
     }
 
     private fun reConnect() {
-        if (reconnect && isConnect)
-            Handler(Looper.getMainLooper())
-                .postDelayed({ connect() }, delayReconnect)
+        Handler(Looper.getMainLooper()).postDelayed(
+            {
+                if (!isConnect && reconnect) connect()
+            }, delayReconnect
+        )
     }
 
     fun OkHttpClient.Builder.doh(

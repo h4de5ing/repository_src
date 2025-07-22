@@ -21,15 +21,15 @@ class WSClientJava(
     val onMessage2: ((String) -> Unit),
 ) : WSClient {
     private var client: WebSocketClient? = null
-    private var activeDisconnect = false
+    private var isConnect = false
     private var delayReconnect = delay
-    private var tag = "gh0st"
 
     init {
         connect()
+        if (reconnect) reConnect()
     }
 
-    override fun isOpen(): Boolean = client?.isOpen == true
+    override fun isOpen(): Boolean = isConnect && client?.isOpen == true
     override fun send(text: String) {
         client?.send(text)
     }
@@ -46,24 +46,22 @@ class WSClientJava(
         try {
             client = object : WebSocketClient(URI(url)) {
                 override fun onOpen(handshakedata: ServerHandshake?) {
-                    activeDisconnect = false
+                    isConnect = true
                     onOpen()
                 }
 
                 override fun onMessage(message: String) {
                     onMessage2(message)
-                    activeDisconnect = false
+                    isConnect = true
                 }
 
                 override fun onClose(code: Int, reason: String, remote: Boolean) {
-                    Log.e(tag, "onClose: code=${code},${reason}")
                     onClose2(code, reason)
-                    activeDisconnect = true
-                    reConnect()
+                    isConnect = false
                 }
 
                 override fun onError(ex: Exception) {
-                    Log.e(tag, "onError: ${ex.message}")
+                    isConnect = false
                     onError2(ex)
                 }
 
@@ -79,18 +77,17 @@ class WSClientJava(
             }
             client?.connect()
         } catch (e: Exception) {
-            reConnect()
+            isConnect = false
             e.printStackTrace()
         }
     }
 
     private fun reConnect() {
-        if (activeDisconnect && reconnect) {
-            Handler(Looper.getMainLooper()).postDelayed(
-                { connect() },
-                delayReconnect
-            )
-        }
+        Handler(Looper.getMainLooper()).postDelayed(
+            {
+                if (!isConnect && reconnect) connect()
+            }, delayReconnect
+        )
     }
 
     override fun disconnect() {
