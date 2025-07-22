@@ -52,9 +52,9 @@ fun get(url: String, params: Map<String, Any>?, header: Map<String, String>?): S
             var line: String?
             while (reader.readLine().also { line = it } != null) result.append(line).append("\n")
             reader.close()
-        } else if (isDebug()) throw Exception(conn.responseCode.toString() + " " + conn.responseMessage)
+        } else throw Exception(conn.responseCode.toString() + " " + conn.responseMessage)
     } catch (e: Exception) {
-        if (isDebug()) e.printStackTrace()
+        e.printStackTrace()
     }
     return result.toString()
 }
@@ -92,30 +92,34 @@ fun post(url: String, params: Map<String, Any>?, header: Map<String, String>?): 
 
 fun post(url: String, json: String, header: Map<String, String>?): String {
     val result = StringBuilder()
-    val realUrl = URL(url)
-    val conn = realUrl.openConnection() as HttpURLConnection
-    conn.setRequestProperty("connection", "Keep-Alive")
-    conn.setRequestProperty("Charset", "UTF-8")
-    conn.setRequestProperty("user-agent", userAgent)
-    conn.setRequestProperty("Content-Length", json.toByteArray().size.toString())
-    conn.setRequestProperty("Content-type", "application/json")
-    header?.apply { for (key in this.keys) conn.setRequestProperty(key, this[key]) }
-    conn.doOutput = true
-    conn.doInput = true
-    val out = conn.outputStream
-    out.write(json.toByteArray())
-    out.flush()
-    out.close()
-    val map = conn.headerFields
-    "网址:$url".print()
-    "json:$json".print()
-    for (key in map.keys) "${key}->${map[key]}".print()
-    if (conn.responseCode == 200) {
-        val reader = BufferedReader(InputStreamReader(conn.inputStream))
-        var line: String?
-        while (reader.readLine().also { line = it } != null) result.append(line).append("\n")
-        reader.close()
-    } else if (isDebug()) throw Exception(conn.responseCode.toString() + " " + conn.responseMessage)
+    try {
+        val realUrl = URL(url)
+        val conn = realUrl.openConnection() as HttpURLConnection
+        conn.setRequestProperty("connection", "Keep-Alive")
+        conn.setRequestProperty("Charset", "UTF-8")
+        conn.setRequestProperty("user-agent", userAgent)
+        conn.setRequestProperty("Content-Length", json.toByteArray().size.toString())
+        conn.setRequestProperty("Content-type", "application/json")
+        header?.apply { for (key in this.keys) conn.setRequestProperty(key, this[key]) }
+        conn.doOutput = true
+        conn.doInput = true
+        val out = conn.outputStream
+        out.write(json.toByteArray())
+        out.flush()
+        out.close()
+        val map = conn.headerFields
+        "网址:$url".print()
+        "json:$json".print()
+        for (key in map.keys) "${key}->${map[key]}".print()
+        if (conn.responseCode == 200) {
+            val reader = BufferedReader(InputStreamReader(conn.inputStream))
+            var line: String?
+            while (reader.readLine().also { line = it } != null) result.append(line).append("\n")
+            reader.close()
+        } else throw Exception(conn.responseCode.toString() + " " + conn.responseMessage)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
     return result.toString()
 }
 
