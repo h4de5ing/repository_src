@@ -1,8 +1,5 @@
 package com.github.h4de5ing.netlib
 
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -12,11 +9,12 @@ import okhttp3.WebSocketListener
 import okhttp3.dnsoverhttps.DnsOverHttps
 import okio.ByteString.Companion.toByteString
 import java.net.InetAddress
+import java.util.Timer
+import java.util.TimerTask
 import java.util.concurrent.TimeUnit
 
 class WSClientOK(
     val url: String,
-    val reconnect: Boolean = true,
     val delay: Long = 10000L,
     val onOpen: () -> Unit = {},
     val onClose2: (code: Int, reason: String) -> Unit = { _, _ -> },
@@ -29,8 +27,11 @@ class WSClientOK(
     override fun isOpen(): Boolean = isConnect
 
     init {
-        connect()
-        if (reconnect) reConnect()
+        Timer().schedule(object : TimerTask() {
+            override fun run() {
+                if (!isConnect) connect()
+            }
+        }, 0, delayReconnect)
     }
 
     override fun connect() {
@@ -60,7 +61,6 @@ class WSClientOK(
                     super.onClosed(webSocket, code, reason)
                     isConnect = false
                     onClose2(code, reason)
-                    reConnect()
                 }
             }
 
@@ -90,14 +90,6 @@ class WSClientOK(
         isConnect = false
         webSocket?.close(1000, "连接已正常关闭 WSClientOK")
         webSocket = null
-    }
-
-    private fun reConnect() {
-        Handler(Looper.getMainLooper()).postDelayed(
-            {
-                if (!isConnect && reconnect) connect()
-            }, delayReconnect
-        )
     }
 
     fun OkHttpClient.Builder.doh(

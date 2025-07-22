@@ -1,17 +1,15 @@
 package com.github.h4de5ing.netlib
 
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import org.java_websocket.WebSocket
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.framing.Framedata
 import org.java_websocket.handshake.ServerHandshake
 import java.net.URI
+import java.util.Timer
+import java.util.TimerTask
 
 class WSClientJava(
     val url: String,
-    val reconnect: Boolean = true,
     val delay: Long = 10000L,
     val onOpen: () -> Unit = {},
     val onClose2: (code: Int, reason: String) -> Unit = { _, _ -> },
@@ -25,8 +23,11 @@ class WSClientJava(
     private var delayReconnect = delay
 
     init {
-        connect()
-        if (reconnect) reConnect()
+        Timer().schedule(object : TimerTask() {
+            override fun run() {
+                if (!isConnect) connect()
+            }
+        }, 0, delayReconnect)
     }
 
     override fun isOpen(): Boolean = isConnect && client?.isOpen == true
@@ -80,14 +81,6 @@ class WSClientJava(
             isConnect = false
             e.printStackTrace()
         }
-    }
-
-    private fun reConnect() {
-        Handler(Looper.getMainLooper()).postDelayed(
-            {
-                if (!isConnect && reconnect) connect()
-            }, delayReconnect
-        )
     }
 
     override fun disconnect() {
