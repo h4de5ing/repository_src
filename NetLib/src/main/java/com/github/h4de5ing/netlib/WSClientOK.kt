@@ -2,6 +2,7 @@ package com.github.h4de5ing.netlib
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -11,6 +12,7 @@ import okhttp3.WebSocketListener
 import okhttp3.dnsoverhttps.DnsOverHttps
 import okio.ByteString.Companion.toByteString
 import java.net.InetAddress
+import java.util.concurrent.TimeUnit
 
 class WSClientOK(
     val url: String,
@@ -22,9 +24,10 @@ class WSClientOK(
     val onMessage2: (String) -> Unit = {}
 ) : WSClient {
     private var webSocket: WebSocket? = null
-    private var activeDisconnect = true
+    private var isConnect = false
     private var delayReconnect = delay
-    override fun isOpen(): Boolean = !activeDisconnect
+    override fun isOpen(): Boolean = isConnect
+    private var tag = "gh0st"
 
     init {
         connect()
@@ -32,41 +35,43 @@ class WSClientOK(
 
     override fun connect() {
         try {
-            println("gh0st WSClientOK connect")
             val request = Request.Builder().url(url).build()
             val listener = object : WebSocketListener() {
                 override fun onOpen(webSocket: WebSocket, response: Response) {
                     super.onOpen(webSocket, response)
-                    activeDisconnect = false
+                    isConnect = true
                     onOpen()
                 }
 
                 override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
                     super.onFailure(webSocket, t, response)
-                    activeDisconnect = true
+                    Log.e(tag, "onFailure: ${t.message},${response?.message ?: ""}")
+                    isConnect = false
                     onError2(t)
-                    reConnect()
+
                 }
 
                 override fun onMessage(webSocket: WebSocket, text: String) {
                     super.onMessage(webSocket, text)
-                    activeDisconnect = false
+                    isConnect = true
                     onMessage2(text)
                 }
 
                 override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                     super.onClosed(webSocket, code, reason)
-                    activeDisconnect = true
+                    Log.e(tag, "onClosed: code=${code},${reason}")
+                    isConnect = false
                     onClose2(code, reason)
+                    reConnect()
                 }
             }
-            webSocket = OkHttpClient()
-                .newBuilder()
-                //.doh()//TODO 增加这个功能
-                .build()
-                .newWebSocket(request, listener)
+
+            webSocket = OkHttpClient.Builder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+//                .doh()//TODO 增加这个功能
+                .build().newWebSocket(request, listener)
         } catch (e: Exception) {
-            activeDisconnect = true
+            isConnect = false
             e.printStackTrace()
         }
     }
@@ -84,13 +89,13 @@ class WSClientOK(
     }
 
     override fun disconnect() {
-        activeDisconnect = true
-        webSocket?.close(1000, "Goodbye!")
+        isConnect = false
+        webSocket?.close(1000, "连接已正常关闭 WSClientOK")
         webSocket = null
     }
 
     private fun reConnect() {
-        if (reconnect && activeDisconnect)
+        if (reconnect && isConnect)
             Handler(Looper.getMainLooper())
                 .postDelayed({ connect() }, delayReconnect)
     }

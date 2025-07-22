@@ -2,6 +2,7 @@ package com.github.h4de5ing.netlib
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import org.java_websocket.WebSocket
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.framing.Framedata
@@ -22,6 +23,7 @@ class WSClientJava(
     private var client: WebSocketClient? = null
     private var activeDisconnect = false
     private var delayReconnect = delay
+    private var tag = "gh0st"
 
     init {
         connect()
@@ -42,7 +44,6 @@ class WSClientJava(
 
     override fun connect() {
         try {
-            println("gh0st WSClientJava connect")
             client = object : WebSocketClient(URI(url)) {
                 override fun onOpen(handshakedata: ServerHandshake?) {
                     activeDisconnect = false
@@ -55,11 +56,16 @@ class WSClientJava(
                 }
 
                 override fun onClose(code: Int, reason: String, remote: Boolean) {
+                    Log.e(tag, "onClose: code=${code},${reason}")
                     onClose2(code, reason)
                     activeDisconnect = true
                     reConnect()
                 }
 
+                override fun onError(ex: Exception) {
+                    Log.e(tag, "onError: ${ex.message}")
+                    onError2(ex)
+                }
 
                 override fun onWebsocketPing(conn: WebSocket, f: Framedata) {
                     super.onWebsocketPing(conn, f)
@@ -70,10 +76,6 @@ class WSClientJava(
                     super.onWebsocketPong(conn, f)
                     onPong()
                 }
-
-                override fun onError(ex: Exception) {
-                    onError2(ex)
-                }
             }
             client?.connect()
         } catch (e: Exception) {
@@ -83,7 +85,6 @@ class WSClientJava(
     }
 
     private fun reConnect() {
-        println("gh0st reConnect activeDisconnect=${activeDisconnect},reconnect=${reconnect}")
         if (activeDisconnect && reconnect) {
             Handler(Looper.getMainLooper()).postDelayed(
                 { connect() },
@@ -94,7 +95,7 @@ class WSClientJava(
 
     override fun disconnect() {
         try {
-            client?.closeConnection(1000, "Goodbye!")
+            client?.closeConnection(1000, "连接已正常关闭 WSClientJava")
             client = null
         } catch (e: Exception) {
             e.printStackTrace()
