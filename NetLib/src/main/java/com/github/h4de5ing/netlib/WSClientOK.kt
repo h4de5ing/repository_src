@@ -14,7 +14,7 @@ import java.net.InetAddress
 
 class WSClientOK(
     val url: String,
-    val reconnect: Boolean = false,
+    val reconnect: Boolean = true,
     val delay: Long = 10000L,
     val onOpen: () -> Unit = {},
     val onClose2: (code: Int, reason: String) -> Unit = { _, _ -> },
@@ -22,10 +22,9 @@ class WSClientOK(
     val onMessage2: (String) -> Unit = {}
 ) : WSClient {
     private var webSocket: WebSocket? = null
-    private var open = false
-    private var activeDisconnect = reconnect
+    private var activeDisconnect = true
     private var delayReconnect = delay
-    override fun isOpen(): Boolean = open
+    override fun isOpen(): Boolean = !activeDisconnect
 
     init {
         connect()
@@ -33,29 +32,30 @@ class WSClientOK(
 
     override fun connect() {
         try {
+            println("gh0st WSClientOK connect")
             val request = Request.Builder().url(url).build()
             val listener = object : WebSocketListener() {
                 override fun onOpen(webSocket: WebSocket, response: Response) {
                     super.onOpen(webSocket, response)
-                    open = true
+                    activeDisconnect = false
                     onOpen()
                 }
 
                 override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
                     super.onFailure(webSocket, t, response)
-                    open = false
+                    activeDisconnect = true
                     onError2(t)
                     reConnect()
                 }
 
                 override fun onMessage(webSocket: WebSocket, text: String) {
                     super.onMessage(webSocket, text)
+                    activeDisconnect = false
                     onMessage2(text)
                 }
 
                 override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                     super.onClosed(webSocket, code, reason)
-                    open = false
                     activeDisconnect = true
                     onClose2(code, reason)
                 }
@@ -65,8 +65,9 @@ class WSClientOK(
                 //.doh()//TODO 增加这个功能
                 .build()
                 .newWebSocket(request, listener)
-        } catch (_: Exception) {
-            open = false
+        } catch (e: Exception) {
+            activeDisconnect = true
+            e.printStackTrace()
         }
     }
 
@@ -89,7 +90,7 @@ class WSClientOK(
     }
 
     private fun reConnect() {
-        if (reconnect && !activeDisconnect)
+        if (reconnect && activeDisconnect)
             Handler(Looper.getMainLooper())
                 .postDelayed({ connect() }, delayReconnect)
     }

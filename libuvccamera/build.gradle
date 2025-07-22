@@ -15,9 +15,9 @@ android {
         targetCompatibility JavaVersion.VERSION_22
     }
     sourceSets {
-        main {
+        main(({
             jniLibs.srcDir 'src/main/libs'
-        }
+        } as String))
     }
     buildFeatures { buildConfig true }
 }

@@ -10,7 +10,7 @@ import java.net.URI
 
 class WSClientJava(
     val url: String,
-    val reconnect: Boolean = false,
+    val reconnect: Boolean = true,
     val delay: Long = 10000L,
     val onOpen: () -> Unit = {},
     val onClose2: (code: Int, reason: String) -> Unit = { _, _ -> },
@@ -20,7 +20,7 @@ class WSClientJava(
     val onMessage2: ((String) -> Unit),
 ) : WSClient {
     private var client: WebSocketClient? = null
-    private var activeDisconnect = reconnect
+    private var activeDisconnect = false
     private var delayReconnect = delay
 
     init {
@@ -42,17 +42,21 @@ class WSClientJava(
 
     override fun connect() {
         try {
+            println("gh0st WSClientJava connect")
             client = object : WebSocketClient(URI(url)) {
                 override fun onOpen(handshakedata: ServerHandshake?) {
+                    activeDisconnect = false
                     onOpen()
                 }
 
                 override fun onMessage(message: String) {
                     onMessage2(message)
+                    activeDisconnect = false
                 }
 
                 override fun onClose(code: Int, reason: String, remote: Boolean) {
                     onClose2(code, reason)
+                    activeDisconnect = true
                     reConnect()
                 }
 
@@ -69,7 +73,6 @@ class WSClientJava(
 
                 override fun onError(ex: Exception) {
                     onError2(ex)
-                    reConnect()
                 }
             }
             client?.connect()
@@ -80,16 +83,17 @@ class WSClientJava(
     }
 
     private fun reConnect() {
-        if (!activeDisconnect && reconnect) Handler(Looper.getMainLooper()).postDelayed(
-            { connect() },
-            delayReconnect
-        )
-        activeDisconnect = false
+        println("gh0st reConnect activeDisconnect=${activeDisconnect},reconnect=${reconnect}")
+        if (activeDisconnect && reconnect) {
+            Handler(Looper.getMainLooper()).postDelayed(
+                { connect() },
+                delayReconnect
+            )
+        }
     }
 
     override fun disconnect() {
         try {
-            activeDisconnect = true
             client?.closeConnection(1000, "Goodbye!")
             client = null
         } catch (e: Exception) {
