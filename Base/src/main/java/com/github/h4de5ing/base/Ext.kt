@@ -4,8 +4,15 @@ import android.annotation.SuppressLint
 import java.text.DecimalFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.experimental.and
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
+import java.util.Timer
+import java.util.TimerTask
 
 //常见的扩展函数
 //判断任何对象是否为空
@@ -14,8 +21,9 @@ import kotlin.experimental.and
 fun Double.nDecimal(n: Int): String = String.format("%.${n}f", this)
 fun Long.date(): String = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA).format(Date(this))
 fun Long.date(pattern: String) = SimpleDateFormat(pattern, Locale.CHINA).format(Date(this))
+
 fun now(): String =
-    SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA).format(Date(System.currentTimeMillis()))
+    DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(Instant.now().atZone(ZoneId.systemDefault()))
 
 //获取某天0点
 private fun getData0(year: Int, month: Int, dayOfMonth: Int): Long {

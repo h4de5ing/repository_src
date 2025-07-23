@@ -6,7 +6,7 @@ import java.util.TimerTask
 
 abstract class WSA : WSClient {
     var isConnect = false
-    var delayReconnect = 10_000L
+    var delayReconnect = 10_000L//TODO 如果被重置了需要重启定时器
 
     init {
         Timer().schedule(object : TimerTask() {

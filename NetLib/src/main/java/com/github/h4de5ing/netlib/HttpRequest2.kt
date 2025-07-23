@@ -25,8 +25,11 @@ fun String.print() {
     if (isDebug()) println(this)
 }
 
-const val userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+const val userAgent =
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+
 fun get(url: String, params: Map<String, Any>?, header: Map<String, String>?): String {
+    val start = System.currentTimeMillis()
     val result = StringBuilder()
     try {
         val reader: BufferedReader
@@ -47,12 +50,14 @@ fun get(url: String, params: Map<String, Any>?, header: Map<String, String>?): S
         url.print()
         for (key in map.keys) "${key}->${map[key]}".print()
         conn.connect()
+        val stop = System.currentTimeMillis()
+        println("${nowISO()} ${realUrl.let { "${it.protocol}://${it.host}${it.path}" }} -> ${conn.responseCode},took ${stop - start}ms")
         if (conn.responseCode == 200) {
             reader = BufferedReader(InputStreamReader(conn.inputStream))
             var line: String?
             while (reader.readLine().also { line = it } != null) result.append(line).append("\n")
             reader.close()
-        } else throw Exception(conn.responseCode.toString() + " " + conn.responseMessage)
+        }
     } catch (e: Exception) {
         e.printStackTrace()
     }
@@ -60,37 +65,45 @@ fun get(url: String, params: Map<String, Any>?, header: Map<String, String>?): S
 }
 
 fun post(url: String, params: Map<String, Any>?, header: Map<String, String>?): String {
+    val start = System.currentTimeMillis()
     val result = StringBuilder()
-    val out: PrintWriter
-    val reader: BufferedReader
-    val paramStr = StringBuilder()
-    params?.apply {
-        for (key in this.keys) paramStr.append(key).append("=").append(this[key]).append("&")
+    try {
+        val out: PrintWriter
+        val reader: BufferedReader
+        val paramStr = StringBuilder()
+        params?.apply {
+            for (key in this.keys) paramStr.append(key).append("=").append(this[key]).append("&")
+        }
+        val realUrl = URL(url)
+        val conn = realUrl.openConnection() as HttpURLConnection
+        conn.setRequestProperty("accept", "*/*")
+        conn.setRequestProperty("connection", "Keep-Alive")
+        conn.setRequestProperty("user-agent", userAgent)
+        header?.apply { for (key in this.keys) conn.setRequestProperty(key, this[key]) }
+        conn.doOutput = true
+        conn.doInput = true
+        out = PrintWriter(conn.getOutputStream())
+        out.print(paramStr)
+        out.flush()
+        url.print()
+        paramStr.toString().print()
+        val map = conn.headerFields
+        for (key in map.keys) "${key}->${map[key]}".print()
+        reader = BufferedReader(InputStreamReader(conn.getInputStream()))
+        var line: String?
+        while (reader.readLine().also { line = it } != null) result.append(line)
+        out.close()
+        reader.close()
+        val stop = System.currentTimeMillis()
+        println("${nowISO()} ${realUrl.let { "${it.protocol}://${it.host}${it.path}" }} -> ${conn.responseCode},took ${stop - start}ms")
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
-    val realUrl = URL(url)
-    val conn = realUrl.openConnection()
-    conn.setRequestProperty("accept", "*/*")
-    conn.setRequestProperty("connection", "Keep-Alive")
-    conn.setRequestProperty("user-agent", userAgent)
-    header?.apply { for (key in this.keys) conn.setRequestProperty(key, this[key]) }
-    conn.doOutput = true
-    conn.doInput = true
-    out = PrintWriter(conn.getOutputStream())
-    out.print(paramStr)
-    out.flush()
-    url.print()
-    paramStr.toString().print()
-    val map = conn.headerFields
-    for (key in map.keys) "${key}->${map[key]}".print()
-    reader = BufferedReader(InputStreamReader(conn.getInputStream()))
-    var line: String?
-    while (reader.readLine().also { line = it } != null) result.append(line)
-    out.close()
-    reader.close()
     return result.toString()
 }
 
 fun post(url: String, json: String, header: Map<String, String>?): String {
+    val start = System.currentTimeMillis()
     val result = StringBuilder()
     try {
         val realUrl = URL(url)
@@ -116,7 +129,9 @@ fun post(url: String, json: String, header: Map<String, String>?): String {
             var line: String?
             while (reader.readLine().also { line = it } != null) result.append(line).append("\n")
             reader.close()
-        } else throw Exception(conn.responseCode.toString() + " " + conn.responseMessage)
+        }
+        val stop = System.currentTimeMillis()
+        println("${nowISO()} ${realUrl.let { "${it.protocol}://${it.host}${it.path}" }} -> ${conn.responseCode},took ${stop - start}ms")
     } catch (e: Exception) {
         e.printStackTrace()
     }

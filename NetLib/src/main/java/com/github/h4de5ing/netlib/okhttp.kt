@@ -17,8 +17,9 @@ import java.net.InetSocketAddress
 import java.net.Proxy
 import java.net.URL
 import java.security.KeyStore
-import java.text.SimpleDateFormat
-import java.util.Date
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.TrustManager
 import javax.net.ssl.TrustManagerFactory
@@ -90,11 +91,8 @@ fun okClient(
  * 简单get请求
  */
 fun okSampleGet(url: String): Int {
-    val client = OkHttpClient()
-        .newBuilder()
-        .connectTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(10, TimeUnit.SECONDS)
-        .connectionPool(ConnectionPool(5, 1, TimeUnit.SECONDS))
+    val client = OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(10, TimeUnit.SECONDS).connectionPool(ConnectionPool(5, 1, TimeUnit.SECONDS))
         .build()
     val build = Request.Builder().url(url).build()
     val response = client.newCall(build).execute()
@@ -146,7 +144,7 @@ fun okGet(
     val response =
         okClient(url.startsWith("https"), proxy, proxyAuthenticator).newCall(request).execute()
     val stop = System.currentTimeMillis()
-    println("${now()} ${URL(newUrl).let { "${it.protocol}://${it.host}${it.path}" }} -> ${response.code},took ${stop - start}ms")
+    println("${nowISO()} ${URL(newUrl).let { "${it.protocol}://${it.host}${it.path}" }} -> ${response.code},took ${stop - start}ms")
     val responseBody = response.body.string()
     if (response.code != 200) println("发生了啥:$responseBody")
     return responseBody
@@ -168,7 +166,7 @@ fun okPostJson(
     request.headers.forEach { t -> println("${t.first}:${t.second}") }
     val response =
         okClient(url.startsWith("https"), proxy, proxyAuthenticator).newCall(request).execute()
-    println("${now()} ${URL(url).let { "${it.protocol}://${it.host}${it.path}" }} -> ${response.code}")
+    println("${nowISO()} ${URL(url).let { "${it.protocol}://${it.host}${it.path}" }} -> ${response.code}")
     val responseBody = response.body.string()
     if (response.code != 200) println("发生了啥:$responseBody")
     return responseBody
@@ -176,4 +174,5 @@ fun okPostJson(
 
 fun okFileUpload() {}
 fun okFileDownload() {}
-private fun now(): String = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(Date())
+fun nowISO(): String =
+    DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(Instant.now().atZone(ZoneId.systemDefault()))
