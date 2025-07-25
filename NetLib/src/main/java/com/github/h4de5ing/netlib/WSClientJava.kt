@@ -15,7 +15,7 @@ class WSClientJava(
     val onPing: () -> Unit = {},
     val onPong: () -> Unit = {},
     val onMessage2: ((String) -> Unit),
-) : WSA() {
+) : WSA(delay2 = delay) {
     private var client: WebSocketClient? = null
 
     override fun isOpen(): Boolean = isConnect && client?.isOpen == true
