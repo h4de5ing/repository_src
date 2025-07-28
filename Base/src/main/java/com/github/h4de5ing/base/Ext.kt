@@ -13,6 +13,7 @@ import java.util.Locale
 import java.util.TimeZone
 import java.util.Timer
 import java.util.TimerTask
+import kotlin.text.toHexString
 
 //常见的扩展函数
 //判断任何对象是否为空
@@ -121,7 +122,10 @@ list.add(it)
  * @param ByteArray {0x01,0x02,0x03}
  * @return 01 02 03
  */
+@Deprecated("kotlin 2.2.0提供方法", ReplaceWith("toHexString(HexFormat)"))
 fun ByteArray.toHexString(): String = this.toHexString(this.size)
+
+@Deprecated("kotlin 2.2.0提供方法", ReplaceWith("toHexString(HexFormat)"))
 fun ByteArray.toHexString(length: Int): String {
     val sb = StringBuilder()
     val hex =
@@ -131,6 +135,13 @@ fun ByteArray.toHexString(length: Int): String {
         sb.append(hex[value / 16]).append(hex[value % 16]).append(" ")
     }
     return sb.toString()
+}
+
+fun ByteArray.toHexString2(): String {
+    return toHexString(HexFormat {
+        upperCase = true
+        bytes { bytesPerGroup = 1 }
+    })
 }
 
 /**
@@ -144,14 +155,5 @@ fun ByteArray.add(data: ByteArray): ByteArray = this + data
  * 输入: 000102030405060708
  * @return 返回 {0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08}
  */
-fun String.toHexByteArray(): ByteArray {
-    var hex = replace(" ", "")
-    if (hex.length % 2 != 0) hex = "0${hex}"
-    val result = ByteArray(hex.length / 2)
-    for (i in result.indices) {
-        val index = i * 2
-        val hexByte = hex.substring(index, index + 2)
-        result[i] = hexByte.toInt(16).toByte()
-    }
-    return result
-}
+@Deprecated("kotlin 2.2.0提供方法", ReplaceWith("hexToByteArray(this)"))
+fun String.toHexByteArray(): ByteArray = hexToByteArray()
