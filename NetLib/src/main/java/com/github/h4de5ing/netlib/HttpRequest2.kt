@@ -121,8 +121,8 @@ fun post(url: String, json: String, header: Map<String, String>?): String {
         out.flush()
         out.close()
         val map = conn.headerFields
-        "网址:$url".print()
-        "json:$json".print()
+        url.print()
+        json.print()
         for (key in map.keys) "${key}->${map[key]}".print()
         if (conn.responseCode == 200) {
             val reader = BufferedReader(InputStreamReader(conn.inputStream))
