@@ -60,6 +60,8 @@ class WSClientJava(
                     onPong()
                 }
             }
+            client?.connectionLostTimeout = 30
+            client?.isTcpNoDelay = true// 禁用Nagle算法
             client?.connect()
         } catch (e: Exception) {
             isConnect = false
