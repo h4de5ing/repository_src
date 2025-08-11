@@ -1,5 +1,6 @@
 package com.github.h4de5ing.netlib
 
+import android.util.Log
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -9,8 +10,6 @@ import okhttp3.WebSocketListener
 import okhttp3.dnsoverhttps.DnsOverHttps
 import okio.ByteString.Companion.toByteString
 import java.net.InetAddress
-import java.util.Timer
-import java.util.TimerTask
 import java.util.concurrent.TimeUnit
 
 class WSClientOK(
@@ -19,17 +18,11 @@ class WSClientOK(
     val onOpen: () -> Unit = {},
     val onClose2: (code: Int, reason: String) -> Unit = { _, _ -> },
     val onError2: (Throwable) -> Unit = { },
+    val onPing: () -> Unit = {},
+    val onPong: () -> Unit = {},
     val onMessage2: (String) -> Unit = {}
 ) : WSA() {
     private var webSocket: WebSocket? = null
-
-    init {
-        Timer().schedule(object : TimerTask() {
-            override fun run() {
-                if (!isConnect) connect()
-            }
-        }, 0, delayReconnect)
-    }
 
     override fun connect() {
         try {
@@ -60,7 +53,7 @@ class WSClientOK(
                 }
             }
 
-            webSocket = OkHttpClient.Builder().connectTimeout(15, TimeUnit.SECONDS)
+            webSocket = OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS)
 //                .doh()//TODO 增加这个功能
                 .build().newWebSocket(request, listener)
         } catch (e: Exception) {
@@ -70,11 +63,11 @@ class WSClientOK(
     }
 
     override fun send(text: String) {
-        webSocket?.send(text)
+        webSocket?.send(text) ?: Log.w("gh0st", "send: socket==null")
     }
 
     override fun send(bytes: ByteArray) {
-        webSocket?.send(bytes.toByteString())
+        webSocket?.send(bytes.toByteString())?: Log.w("gh0st", "send: socket==null")
     }
 
     override fun disconnect() {

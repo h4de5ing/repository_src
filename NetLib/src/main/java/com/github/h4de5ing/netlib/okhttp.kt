@@ -25,6 +25,8 @@ import javax.net.ssl.TrustManager
 import javax.net.ssl.TrustManagerFactory
 import javax.net.ssl.X509TrustManager
 
+const val timeout = 30L
+
 /**
  * 设置OkHttpClient，主要是设置代理和SSL
  */
@@ -63,8 +65,8 @@ fun okClient(
             CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA256
         ).build()
     val okHttpBuilder: OkHttpClient.Builder =
-        OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(10, TimeUnit.SECONDS).writeTimeout(10, TimeUnit.SECONDS)
+        OkHttpClient().newBuilder().connectTimeout(timeout, TimeUnit.SECONDS)
+            .readTimeout(timeout, TimeUnit.SECONDS).writeTimeout(timeout, TimeUnit.SECONDS)
             .hostnameVerifier { hostname, session -> true }
             .protocols(listOf(Protocol.HTTP_1_1, Protocol.HTTP_2)).proxy(proxy)
             .proxyAuthenticator(proxyAuthenticator)
@@ -91,8 +93,8 @@ fun okClient(
  * 简单get请求
  */
 fun okSampleGet(url: String): Int {
-    val client = OkHttpClient().newBuilder().connectTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(10, TimeUnit.SECONDS).connectionPool(ConnectionPool(5, 1, TimeUnit.SECONDS))
+    val client = OkHttpClient().newBuilder().connectTimeout(timeout, TimeUnit.SECONDS)
+        .readTimeout(timeout, TimeUnit.SECONDS).connectionPool(ConnectionPool(5, 1, TimeUnit.SECONDS))
         .build()
     val build = Request.Builder().url(url).build()
     val response = client.newCall(build).execute()
