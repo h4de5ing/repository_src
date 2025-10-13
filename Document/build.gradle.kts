@@ -24,6 +24,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_22
         targetCompatibility = JavaVersion.VERSION_22
     }
+    publishing { singleVariant("release") {} }
 }
 
 dependencies {

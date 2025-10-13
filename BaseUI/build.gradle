@@ -5,20 +5,21 @@ plugins {
 }
 
 android {
-    compileSdk 36
+    compileSdk = 36
     namespace 'com.github.h4de5ing.baseui'
     defaultConfig {
-        minSdk 19
-        targetSdk 36
+        minSdk = 19
+        targetSdk = 36
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_22
         targetCompatibility JavaVersion.VERSION_22
     }
+    publishing { singleVariant("release") {} }
 }
 
 dependencies {
-    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'com.google.android.material:material:1.13.0'
 }
 afterEvaluate {
     publishing {

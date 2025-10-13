@@ -5,11 +5,10 @@ plugins {
 }
 
 android {
+    compileSdk = 36
     namespace 'com.android.ymode'
-    compileSdk 36
-
     defaultConfig {
-        minSdk 29
+        minSdk = 29
         //noinspection ChromeOsAbiSupport
         ndk { abiFilters 'armeabi', 'armeabi-v7a' }
     }
@@ -25,10 +24,9 @@ android {
         targetCompatibility JavaVersion.VERSION_22
     }
     sourceSets {
-        main {
-            jniLibs.srcDirs = ['/src/main/jniLibs']
-        }
+        main { jniLibs.srcDirs = ['/src/main/jniLibs'] }
     }
+    publishing { singleVariant("release") {} }
 }
 afterEvaluate {
     publishing {

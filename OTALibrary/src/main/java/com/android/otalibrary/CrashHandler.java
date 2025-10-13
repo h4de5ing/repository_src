@@ -67,12 +67,6 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
 
     private boolean handleException(Throwable ex) {
         if (ex == null) return false;
-        new Thread(() -> {
-            Looper.prepare();
-            Toast.makeText(mContext, "很抱歉," + mContext.getPackageName() + "程序出现异常,正在收集日志，即将退出", Toast.LENGTH_SHORT)
-                    .show();
-            Looper.loop();
-        }).start();
         collectDeviceInfo(mContext);
         saveCrashInfo2File(ex);
         return true;

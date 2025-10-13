@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    compileSdk 36
+    compileSdk = 36
     namespace 'com.hoho.android.usbserial'
     defaultConfig {
-        minSdk 17
-        targetSdk 36
+        minSdk = 17
+        targetSdk = 36
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_22
@@ -20,6 +20,7 @@ android {
         }
     }
     buildFeatures { buildConfig true }
+    publishing { singleVariant("release") {} }
 }
 
 dependencies {

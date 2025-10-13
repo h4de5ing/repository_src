@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    compileSdk 36
+    compileSdk = 36
     namespace 'com.github.h4de5ing.netlib'
     defaultConfig {
-        minSdk 26
-        targetSdk 36
+        minSdk = 26
+        targetSdk = 36
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_22
@@ -24,8 +24,8 @@ android {
 
 dependencies {
     implementation("org.java-websocket:Java-WebSocket:1.6.0")
-    implementation("com.squareup.okhttp3:okhttp:5.1.0")
-    implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:5.1.0")
+    implementation("com.squareup.okhttp3:okhttp:5.2.1")
+    implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:5.2.1")
 }
 
 afterEvaluate {

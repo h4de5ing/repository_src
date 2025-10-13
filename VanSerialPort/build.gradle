@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    compileSdk 36
+    compileSdk = 36
     namespace 'com.github.h4de5ing.vanserialport'
     defaultConfig {
-        minSdk 21
-        targetSdk 36
+        minSdk = 21
+        targetSdk = 36
         //noinspection ChromeOsAbiSupport
         ndk { abiFilters "armeabi", "armeabi-v7a" }
     }
@@ -18,11 +18,10 @@ android {
         targetCompatibility JavaVersion.VERSION_22
     }
     sourceSets {
-        main {
-            jniLibs.srcDirs = ['/src/main/jniLibs']
-        }
+        main { jniLibs.srcDirs = ['/src/main/jniLibs'] }
     }
     buildFeatures { buildConfig true }
+    publishing { singleVariant("release") {} }
 }
 afterEvaluate {
     publishing {

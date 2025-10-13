@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
+    compileSdk = 36
     namespace 'com.github.h4de5ing.filepicker'
-    compileSdk 36
     defaultConfig {
-        minSdk 21
-        targetSdk 36
+        minSdk = 21
+        targetSdk = 36
     }
 
     buildTypes {
@@ -21,6 +21,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_22
         targetCompatibility JavaVersion.VERSION_22
     }
+    publishing { singleVariant("release") {} }
 }
 afterEvaluate {
     publishing {

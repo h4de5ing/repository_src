@@ -5,24 +5,24 @@ plugins {
 }
 
 android {
+    compileSdk = 36
     namespace 'com.android.otalibrary'
-    compileSdk 36
-
     defaultConfig {
-        minSdk 21
-        targetSdk 36
+        minSdk = 21
+        targetSdk = 36
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_22
         targetCompatibility JavaVersion.VERSION_22
     }
     buildFeatures { buildConfig true }
+    publishing { singleVariant("release") {} }
 }
 
 dependencies {
     implementation "androidx.startup:startup-runtime:1.2.0"
     implementation 'androidx.appcompat:appcompat:1.7.1'
-    implementation 'com.github.h4de5ing.netlib:netlib:2.0-20250611'
+    implementation 'com.github.h4de5ing.netlib:netlib:2.0-20250811'
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
 }
 afterEvaluate {
