@@ -13,6 +13,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import com.android.otalibrary.R
 import com.android.otalibrary.apkUrl
 import com.android.otalibrary.getAPKFilePackageName
@@ -40,15 +41,15 @@ class OTAActivity : AppCompatActivity() {
         val progressBar = findViewById<TextView>(R.id.tv_description)
         val ibClose = findViewById<ImageButton>(R.id.ib_close)
         ibClose.setOnClickListener {
-            spf?.edit()?.putLong("today", System.currentTimeMillis())?.apply()
+            spf?.edit { putLong("today", System.currentTimeMillis()) }
             isUpdate = false
             finish()
         }
         val checkBox = findViewById<CheckBox>(R.id.check_box)
         findViewById<LinearLayout>(R.id.ignore_check_box).setOnClickListener {
             checkBox.isChecked = !checkBox.isChecked
-            spf?.edit()?.putBoolean("ignore", checkBox.isChecked)?.apply()
-            spf?.edit()?.putLong("versionCode", targetVersion)?.apply()
+            spf?.edit { putBoolean("ignore", checkBox.isChecked) }
+            spf?.edit { putLong("versionCode", targetVersion) }
         }
         val btnUpdate = findViewById<Button>(R.id.btn_update)
         val tvTitle = findViewById<TextView>(R.id.tv_title)
@@ -94,7 +95,7 @@ class OTAActivity : AppCompatActivity() {
                         downloadFile(
                             apkUrl,
                             localAPkPath,
-                            progress = { it, message ->
+                            progress = { it, _ ->
                                 runOnUiThread {
                                     progressBar.text =
                                         getString(R.string.app_update_download) + "${it}%"

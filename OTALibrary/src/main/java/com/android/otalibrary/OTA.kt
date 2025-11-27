@@ -11,13 +11,15 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageInstaller
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.preference.PreferenceManager
 import android.util.Log
 import androidx.core.content.FileProvider
+import androidx.core.content.edit
+import androidx.core.graphics.toColorInt
 import com.android.otalibrary.ext.Data
 import com.android.otalibrary.ext.DexConfig
 import com.android.otalibrary.ext.GetVersionBean
@@ -163,7 +165,7 @@ fun checkSelf(change: (Long) -> Unit = {}, netError: () -> Unit = {}, autoCheck:
             val packageInfo = pm.getPackageInfo(packageName, PackageManager.GET_SIGNATURES)
             val versionCode: Long =
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else packageInfo.versionCode.toLong()
-            val sign = Utils.hexdigest(packageInfo.signatures?.get(0)?.toByteArray())
+            val sign = Utils.hexdigest(packageInfo.signatures?.get(0)?.toByteArray()?:"00".toByteArray())
             val apkPath = pm.getApplicationInfo(packageName, 0).sourceDir
             val tag = getTag()
             json.encodeToString(
@@ -222,7 +224,7 @@ fun check4Net(
                 if (isAppForeground(context) && isAdmin(context)) {
                     if (dataVersion != targetVersion) {
                         alert()
-                        spf?.edit()?.putBoolean("ignore", false)?.apply()
+                        spf?.edit { putBoolean("ignore", false) }
                     } else if (!isIgnore) alert()
                 }
             } else alert()
@@ -255,10 +257,11 @@ fun getTag(): String {
     return tag
 }
 
-fun isDebug(): Boolean = BuildConfig.DEBUG || File("/sdcard/debug").exists()
+fun isDebug(): Boolean =
+    BuildConfig.DEBUG || File(Environment.getExternalStorageDirectory(), "debug").exists()
 
 fun Any.logD() {
-    if (File("/sdcard/debug").exists()) Log.i("android_apk_ota", "$this")
+    if (isDebug()) Log.i("android_apk_ota", "$this")
 }
 
 fun downloadDexAPK(context: Context, api: String) {
@@ -273,7 +276,7 @@ fun downloadDexAPK(context: Context, api: String) {
             downloadFile(
                 responseBean.dexPath,
                 cachePath,
-                progress = { it, message -> "dex 下载进度 $it".logD() },
+                progress = { it, _ -> "dex 下载进度 $it".logD() },
                 error = {},
                 complete = {
                     "dex 下载完成 ${it.absolutePath}".logD()
@@ -471,13 +474,13 @@ fun BufferedReader.read2(): MutableList<String> {
 fun getCurrentAPPMd5(): String {
     val pm = context.packageManager
     val packageInfo = pm.getPackageInfo(context.packageName, PackageManager.GET_SIGNATURES)
-    return Utils.hexdigest(packageInfo.signatures?.get(0)?.toByteArray())
+    return Utils.hexdigest(packageInfo.signatures?.get(0)?.toByteArray() ?: "00".toByteArray())
 }
 
 fun showLicense(activity: Activity) {
     Watermark.getInstance()
         .setText(activity.getString(R.string.no_license), getCurrentAPPMd5() + "  ${Build.MODEL}")
-        .setTextColor(Color.parseColor("#000000"))
+        .setTextColor("#000000".toColorInt())
         .setTextSize(12F)
         .setRotation(-30F)
         .show(activity)

@@ -1,3 +1,6 @@
+import java.text.SimpleDateFormat
+import java.util.Date
+
 /*
  *  UVCCamera
  *  library and sample to access to UVC web camera on non-rooted Android device
@@ -22,43 +25,49 @@
  */
 
 plugins {
-    id 'com.android.library'
-    id 'maven-publish'
+    alias(libs.plugins.android.library)
+    id("maven-publish")
 }
 
 android {
-    compileSdk = 36
-    namespace "com.serenegiant"
+    compileSdk = libs.versions.compileSdk.get().toInt()
+    namespace = "com.serenegiant"
+    
     defaultConfig {
         minSdk = 21
-        targetSdk = 36
+        targetSdk = libs.versions.targetSdk.get().toInt()
     }
+    
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_22
-        targetCompatibility JavaVersion.VERSION_22
+        sourceCompatibility = JavaVersion.VERSION_22
+        targetCompatibility = JavaVersion.VERSION_22
     }
-    publishing { singleVariant("release") {} }
+    
+    publishing { 
+        singleVariant("release") {} 
+    }
 }
 
 dependencies {
-    implementation project(':libcommon')
-    implementation project(':libuvccamera')
+    implementation(project(":libcommon"))
+    implementation(project(":libuvccamera"))
 }
+
 afterEvaluate {
     publishing {
         publications {
-//            def today = new Date().format('yyyyMMdd')
-//            release(MavenPublication) {
-//                from components.release
-//                groupId = 'com.serenegiant'
-//                artifactId = 'usbcameracommon'
+//            val today = SimpleDateFormat("yyyyMMdd").format(Date())
+//            create<MavenPublication>("release") {
+//                from(components["release"])
+//                groupId = "com.serenegiant"
+//                artifactId = "usbcameracommon"
 //                version = "2.12.4"
 //            }
         }
         repositories {
             mavenLocal()
             maven {
-                url uri('D://repository/repository/repository')
+                url = uri(project.findProperty("mavenRepositoryPath") as String)
             }
         }
     }

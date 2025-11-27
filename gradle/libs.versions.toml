@@ -1,0 +1,91 @@
+[versions]
+# Plugins
+agp = "8.13.1"
+kotlin = "2.2.21"
+
+# SDK Versions
+compileSdk = "36"
+minSdk = "21"
+targetSdk = "36"
+javaVersion = "22"
+
+# AndroidX
+androidxCoreKtx = "1.17.0"
+androidxAppcompat = "1.7.1"
+androidxLegacySupport = "1.0.0"
+androidxRecyclerview = "1.4.0"
+androidxExifinterface = "1.4.1"
+androidxLifecycleProcess = "2.10.0"
+androidxLifecycleVersion = "2.10.0"
+androidxPreference = "1.2.1"
+androidxFragment = "1.8.9"
+androidxDatabinding = "8.13.1"
+androidxStartupRuntime = "1.2.0"
+androidxAnnotation = "1.9.1"
+
+# Material
+material = "1.13.0"
+
+# Kotlin Coroutines
+kotlinxCoroutines = "1.10.2"
+kotlinxSerialization = "1.9.0"
+
+# Network
+okhttp = "5.3.2"
+javaWebSocket = "1.6.0"
+
+# ZXing
+zxingCore = "3.5.4"
+
+# Other
+annimonStream = "1.2.2"
+okio = "3.16.4"
+
+# Custom
+netlibVersion = "2.0-20250811"
+
+[libraries]
+# AndroidX
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidxCoreKtx" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidxAppcompat" }
+androidx-legacy-support-v4 = { group = "androidx.legacy", name = "legacy-support-v4", version.ref = "androidxLegacySupport" }
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "androidxRecyclerview" }
+androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "androidxExifinterface" }
+androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "androidxLifecycleProcess" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "androidxLifecycleVersion" }
+androidx-lifecycle-viewmodel-savedstate = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-savedstate", version.ref = "androidxLifecycleVersion" }
+androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "androidxLifecycleVersion" }
+androidx-lifecycle-service = { group = "androidx.lifecycle", name = "lifecycle-service", version.ref = "androidxLifecycleVersion" }
+androidx-lifecycle-common-java8 = { group = "androidx.lifecycle", name = "lifecycle-common-java8", version.ref = "androidxLifecycleVersion" }
+androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "androidxPreference" }
+androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "androidxFragment" }
+androidx-databinding-common = { group = "androidx.databinding", name = "databinding-common", version.ref = "androidxDatabinding" }
+androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "androidxStartupRuntime" }
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidxAnnotation" }
+
+# Material
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
+# Kotlin
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+
+# Network
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+okhttp-dnsoverhttps = { group = "com.squareup.okhttp3", name = "okhttp-dnsoverhttps", version.ref = "okhttp" }
+java-websocket = { group = "org.java-websocket", name = "Java-WebSocket", version.ref = "javaWebSocket" }
+
+# ZXing
+zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxingCore" }
+
+# Other
+annimon-stream = { group = "com.annimon", name = "stream", version.ref = "annimonStream" }
+okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
+
+# Custom
+netlib = { group = "com.github.h4de5ing.netlib", name = "netlib", version.ref = "netlibVersion" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

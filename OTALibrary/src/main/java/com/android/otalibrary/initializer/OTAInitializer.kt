@@ -9,7 +9,7 @@ import com.android.otalibrary.isDebug
 class OTAInitializer : Initializer<Unit> {
 
     override fun create(context: Context) {
-        if (!isDebug()) CrashHandler.getInstance().init(context)
+        if (!isDebug()) CrashHandler.instance.init(context)
         initialize(context)
     }
 

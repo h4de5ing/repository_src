@@ -128,7 +128,7 @@ public class Watermark {
     }
 
     private static class WatermarkDrawable extends Drawable {
-        private Paint mPaint;
+        private final Paint mPaint;
         /**
          * 水印文本
          */
