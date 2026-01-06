@@ -11,7 +11,7 @@ class WSClientJava(
     val delay: Long = 10000L,
     val onOpen: () -> Unit = {},
     val onClose2: (code: Int, reason: String) -> Unit = { _, _ -> },
-    val onError2: (Throwable) -> Unit = {},
+    val onError2: (String) -> Unit = {},
     val onPing: () -> Unit = {},
     val onPong: () -> Unit = {},
     val onMessage2: ((String) -> Unit),
@@ -47,7 +47,7 @@ class WSClientJava(
 
                 override fun onError(ex: Exception) {
                     isConnect = false
-                    onError2(ex)
+                    onError2("onError:${ex.message}")
                 }
 
                 override fun onWebsocketPing(conn: WebSocket, f: Framedata) {
@@ -64,7 +64,7 @@ class WSClientJava(
             client?.isTcpNoDelay = true// 禁用Nagle算法
             client?.connect()
         } catch (e: Exception) {
-            onError2(e)
+            onError2("Exception:${e.message}")
             isConnect = false
             e.printStackTrace()
         }

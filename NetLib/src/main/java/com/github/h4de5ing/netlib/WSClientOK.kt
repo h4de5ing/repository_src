@@ -14,7 +14,7 @@ class WSClientOK(
     val delay: Long = 10000L,
     val onOpen: () -> Unit = {},
     val onClose2: (code: Int, reason: String) -> Unit = { _, _ -> },
-    val onError2: (Throwable) -> Unit = { },
+    val onError2: (String) -> Unit = { },
     val onPing: () -> Unit = {},
     val onPong: () -> Unit = {},
     val onMessage2: (String) -> Unit = {}
@@ -36,24 +36,25 @@ class WSClientOK(
                     onMessage2(text)
                 }
 
-                override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                    super.onFailure(webSocket, t, response)
-                    isConnect = false
-                    onError2(t)
-
-                }
-
                 override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                     super.onClosed(webSocket, code, reason)
                     isConnect = false
                     onClose2(code, reason)
                 }
+
+                override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+                    super.onFailure(webSocket, t, response)
+                    isConnect = false
+                    onError2("onFailure:${t.message},${response?.code ?: ""},${response?.message ?: ""}")
+                }
             }
 
-            webSocket = OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS)
-                .build().newWebSocket(request, listener)
+            webSocket = OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .build()
+                .newWebSocket(request, listener)
         } catch (e: Exception) {
-            onError2(e)
+            onError2("Exception:${e.message}")
             isConnect = false
             e.printStackTrace()
         }
