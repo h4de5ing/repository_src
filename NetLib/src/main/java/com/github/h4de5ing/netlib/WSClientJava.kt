@@ -10,7 +10,7 @@ class WSClientJava(
     val url: String,
     val delay: Long = 10000L,
     val onOpen: () -> Unit = {},
-    val onClose2: (code: Int, reason: String) -> Unit = { _, _ -> },
+    val onClose2: (String) -> Unit = { },
     val onError2: (String) -> Unit = {},
     val onPing: () -> Unit = {},
     val onPong: () -> Unit = {},
@@ -41,8 +41,8 @@ class WSClientJava(
                 }
 
                 override fun onClose(code: Int, reason: String, remote: Boolean) {
-                    onClose2(code, reason)
                     isConnect = false
+                    onClose2("${code},${reason}")
                 }
 
                 override fun onError(ex: Exception) {

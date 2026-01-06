@@ -13,7 +13,7 @@ class WSClientOK(
     val url: String,
     val delay: Long = 10000L,
     val onOpen: () -> Unit = {},
-    val onClose2: (code: Int, reason: String) -> Unit = { _, _ -> },
+    val onClose2: (String) -> Unit = { },
     val onError2: (String) -> Unit = { },
     val onPing: () -> Unit = {},
     val onPong: () -> Unit = {},
@@ -39,7 +39,7 @@ class WSClientOK(
                 override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                     super.onClosed(webSocket, code, reason)
                     isConnect = false
-                    onClose2(code, reason)
+                    onClose2("${code},${reason}")
                 }
 
                 override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
