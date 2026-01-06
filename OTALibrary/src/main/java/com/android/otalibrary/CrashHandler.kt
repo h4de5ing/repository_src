@@ -64,7 +64,7 @@ class CrashHandler private constructor() : Thread.UncaughtExceptionHandler {
                 appInformation["versionName"] = versionName
                 appInformation["versionCode"] = versionCode
             }
-        } catch (ignored: PackageManager.NameNotFoundException) {
+        } catch (_: PackageManager.NameNotFoundException) {
         }
         val fields = Build::class.java.declaredFields
         for (field in fields) {

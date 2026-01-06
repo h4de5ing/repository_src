@@ -31,7 +31,6 @@ android {
 dependencies {
     implementation(libs.java.websocket)
     implementation(libs.okhttp)
-    implementation(libs.okhttp.dnsoverhttps)
 }
 
 afterEvaluate {

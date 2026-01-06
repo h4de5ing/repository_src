@@ -1,15 +1,12 @@
 package com.github.h4de5ing.netlib
 
 import android.util.Log
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
-import okhttp3.dnsoverhttps.DnsOverHttps
 import okio.ByteString.Companion.toByteString
-import java.net.InetAddress
 import java.util.concurrent.TimeUnit
 
 class WSClientOK(
@@ -54,9 +51,9 @@ class WSClientOK(
             }
 
             webSocket = OkHttpClient.Builder().connectTimeout(30, TimeUnit.SECONDS)
-//                .doh()//TODO 增加这个功能
                 .build().newWebSocket(request, listener)
         } catch (e: Exception) {
+            onError2(e)
             isConnect = false
             e.printStackTrace()
         }
@@ -67,7 +64,7 @@ class WSClientOK(
     }
 
     override fun send(bytes: ByteArray) {
-        webSocket?.send(bytes.toByteString())?: Log.w("gh0st", "send: socket==null")
+        webSocket?.send(bytes.toByteString()) ?: Log.w("gh0st", "send: socket==null")
     }
 
     override fun disconnect() {
@@ -75,21 +72,4 @@ class WSClientOK(
         webSocket?.close(1000, "连接已正常关闭 WSClientOK")
         webSocket = null
     }
-
-    fun OkHttpClient.Builder.doh(
-        url: String = "https://cloudflare-dns.com/dns-query", ips: List<String> = listOf(
-            "162.159.36.1",
-            "162.159.46.1",
-            "1.1.1.1",
-            "1.0.0.1",
-            "162.159.132.53",
-            "2606:4700:4700::1111",
-            "2606:4700:4700::1001",
-            "2606:4700:4700::0064",
-            "2606:4700:4700::6400"
-        )
-    ) = dns(
-        DnsOverHttps.Builder().client(build()).url(url.toHttpUrl())
-            .bootstrapDnsHosts(ips.map { InetAddress.getByName(it) }).build()
-    )
 }

@@ -64,6 +64,7 @@ class WSClientJava(
             client?.isTcpNoDelay = true// 禁用Nagle算法
             client?.connect()
         } catch (e: Exception) {
+            onError2(e)
             isConnect = false
             e.printStackTrace()
         }

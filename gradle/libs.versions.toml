@@ -1,7 +1,7 @@
 [versions]
 # Plugins
-agp = "8.13.1"
-kotlin = "2.2.21"
+agp = "8.13.2"
+kotlin = "2.3.0"
 
 # SDK Versions
 compileSdk = "36"
@@ -14,12 +14,12 @@ androidxCoreKtx = "1.17.0"
 androidxAppcompat = "1.7.1"
 androidxLegacySupport = "1.0.0"
 androidxRecyclerview = "1.4.0"
-androidxExifinterface = "1.4.1"
+androidxExifinterface = "1.4.2"
 androidxLifecycleProcess = "2.10.0"
 androidxLifecycleVersion = "2.10.0"
 androidxPreference = "1.2.1"
 androidxFragment = "1.8.9"
-androidxDatabinding = "8.13.1"
+androidxDatabinding = "8.13.2"
 androidxStartupRuntime = "1.2.0"
 androidxAnnotation = "1.9.1"
 
@@ -72,7 +72,6 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 
 # Network
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
-okhttp-dnsoverhttps = { group = "com.squareup.okhttp3", name = "okhttp-dnsoverhttps", version.ref = "okhttp" }
 java-websocket = { group = "org.java-websocket", name = "Java-WebSocket", version.ref = "javaWebSocket" }
 
 # ZXing
