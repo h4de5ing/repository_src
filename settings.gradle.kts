@@ -29,10 +29,10 @@ include(":VanSerialPort")
 include(":Ymode")
 include(":zxing")
 include(":UploadDevices")
+
 //include(":usbCameraCommon")
 //include(":usbserial")
 //include(":usbSerialForAndroid")
 
 //include(":libcommon")
 //include(":libuvccamera")
-

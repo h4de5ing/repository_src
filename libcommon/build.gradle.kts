@@ -1,9 +1,6 @@
-import java.text.SimpleDateFormat
-import java.util.Date
-
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.library)
+    alias(libs.plugins.kotlin)
     id("maven-publish")
 }
 

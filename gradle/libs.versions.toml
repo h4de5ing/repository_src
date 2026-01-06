@@ -85,6 +85,6 @@ okio = { group = "com.squareup.okio", name = "okio", version.ref = "okio" }
 netlib = { group = "com.github.h4de5ing.netlib", name = "netlib", version.ref = "netlibVersion" }
 
 [plugins]
-android-application = { id = "com.android.application", version.ref = "agp" }
-android-library = { id = "com.android.library", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+application = { id = "com.android.application", version.ref = "agp" }
+library = { id = "com.android.library", version.ref = "agp" }
+kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
