@@ -3,7 +3,6 @@ import java.util.Date
 
 plugins {
     alias(libs.plugins.library)
-    alias(libs.plugins.kotlin)
     id("maven-publish")
 }
 

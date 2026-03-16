@@ -12,7 +12,7 @@ class InternalSSLSocketFactory : SSLSocketFactory() {
     private val internalSSLSocketFactory: SSLSocketFactory
 
     override fun getDefaultCipherSuites(): Array<String> {
-        return internalSSLSocketFactory.defaultCipherSuites;
+        return internalSSLSocketFactory.defaultCipherSuites
     }
 
     @Throws(IOException::class)

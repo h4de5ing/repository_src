@@ -1,7 +1,7 @@
 [versions]
 # Plugins
-agp = "8.13.2"
-kotlin = "2.3.0"
+agp = "9.1.0"
+kotlin = "2.3.20"
 
 # SDK Versions
 compileSdk = "36"
@@ -10,7 +10,7 @@ targetSdk = "36"
 javaVersion = "22"
 
 # AndroidX
-androidxCoreKtx = "1.17.0"
+androidxCoreKtx = "1.18.0"
 androidxAppcompat = "1.7.1"
 androidxLegacySupport = "1.0.0"
 androidxRecyclerview = "1.4.0"
@@ -19,7 +19,7 @@ androidxLifecycleProcess = "2.10.0"
 androidxLifecycleVersion = "2.10.0"
 androidxPreference = "1.2.1"
 androidxFragment = "1.8.9"
-androidxDatabinding = "8.13.2"
+androidxDatabinding = "9.1.0"
 androidxStartupRuntime = "1.2.0"
 androidxAnnotation = "1.9.1"
 
@@ -28,7 +28,7 @@ material = "1.13.0"
 
 # Kotlin Coroutines
 kotlinxCoroutines = "1.10.2"
-kotlinxSerialization = "1.9.0"
+kotlinxSerialization = "1.10.0"
 
 # Network
 okhttp = "5.3.2"
@@ -39,7 +39,7 @@ zxingCore = "3.5.4"
 
 # Other
 annimonStream = "1.2.2"
-okio = "3.16.4"
+okio = "3.17.0"
 
 # Custom
 netlibVersion = "2.0-20250811"
@@ -87,4 +87,3 @@ netlib = { group = "com.github.h4de5ing.netlib", name = "netlib", version.ref = 
 [plugins]
 application = { id = "com.android.application", version.ref = "agp" }
 library = { id = "com.android.library", version.ref = "agp" }
-kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

@@ -3,7 +3,6 @@ import java.util.Date
 
 plugins {
     alias(libs.plugins.library)
-    alias(libs.plugins.kotlin)
     id("maven-publish")
 }
 
@@ -13,7 +12,6 @@ android {
     
     defaultConfig {
         minSdk = 21
-        targetSdk = libs.versions.targetSdk.get().toInt()
     }
     
     compileOptions {

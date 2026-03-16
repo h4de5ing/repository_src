@@ -3,7 +3,6 @@ import java.util.Date
 
 plugins {
     alias(libs.plugins.library)
-    alias(libs.plugins.kotlin)
     id("maven-publish")
 }
 
@@ -13,7 +12,6 @@ android {
     
     defaultConfig {
         minSdk = 26
-        targetSdk = libs.versions.targetSdk.get().toInt()
     }
     
     compileOptions {
@@ -29,7 +27,7 @@ android {
 }
 
 dependencies {
-    implementation(libs.java.websocket)
+    implementation(libs.kotlinx.coroutines.android)
     implementation(libs.okhttp)
 }
 

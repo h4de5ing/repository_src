@@ -3,40 +3,32 @@ import java.util.Date
 
 plugins {
     alias(libs.plugins.library)
-    alias(libs.plugins.kotlin)
     id("maven-publish")
 }
 
 android {
     compileSdk = libs.versions.compileSdk.get().toInt()
     namespace = "com.github.h4de5ing.vanserialport"
-    
+
     defaultConfig {
         minSdk = 21
-        targetSdk = libs.versions.targetSdk.get().toInt()
         //noinspection ChromeOsAbiSupport
-        ndk { 
-            abiFilters += listOf("armeabi", "armeabi-v7a")
+        ndk {
+            abiFilters += listOf("armeabi", "armeabi-v7a", "arm64-v8a")
         }
     }
-    
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_22
         targetCompatibility = JavaVersion.VERSION_22
     }
-    
-    sourceSets {
-        getByName("main") { 
-            jniLibs.srcDirs("/src/main/jniLibs")
-        }
+
+    buildFeatures {
+        buildConfig = true
     }
-    
-    buildFeatures { 
-        buildConfig = true 
-    }
-    
-    publishing { 
-        singleVariant("release") {} 
+
+    publishing {
+        singleVariant("release") {}
     }
 }
 

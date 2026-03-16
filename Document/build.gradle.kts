@@ -2,8 +2,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.library)
     id("maven-publish")
 }
 
