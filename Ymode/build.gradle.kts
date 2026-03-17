@@ -9,35 +9,38 @@ plugins {
 android {
     compileSdk = libs.versions.compileSdk.get().toInt()
     namespace = "com.android.ymode"
-    
+
     defaultConfig {
         minSdk = 29
         //noinspection ChromeOsAbiSupport
-        ndk { 
-            abiFilters += listOf("armeabi", "armeabi-v7a")
+        ndk {
+            abiFilters += listOf("armeabi", "armeabi-v7a", "arm64-v8a")
         }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
-    
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_22
         targetCompatibility = JavaVersion.VERSION_22
     }
-    
+
     sourceSets {
-        getByName("main") { 
+        getByName("main") {
             jniLibs.srcDirs("/src/main/jniLibs")
         }
     }
-    
-    publishing { 
-        singleVariant("release") {} 
+
+    publishing {
+        singleVariant("release") {}
     }
 }
 
