@@ -11,7 +11,7 @@ android {
     namespace = "com.github.h4de5ing.base"
     
     defaultConfig {
-        minSdk = 26
+        minSdk = libs.versions.minSdk.get().toInt()
     }
     
     compileOptions {

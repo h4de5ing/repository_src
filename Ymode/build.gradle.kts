@@ -11,7 +11,7 @@ android {
     namespace = "com.android.ymode"
 
     defaultConfig {
-        minSdk = 29
+        minSdk = libs.versions.minSdk.get().toInt()
         //noinspection ChromeOsAbiSupport
         ndk {
             abiFilters += listOf("armeabi", "armeabi-v7a", "arm64-v8a")
@@ -31,12 +31,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_22
         targetCompatibility = JavaVersion.VERSION_22
-    }
-
-    sourceSets {
-        getByName("main") {
-            jniLibs.srcDirs("/src/main/jniLibs")
-        }
     }
 
     publishing {

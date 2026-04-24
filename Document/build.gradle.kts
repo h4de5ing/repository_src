@@ -8,10 +8,10 @@ plugins {
 
 android {
     namespace = "com.github.h4de5ing.document"
-    compileSdk = 36
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 21
+        minSdk = libs.versions.minSdk.get().toInt()
     }
 
     buildTypes {

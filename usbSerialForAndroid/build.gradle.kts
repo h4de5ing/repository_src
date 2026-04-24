@@ -11,8 +11,7 @@ android {
     namespace = "com.hoho.android.usbserial"
     
     defaultConfig {
-        minSdk = 17
-        targetSdk = libs.versions.targetSdk.get().toInt()
+        minSdk = libs.versions.minSdk.get().toInt()
     }
     
     compileOptions {

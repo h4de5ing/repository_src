@@ -11,7 +11,7 @@ android {
     namespace = "com.giftedcat.serialportlibrary"
     
     defaultConfig {
-        minSdk = 21
+        minSdk = libs.versions.minSdk.get().toInt()
         //noinspection ChromeOsAbiSupport
         ndk { 
             abiFilters += listOf("arm64-v8a", "armeabi-v7a")

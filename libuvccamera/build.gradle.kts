@@ -8,8 +8,7 @@ android {
     namespace = "com.serenegiant.uvccamera"
     
     defaultConfig {
-        minSdk = 21
-        targetSdk = libs.versions.targetSdk.get().toInt()
+        minSdk = libs.versions.minSdk.get().toInt()
     }
     
     compileOptions {

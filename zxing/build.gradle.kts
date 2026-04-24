@@ -11,7 +11,7 @@ android {
     namespace = "com.google.zxing.client.android"
     
     defaultConfig {
-        minSdk = 21
+        minSdk = libs.versions.minSdk.get().toInt()
     }
     
     compileOptions {

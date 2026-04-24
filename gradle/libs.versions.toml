@@ -1,12 +1,11 @@
 [versions]
 # Plugins
-agp = "9.1.0"
-kotlin = "2.3.20"
+agp = "9.2.0"
 
 # SDK Versions
-compileSdk = "36"
+compileSdk = "37"
 minSdk = "21"
-targetSdk = "36"
+targetSdk = "37"
 javaVersion = "22"
 
 # AndroidX
@@ -19,16 +18,16 @@ androidxLifecycleProcess = "2.10.0"
 androidxLifecycleVersion = "2.10.0"
 androidxPreference = "1.2.1"
 androidxFragment = "1.8.9"
-androidxDatabinding = "9.1.0"
+androidxDatabinding = "9.2.0"
 androidxStartupRuntime = "1.2.0"
-androidxAnnotation = "1.9.1"
+androidxAnnotation = "1.10.0"
 
 # Material
 material = "1.13.0"
 
 # Kotlin Coroutines
 kotlinxCoroutines = "1.10.2"
-kotlinxSerialization = "1.10.0"
+kotlinxSerialization = "1.11.0"
 
 # Network
 okhttp = "5.3.2"

@@ -27,8 +27,7 @@ android {
     namespace = "com.serenegiant.common"
     
     defaultConfig {
-        minSdk = 21
-        targetSdk = libs.versions.targetSdk.get().toInt()
+        minSdk = libs.versions.minSdk.get().toInt()
         buildConfigField("int", "VERSION_CODE", "2124")
         buildConfigField("String", "VERSION_NAME", "\"2.12.4\"")
 

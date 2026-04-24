@@ -11,7 +11,7 @@ android {
     namespace = "com.github.h4de5ing.vanserialport"
 
     defaultConfig {
-        minSdk = 21
+        minSdk = libs.versions.minSdk.get().toInt()
         //noinspection ChromeOsAbiSupport
         ndk {
             abiFilters += listOf("armeabi", "armeabi-v7a", "arm64-v8a")

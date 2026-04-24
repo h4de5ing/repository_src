@@ -9,18 +9,18 @@ plugins {
 android {
     compileSdk = libs.versions.compileSdk.get().toInt()
     namespace = "com.github.h4de5ing.baseui"
-    
+
     defaultConfig {
-        minSdk = 19
+        minSdk = libs.versions.minSdk.get().toInt()
     }
-    
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_22
         targetCompatibility = JavaVersion.VERSION_22
     }
-    
-    publishing { 
-        singleVariant("release") {} 
+
+    publishing {
+        singleVariant("release") {}
     }
 }
 

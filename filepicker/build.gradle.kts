@@ -11,7 +11,7 @@ android {
     namespace = "com.github.h4de5ing.filepicker"
     
     defaultConfig {
-        minSdk = 21
+        minSdk = libs.versions.minSdk.get().toInt()
     }
 
     buildTypes {
