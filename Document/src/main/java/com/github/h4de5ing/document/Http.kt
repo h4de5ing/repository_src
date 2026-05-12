@@ -68,7 +68,7 @@ class Http(private val context: Context, port: Int) : NanoHTTPD(port) {
             try {
                 val isr: InputStream = getAssets(filename)!!
                 newFixedLengthResponse(Response.Status.OK, mimetype, isr, isr.available().toLong())
-            } catch (e: IOException) {
+            } catch (_: IOException) {
                 newFixedLengthResponse(Response.Status.OK, mimetype, "png not found")
             }
         } else {
