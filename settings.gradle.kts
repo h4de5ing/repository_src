@@ -17,8 +17,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "repository"
 include(":Base")
-include(":BaseUI")
-include(":Document")
+//include(":BaseUI")
+//include(":Document")
 //include(":filepicker")
 //include(":License")
 //include(":NetLib")
@@ -28,7 +28,7 @@ include(":Document")
 //include(":VanSerialPort")
 //include(":Ymode")
 //include(":zxing")
-include(":UploadDevices")
+//include(":UploadDevices")
 
 //include(":usbCameraCommon")
 //include(":usbserial")

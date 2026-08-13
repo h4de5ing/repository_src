@@ -1,7 +1,9 @@
 package com.github.h4de5ing.base
 
 import android.content.Context
+import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.content.pm.Signature
 import android.os.Build
 import java.io.File
 import java.io.IOException
@@ -33,20 +35,61 @@ object SignUtil {
     }
 
     fun getAppSignature(context: Context, pkgName: String?, algorithm: String): String {
-        try {
-            val packageInfo =
-                context.packageManager.getPackageInfo(pkgName!!, PackageManager.GET_SIGNATURES)
-            val sign = if (Build.VERSION.SDK_INT >= 28) {
-                packageInfo.signingInfo?.apkContentsSigners?.get(0)
-            } else {
-                packageInfo.signatures?.get(0)
-            }
-            return hexDigest(sign!!.toByteArray(), algorithm)
+        val packageName = pkgName ?: return ""
+        return try {
+            getPackageSignature(context.packageManager, packageName)
+                ?.toByteArray()
+                ?.let { hexDigest(it, algorithm) }
+                .orEmpty()
         } catch (e: Exception) {
             e.printStackTrace()
+            ""
         }
-        return ""
     }
+
+    private fun getPackageSignature(
+        packageManager: PackageManager,
+        packageName: String
+    ): Signature? {
+        val packageInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            packageManager.getPackageInfo(
+                packageName,
+                PackageManager.PackageInfoFlags.of(
+                    PackageManager.GET_SIGNING_CERTIFICATES.toLong()
+                )
+            )
+        } else {
+            getPackageInfoBeforeApi33(
+                packageManager,
+                packageName,
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    PackageManager.GET_SIGNING_CERTIFICATES
+                } else {
+                    getLegacySignatureFlag()
+                }
+            )
+        }
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            packageInfo.signingInfo?.apkContentsSigners?.firstOrNull()
+        } else {
+            getLegacySignature(packageInfo)
+        }
+    }
+
+    @Suppress("DEPRECATION")
+    private fun getPackageInfoBeforeApi33(
+        packageManager: PackageManager,
+        packageName: String,
+        flags: Int
+    ): PackageInfo = packageManager.getPackageInfo(packageName, flags)
+
+    @Suppress("DEPRECATION")
+    private fun getLegacySignatureFlag(): Int = PackageManager.GET_SIGNATURES
+
+    @Suppress("DEPRECATION")
+    private fun getLegacySignature(packageInfo: PackageInfo): Signature? =
+        packageInfo.signatures?.firstOrNull()
 
     /**
      * 从APK中读取签名
