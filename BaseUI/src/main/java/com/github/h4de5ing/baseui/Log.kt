@@ -1,9 +1,8 @@
 package com.github.h4de5ing.baseui
 
-import android.os.Build
+import android.os.Environment
 import android.text.TextUtils
 import android.util.Log
-import androidx.annotation.RequiresApi
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -11,7 +10,7 @@ import java.io.File
 private val FILE_NAME = Thread.currentThread().stackTrace[2].fileName
 private var tag = Log::class.simpleName
 private var isShow = true
-private var logFile = "/sdcard/log.txt"
+private var logFile = File(Environment.getExternalStorageDirectory(), "log.txt").absolutePath
 fun Any.initLog(initIsShow: Boolean, initTag: String) {
     isShow = initIsShow
     tag = initTag
@@ -23,8 +22,7 @@ fun Any.initLogFile(file: String) {
 
 //日志格式:TAG (类名:行数)[调用对象类型$方法名称] 日志内容
 private fun buildMessage(
-    className: String,
-    msg: Array<out String>
+    className: String, msg: Array<out String>
 ): Pair<String, String> {
     fun location(simpleName: String): String {
         var offset = 0
@@ -69,13 +67,7 @@ private const val JSON = 8
 private const val XML = 9
 private fun log(level: Int, context: Pair<String, String>) {
     if (isShow) {
-        if (level == VERBOSE
-            || level == DEBUG
-            || level == INFO
-            || level == WARN
-            || level == ERROR
-            || level == ASSERT
-        ) {
+        if (level == VERBOSE || level == DEBUG || level == INFO || level == WARN || level == ERROR || level == ASSERT) {
             printDefault(level, context.first + " " + context.second)
         } else if (level == JSON) {
             printJson(context)
@@ -145,13 +137,11 @@ private fun printJson(context: Pair<String, String>) {
 }
 
 private fun printLine(isTop: Boolean) {
-    if (isTop)
-        Log.d(
-            tag,
-            "╔═══════════════════════════════════════════════════════════════════════════════════════"
-        ) else
-        Log.d(
-            tag,
-            "╚═══════════════════════════════════════════════════════════════════════════════════════"
-        )
+    if (isTop) Log.d(
+        tag,
+        "╔═══════════════════════════════════════════════════════════════════════════════════════"
+    ) else Log.d(
+        tag,
+        "╚═══════════════════════════════════════════════════════════════════════════════════════"
+    )
 }

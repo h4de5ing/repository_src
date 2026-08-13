@@ -27,7 +27,7 @@ android {
 }
 
 dependencies {
-    api("org.nanohttpd:nanohttpd:2.3.1")
+    api(libs.nanohttpd)
 }
 publishing {
     publications {

@@ -16,8 +16,8 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "repository"
-//include(":Base")
-//include(":BaseUI")
+include(":Base")
+include(":BaseUI")
 include(":Document")
 //include(":filepicker")
 //include(":License")
