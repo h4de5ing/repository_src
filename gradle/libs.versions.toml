@@ -1,6 +1,6 @@
 [versions]
 # Plugins
-agp = "9.3.1"
+agp = "9.4.1"
 
 # SDK Versions
 compileSdk = "37"
@@ -9,7 +9,7 @@ targetSdk = "37"
 javaVersion = "22"
 
 # AndroidX
-androidxCoreKtx = "1.19.0"
+androidxCoreKtx = "1.19.1"
 androidxAppcompat = "1.8.0"
 androidxLegacySupport = "1.0.0"
 androidxRecyclerview = "1.4.0"
@@ -17,10 +17,10 @@ androidxExifinterface = "1.4.2"
 androidxLifecycleProcess = "2.11.0"
 androidxLifecycleVersion = "2.11.0"
 androidxPreference = "1.2.1"
-androidxFragment = "1.9.0"
-androidxDatabinding = "9.3.1"
+androidxFragment = "1.9.1"
+androidxDatabinding = "9.4.1"
 androidxStartupRuntime = "1.2.0"
-androidxAnnotation = "1.10.0"
+androidxAnnotation = "1.11.0"
 
 # Material
 material = "1.14.0"
@@ -30,7 +30,7 @@ kotlinxCoroutines = "1.11.0"
 kotlinxSerialization = "1.11.0"
 
 # Network
-okhttp = "5.4.0"
+okhttp = "5.5.0"
 nanohttpd = "2.3.1"
 javaWebSocket = "1.6.0"
 
@@ -39,7 +39,7 @@ zxingCore = "3.5.4"
 
 # Other
 annimonStream = "1.2.2"
-okio = "3.18.1"
+okio = "3.18.2"
 
 # Custom
 netlibVersion = "2.0-20250811"

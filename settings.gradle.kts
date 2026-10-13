@@ -16,13 +16,13 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "repository"
-include(":Base")
+//include(":Base")
 //include(":BaseUI")
 //include(":Document")
 //include(":filepicker")
 //include(":License")
 //include(":NetLib")
-//include(":OTALibrary")
+include(":OTALibrary")
 //include(":SerialPortLib")
 //include(":SerialPortLibrary")
 //include(":VanSerialPort")
