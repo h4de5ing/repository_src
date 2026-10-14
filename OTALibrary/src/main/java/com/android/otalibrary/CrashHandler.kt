@@ -33,24 +33,26 @@ class CrashHandler private constructor() : Thread.UncaughtExceptionHandler {
     }
 
     override fun uncaughtException(thread: Thread, ex: Throwable) {
-        if (!handleException(ex) && mDefaultHandler != null) {
-            mDefaultHandler?.uncaughtException(thread, ex)
-        } else {
-            try {
-                Thread.sleep(3000)
-            } catch (_: InterruptedException) {
-            }
-            Process.killProcess(Process.myPid())
-            exitProcess(1)
-        }
+        // 先把崩溃信息同步落盘（已在内部 try/catch，失败也不影响后续结束流程）
+        handleException(ex)
+        // 关键：不要在崩溃线程上 Thread.sleep。
+        // 若崩溃发生在主线程，长时间 sleep 会阻塞输入分发，把一次崩溃放大成“输入超时 ANR”，
+        // 反而掩盖真正的崩溃（见 FileEditor 大文件崩溃被放大为 ANR 的问题）。
+        // 本地日志已由 saveCrashInfo2File 同步写盘，无需再 sleep 等待。
+        Process.killProcess(Process.myPid())
+        exitProcess(1)
     }
 
 
     private fun handleException(ex: Throwable?): Boolean {
         if (ex == null) return false
-        collectDeviceInfo(mContext!!)
-        saveCrashInfo2File(ex)
-        return true
+        return try {
+            mContext?.let { collectDeviceInfo(it) }
+            saveCrashInfo2File(ex)
+            true
+        } catch (_: Throwable) {
+            false
+        }
     }
 
     fun collectDeviceInfo(ctx: Context) {
